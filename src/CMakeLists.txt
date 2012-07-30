@@ -40,8 +40,8 @@ add_library(bppseqomics-shared SHARED ${CPP_FILES})
 set_target_properties(bppseqomics-shared
   PROPERTIES OUTPUT_NAME bpp-seq-omics
   CLEAN_DIRECT_OUTPUT 1
-  VERSION ${BPPSEQ_VERSION}
-  SOVERSION ${BPPSEQ_VERSION_MAJOR}
+  VERSION ${BPPSEQOMICS_VERSION}
+  SOVERSION ${BPPSEQOMICS_VERSION_MAJOR}
   )
 target_link_libraries(bppseqomics-shared ${LIBS})
 
