@@ -11,6 +11,7 @@ SET(CPP_FILES
   Bpp/Seq/Io/Maf/MafStatistics.cpp
   Bpp/Seq/Io/Maf/IterationListener.cpp
   Bpp/Seq/Feature/SequenceFeature.cpp
+  Bpp/Seq/Feature/SequenceFeatureTools.cpp
   Bpp/Seq/Feature/Gff/GffFeatureReader.cpp
   Bpp/Seq/Feature/Gtf/GtfFeatureReader.cpp
   )
@@ -23,6 +24,7 @@ SET(H_FILES
   Bpp/Seq/Io/Maf/MafStatistics.h
   Bpp/Seq/Io/Maf/IterationListener.h
   Bpp/Seq/Feature/SequenceFeature.h
+  Bpp/Seq/Feature/SequenceFeatureTools.h
   Bpp/Seq/Feature/Gff/GffFeatureReader.h
   Bpp/Seq/Feature/Gtf/GtfFeatureReader.h
   )
