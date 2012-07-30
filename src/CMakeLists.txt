@@ -30,15 +30,15 @@ set(H_FILES
 # Build the static lib
 add_library(bppseqomics-static STATIC ${CPP_FILES})
 set_target_properties(bppseqomics-static
-  PROPERTIES OUTPUT_NAME bpp-seq
+  PROPERTIES OUTPUT_NAME bpp-seq-omics
   CLEAN_DIRECT_OUTPUT 1
   )
 target_link_libraries(bppseqomics-static ${LIBS})
 
 # Build the shared lib
-add_library(bppseq-shared SHARED ${CPP_FILES})
+add_library(bppseqomics-shared SHARED ${CPP_FILES})
 set_target_properties(bppseqomics-shared
-  PROPERTIES OUTPUT_NAME bpp-seq
+  PROPERTIES OUTPUT_NAME bpp-seq-omics
   CLEAN_DIRECT_OUTPUT 1
   VERSION ${BPPSEQ_VERSION}
   SOVERSION ${BPPSEQ_VERSION_MAJOR}
