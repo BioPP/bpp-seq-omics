@@ -1,0 +1,11 @@
+Julien Dutheil <julien.dutheil@univ-montp2.fr>
+Sylvain Gaillard <sylvain.gaillard@angers.inra.fr>
+Vincent Cahais
+
+Contributed code to Bio++ was enabled thanks to the following institutions and resources:
+
+2007 - 2010 Bioinformatics Research Center, University of Aarhus (Julien Dutheil).
+            Funded by European research Area on Plant Genomics (ERA-PG) ARelatives.
+2010 -      ISE-M UMR CNRS 5554 Université Montpellier 2 (Julien Dutheil)
+2010 -      ISE-M UMR CNRS 5554 Université Montpellier 2 (Vincent Cahais)
+2007 -      Genetics and Horticulture UMR INRA 1259 Angers-Nantes INRA Center (Sylvain Gaillard)
