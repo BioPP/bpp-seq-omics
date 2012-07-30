@@ -92,6 +92,10 @@ IF (DOXYGEN_FOUND)
     COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile-stable )
 ENDIF (DOXYGEN_FOUND)
 
+# Python, needed for install:
+FIND_PACKAGE(PythonInterp)
+FIND_PACKAGE(PythonLibs)
+
 ENDIF(NO_DEP_CHECK)
 
 # Packager
@@ -170,3 +174,4 @@ IF (BUILD_TESTING)
 ENDIF(BUILD_TESTING)
 
 ENDIF(NOT NO_DEP_CHECK)
+

@@ -3,7 +3,7 @@
 # Created: 30/07/2012
 
 # File list
-set(CPP_FILES
+SET(CPP_FILES
   Bpp/Seq/Io/Fastq.cpp
   Bpp/Seq/Io/Maf/MafAlignmentParser.cpp
   Bpp/Seq/Io/Maf/MafIterator.cpp
@@ -15,7 +15,7 @@ set(CPP_FILES
   Bpp/Seq/Feature/Gtf/GtfFeatureReader.cpp
   )
 
-set(H_FILES
+SET(H_FILES
   Bpp/Seq/Io/Fastq.h
   Bpp/Seq/Io/Maf/MafSequence.h
   Bpp/Seq/Io/Maf/MafAlignmentParser.h
@@ -28,25 +28,28 @@ set(H_FILES
   )
 
 # Build the static lib
-add_library(bppseqomics-static STATIC ${CPP_FILES})
-set_target_properties(bppseqomics-static
+ADD_LIBRARY(bppseqomics-static STATIC ${CPP_FILES})
+SET_TARGET_PROPERTIES(bppseqomics-static
   PROPERTIES OUTPUT_NAME bpp-seq-omics
   CLEAN_DIRECT_OUTPUT 1
   )
-target_link_libraries(bppseqomics-static ${LIBS})
+TARGET_LINK_LIBRARIES(bppseqomics-static ${LIBS})
 
 # Build the shared lib
-add_library(bppseqomics-shared SHARED ${CPP_FILES})
-set_target_properties(bppseqomics-shared
+ADD_LIBRARY(bppseqomics-shared SHARED ${CPP_FILES})
+SET_TARGET_PROPERTIES(bppseqomics-shared
   PROPERTIES OUTPUT_NAME bpp-seq-omics
   CLEAN_DIRECT_OUTPUT 1
   VERSION ${BPPSEQOMICS_VERSION}
   SOVERSION ${BPPSEQOMICS_VERSION_MAJOR}
   )
-target_link_libraries(bppseqomics-shared ${LIBS})
+TARGET_LINK_LIBRARIES(bppseqomics-shared ${LIBS})
 
 # Install libs
-install(TARGETS bppseqomics-static bppseqomics-shared DESTINATION lib${LIB_SUFFIX})
+INSTALL(TARGETS bppseqomics-static bppseqomics-shared DESTINATION lib${LIB_SUFFIX})
 
 # Install headers
-install(DIRECTORY Bpp/ DESTINATION include/Bpp FILES_MATCHING PATTERN "*.h" PATTERN "*.all")
+INSTALL(DIRECTORY Bpp/ DESTINATION include/Bpp FILES_MATCHING PATTERN "*.h" PATTERN "*.all")
+
+INSTALL(CODE "EXECUTE_PROCESS(COMMAND python genIncludes.py ${CMAKE_PREFIX_PATH}/include/Bpp/Seq)")
+
