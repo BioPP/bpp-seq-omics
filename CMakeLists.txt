@@ -1,6 +1,6 @@
 # CMake script for bpp-seq unit tests
 # Author: Julien Dutheil
-# Created: 30/10/2010
+# Created: 30/07/2012
 
 MACRO(TEST_FIND_LIBRARY OUTPUT_LIBS lib_name include_to_find)
   #start:
@@ -22,35 +22,7 @@ MACRO(TEST_FIND_LIBRARY OUTPUT_LIBS lib_name include_to_find)
 ENDMACRO(TEST_FIND_LIBRARY)
 
 #Find the bpp-seq library library:
-TEST_FIND_LIBRARY(LIBS bpp-seq Bpp/Seq/Alphabet/Alphabet.h)
-
-ADD_EXECUTABLE(test_alphabets test_alphabets.cpp)
-TARGET_LINK_LIBRARIES(test_alphabets ${LIBS})
-ADD_TEST(test_alphabets "test_alphabets")
-
-ADD_EXECUTABLE(test_sequences test_sequences.cpp)
-TARGET_LINK_LIBRARIES(test_sequences ${LIBS})
-ADD_TEST(test_sequences "test_sequences")
-
-ADD_EXECUTABLE(test_io test_io.cpp)
-TARGET_LINK_LIBRARIES(test_io ${LIBS})
-ADD_TEST(test_io "test_io")
-
-ADD_EXECUTABLE(test_containers test_containers.cpp)
-TARGET_LINK_LIBRARIES(test_containers ${LIBS})
-ADD_TEST(test_containers "test_containers")
-
-ADD_EXECUTABLE(test_alignment_scores test_alignment_scores.cpp)
-TARGET_LINK_LIBRARIES(test_alignment_scores ${LIBS})
-ADD_TEST(test_alignment_scores "test_alignment_scores")
-
-ADD_EXECUTABLE(test_walker test_walker.cpp)
-TARGET_LINK_LIBRARIES(test_walker ${LIBS})
-ADD_TEST(test_walker "test_walker")
-
-ADD_EXECUTABLE(test_bowker test_bowker.cpp)
-TARGET_LINK_LIBRARIES(test_bowker ${LIBS})
-ADD_TEST(test_bowker "test_bowker")
+TEST_FIND_LIBRARY(LIBS bpp-seq-omics Bpp/Seq/Feature/SequenceFeature.h)
 
 ADD_EXECUTABLE(test_gff test_gff.cpp)
 TARGET_LINK_LIBRARIES(test_gff ${LIBS})
@@ -61,11 +33,11 @@ TARGET_LINK_LIBRARIES(test_fastq ${LIBS})
 ADD_TEST(test_fastq "test_fastq")
 
 IF(UNIX)
-  SET_PROPERTY(TEST test_alphabets test_sequences test_io test_containers test_bowker test_gff test_fastq PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=$ENV{LD_LIBRARY_PATH}:../src")
+  SET_PROPERTY(TEST test_gff test_fastq PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=$ENV{LD_LIBRARY_PATH}:../src")
 ENDIF()
 
 IF(APPLE)
-  SET_PROPERTY(TEST test_alphabets test_sequences test_io test_containers test_bowker test_gff test_fastq PROPERTY ENVIRONMENT "DYLD_LIBRARY_PATH=$ENV{DYLD_LIBRARY_PATH}:../src")
+  SET_PROPERTY(TEST test_gff test_fastq PROPERTY ENVIRONMENT "DYLD_LIBRARY_PATH=$ENV{DYLD_LIBRARY_PATH}:../src")
 ENDIF()
 
 IF(WIN32)
