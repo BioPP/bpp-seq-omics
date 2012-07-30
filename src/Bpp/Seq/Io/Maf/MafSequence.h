@@ -40,10 +40,11 @@ knowledge of the CeCILL license and that you accept its terms.
 #ifndef _MAFSEQUENCE_H_
 #define _MAFSEQUENCE_H_
 
-#include "../../SequenceWithAnnotation.h"
-#include "../../Alphabet/AlphabetTools.h"
 #include "../../Feature/SequenceFeature.h"
-#include "../../SequenceTools.h"
+
+#include <Bpp/Seq/SequenceWithAnnotation.h>
+#include <Bpp/Seq/Alphabet/AlphabetTools.h>
+#include <Bpp/Seq/SequenceTools.h>
 
 namespace bpp {
 

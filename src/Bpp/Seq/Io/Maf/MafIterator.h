@@ -42,7 +42,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 #include "MafBlock.h"
 #include "MafStatistics.h"
-#include "../Clustal.h"
+#include <Bpp/Seq/Io/Clustal.h>
 
 //From the STL:
 #include <iostream>

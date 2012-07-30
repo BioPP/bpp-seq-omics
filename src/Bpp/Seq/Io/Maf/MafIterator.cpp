@@ -39,12 +39,12 @@ knowledge of the CeCILL license and that you accept its terms.
 
 #include "MafIterator.h"
 #include "IterationListener.h"
-#include "../../SequenceWithQuality.h"
-#include "../../SequenceWithAnnotationTools.h"
-#include "../../SequenceWalker.h"
-#include "../../Alphabet/AlphabetTools.h"
-#include "../../Container/VectorSiteContainer.h"
-#include "../../SiteTools.h"
+#include <Bpp/Seq/SequenceWithQuality.h>
+#include <Bpp/Seq/SequenceWithAnnotationTools.h>
+#include <Bpp/Seq/SequenceWalker.h>
+#include <Bpp/Seq/Alphabet/AlphabetTools.h>
+#include <Bpp/Seq/Container/VectorSiteContainer.h>
+#include <Bpp/Seq/SiteTools.h>
 
 using namespace bpp;
 

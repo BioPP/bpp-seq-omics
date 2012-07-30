@@ -38,7 +38,7 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 
 #include "Fastq.h"
-#include "../SequenceWithQuality.h"
+#include <Bpp/Seq/SequenceWithQuality.h>
 
 #include <typeinfo>
 

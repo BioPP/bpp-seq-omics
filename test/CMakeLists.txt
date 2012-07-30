@@ -14,14 +14,14 @@ MACRO(TEST_FIND_LIBRARY OUTPUT_LIBS lib_name include_to_find)
     MESSAGE("   dynamic libraries: ${${lib_name}_LIBRARY}")
     MESSAGE(WARNING "Library ${lib_name} is already installed in the system tree. Test will be built against it. This may lead to unexpected results. You may want to do 'make install' before 'make test', or remove the installed version.")
   ELSE()
-    SET(${lib_name}_LIBRARY "-L../src -lbpp-seq")
+    SET(${lib_name}_LIBRARY "-L../src -lbpp-seq-omics")
     SET(${lib_name}_INCLUDE_DIR "../src/")
   ENDIF()
   INCLUDE_DIRECTORIES(${${lib_name}_INCLUDE_DIR})
   SET(${OUTPUT_LIBS} ${${OUTPUT_LIBS}} ${${lib_name}_LIBRARY})
 ENDMACRO(TEST_FIND_LIBRARY)
 
-#Find the bpp-seq library library:
+#Find the bpp-seq(-omics) library library:
 TEST_FIND_LIBRARY(LIBS bpp-seq-omics Bpp/Seq/Feature/SequenceFeature.h)
 
 ADD_EXECUTABLE(test_gff test_gff.cpp)

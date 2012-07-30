@@ -41,7 +41,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define _MAFBLOCK_H_
 
 #include "MafSequence.h"
-#include "../../Container/AlignedSequenceContainer.h"
+#include <Bpp/Seq/Container/AlignedSequenceContainer.h>
 
 #include <Bpp/Clonable.h>
 

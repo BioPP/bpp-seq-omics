@@ -38,8 +38,8 @@ knowledge of the CeCILL license and that you accept its terms.
 */
 
 #include "MafStatistics.h"
-#include "../../Container/SequenceContainerTools.h"
-#include "../../Container/VectorSiteContainer.h"
+#include <Bpp/Seq/Container/SequenceContainerTools.h>
+#include <Bpp/Seq/Container/VectorSiteContainer.h>
 
 //From bpp-core:
 #include <Bpp/Numeric/NumConstants.h>

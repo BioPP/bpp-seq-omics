@@ -41,10 +41,10 @@ knowledge of the CeCILL license and that you accept its terms.
 #define _BPP_SEQ_IO_FASTQ_H_
 
 #include <string>
-#include "ISequenceStream.h"
-#include "OSequenceStream.h"
-#include "../Sequence.h"
-#include "../SequenceWithQuality.h"
+#include <Bpp/Seq/Io/ISequenceStream.h>
+#include <Bpp/Seq/Io/OSequenceStream.h>
+#include <Bpp/Seq/Sequence.h>
+#include <Bpp/Seq/SequenceWithQuality.h>
 
 namespace bpp
 {

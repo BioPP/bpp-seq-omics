@@ -41,7 +41,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define _MAFALIGNMENTPARSER_H_
 
 #include "MafIterator.h"
-#include "../../Alphabet/CaseMaskedAlphabet.h"
+#include <Bpp/Seq/Alphabet/CaseMaskedAlphabet.h>
 
 //From the STL:
 #include <iostream>
