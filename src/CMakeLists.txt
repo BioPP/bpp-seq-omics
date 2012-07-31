@@ -53,5 +53,5 @@ INSTALL(TARGETS bppseqomics-static bppseqomics-shared DESTINATION lib${LIB_SUFFI
 # Install headers
 INSTALL(DIRECTORY Bpp/ DESTINATION include/Bpp FILES_MATCHING PATTERN "*.h" PATTERN "*.all")
 
-INSTALL(CODE "EXECUTE_PROCESS(COMMAND python genIncludes.py ${CMAKE_PREFIX_PATH}/include/Bpp/Seq)")
+INSTALL(CODE "EXECUTE_PROCESS(COMMAND python ${CMAKE_SOURCE_DIR}/genIncludes.py ${CMAKE_PREFIX_PATH}/include/Bpp/Seq)")
 
