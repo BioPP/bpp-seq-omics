@@ -225,6 +225,7 @@ class MafBlock:
      *
      * An existing data associated to this property will be deleted and replaced by the new one.
      * @param property The property to look for.
+     * @param data The data to associate to this property.
      * @throw Exception if the pointer toward the input data is NULL.
      */
     void setProperty(const std::string& property, Clonable* data) throw (Exception) 

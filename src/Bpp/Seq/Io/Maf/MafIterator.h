@@ -859,8 +859,7 @@ class SequenceStatisticsMafIterator:
   public:
     /**
      * @param iterator The input iterator.
-     * @param species The list of species names for which statistics should be computed.
-     * @param output The output stream where to store the results.
+     * @param statistics A vector of pointers toward MafStatistics, tobe computed simultaneously for each maf block.
      */
     SequenceStatisticsMafIterator(MafIterator* iterator, const std::vector<MafStatistics*> statistics);
 

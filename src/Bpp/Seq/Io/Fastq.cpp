@@ -85,7 +85,7 @@ bool Fastq::nextSequence(std::istream& input, Sequence& seq) const throw (Except
 
 /******************************************************************************/
 
-void Fastq::writeSequence(std::ostream& output, const bpp::Sequence& seq) const throw (Exception) {
+void Fastq::writeSequence(std::ostream& output, const Sequence& seq) const throw (Exception) {
   std::string qual(seq.size(), static_cast<char>(33));
   try {
     const SequenceWithQuality& sq = dynamic_cast<const SequenceWithQuality&>(seq);

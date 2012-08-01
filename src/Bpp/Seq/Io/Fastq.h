@@ -118,7 +118,7 @@ namespace bpp
        * in.close();
        * @endcode
        */
-      bool nextSequence(std::istream& input, bpp::Sequence& seq) const throw (Exception);
+      bool nextSequence(std::istream& input, Sequence& seq) const throw (Exception);
       /** @} */
 
       /**
@@ -130,7 +130,7 @@ namespace bpp
        * @copydoc OSequenceStream::writeSequence(std::ostream& output, const Sequence& seq) const
        * @author Sylvain Gaillard
        */
-      void writeSequence(std::ostream& output, const bpp::Sequence& seq) const throw (Exception);
+      void writeSequence(std::ostream& output, const Sequence& seq) const throw (Exception);
       /** @} */
   };
 }
