@@ -162,7 +162,7 @@ class MafStatistics
  * @brief Partial implementation of MafStatistics, for convenience.
  */
 class AbstractMafStatistics:
-  public MafStatistics
+  public virtual MafStatistics
 {
   protected:
     MafStatisticsResult result_;
@@ -307,13 +307,36 @@ class CharacterCountsMafStatistics:
     std::vector<std::string> getSupportedTags() const;
 };
 
+
+/**
+ * @brief Partial implementation of MafStatistics for method working on a subset of species, in a site-wise manner.
+ *
+ * This class stores a seleciton of species and create for each block the corresponding SiteContainer.
+ */
+class AbstractSpeciesSelectionMafStatistics:
+  public virtual MafStatistics
+{
+  private:
+    std::vector<std::string> species_;
+
+  public:
+    AbstractSpeciesSelectionMafStatistics(const std::vector<std::string>& species):
+      species_(species) {}
+
+  protected:
+    SiteContainer* getSiteContainer(const MafBlock& block);
+
+};
+
+
 /**
  * @brief Compute the Site Frequency Spectrum of a maf block.
  *
  * The ancestral states are considered as unknown, so that 10000 and 11110 sites are treated equally.
  */
 class SiteFrequencySpectrumMafStatistics:
-  public AbstractMafStatistics
+  public AbstractMafStatistics,
+  public AbstractSpeciesSelectionMafStatistics
 {
   private:
     class Categorizer {
@@ -344,31 +367,30 @@ class SiteFrequencySpectrumMafStatistics:
     const Alphabet* alphabet_;
     Categorizer categorizer_;
     std::vector<unsigned int> counts_;
-    std::vector<std::string> ingroup_;
 
   public:
     SiteFrequencySpectrumMafStatistics(const Alphabet* alphabet, const std::vector<double>& bounds, const std::vector<std::string>& ingroup):
       AbstractMafStatistics(),
+      AbstractSpeciesSelectionMafStatistics(ingroup),
       alphabet_(alphabet),
       categorizer_(bounds),
-      counts_(bounds.size() - 1),
-      ingroup_(ingroup)
+      counts_(bounds.size() - 1)
     {}
 
     SiteFrequencySpectrumMafStatistics(const SiteFrequencySpectrumMafStatistics& stats):
-      AbstractMafStatistics(stats),
+      AbstractMafStatistics(),
+      AbstractSpeciesSelectionMafStatistics(stats),
       alphabet_(stats.alphabet_),
       categorizer_(stats.categorizer_),
-      counts_(stats.counts_),
-      ingroup_(stats.ingroup_)
+      counts_(stats.counts_)
     {}
 
     SiteFrequencySpectrumMafStatistics& operator=(const SiteFrequencySpectrumMafStatistics& stats) {
       AbstractMafStatistics::operator=(stats);
+      AbstractSpeciesSelectionMafStatistics::operator=(stats);
       alphabet_    = stats.alphabet_;
       categorizer_ = stats.categorizer_;
       counts_      = stats.counts_;
-      ingroup_     = stats.ingroup_;
       return *this;
     }
 
@@ -377,6 +399,33 @@ class SiteFrequencySpectrumMafStatistics:
   public:
     std::string getShortName() const { return "SiteFrequencySpectrum"; }
     std::string getFullName() const { return "Site frequency spectrum."; }
+    void compute(const MafBlock& block);
+    std::vector<std::string> getSupportedTags() const;
+};
+
+/**
+ * @brief Compute a few site statistics in a maf block.
+ *
+ * Computed statistics include:
+ * - Number of sites without gaps
+ * - Number of complete sites (no gap, no unresolved)
+ * - Number of parsimony informative sites
+ */
+class SiteMafStatistics:
+  public AbstractMafStatistics,
+  public AbstractSpeciesSelectionMafStatistics
+{
+  public:
+    SiteMafStatistics(const std::vector<std::string>& species):
+      AbstractMafStatistics(),
+      AbstractSpeciesSelectionMafStatistics(species)
+    {}
+
+    virtual ~SiteMafStatistics() {}
+
+  public:
+    std::string getShortName() const { return "SiteStatistics"; }
+    std::string getFullName() const { return "Site statistics."; }
     void compute(const MafBlock& block);
     std::vector<std::string> getSupportedTags() const;
 };

@@ -40,6 +40,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "MafStatistics.h"
 #include <Bpp/Seq/Container/SequenceContainerTools.h>
 #include <Bpp/Seq/Container/VectorSiteContainer.h>
+#include <Bpp/Seq/SiteTools.h>
 
 //From bpp-core:
 #include <Bpp/Numeric/NumConstants.h>
@@ -88,6 +89,20 @@ void CharacterCountsMafStatistics::compute(const MafBlock& block)
   result_.setValue("Unresolved", countUnres);
 }
 
+SiteContainer* AbstractSpeciesSelectionMafStatistics::getSiteContainer(const MafBlock& block)
+{
+  VectorSiteContainer* alignment = new VectorSiteContainer(block.getAlignment().getAlphabet());
+  for (size_t i = 0; i < species_.size(); ++i) {
+    if (block.hasSequenceForSpecies(species_[i])) {
+      vector<const MafSequence*> selection = block.getSequencesForSpecies(species_[i]);
+      for (size_t j = 0; j < selection.size(); ++j) {
+        alignment->addSequence(*selection[j]);
+      }
+    }
+  }
+  return alignment;
+}
+
 vector<string> SiteFrequencySpectrumMafStatistics::getSupportedTags() const
 {
   vector<string> tags;
@@ -107,19 +122,11 @@ void SiteFrequencySpectrumMafStatistics::compute(const MafBlock& block)
   unsigned int nbIgnored = 0;
   counts_.assign(categorizer_.getNumberOfCategories(), 0);
   int state;
-  VectorSiteContainer alignment(alphabet_);
-  for (size_t i = 0; i < ingroup_.size(); ++i) {
-    if (block.hasSequenceForSpecies(ingroup_[i])) {
-      vector<const MafSequence*> selection = block.getSequencesForSpecies(ingroup_[i]);
-      for (size_t j = 0; j < selection.size(); ++j) {
-        alignment.addSequence(*selection[j]);
-      }
-    }
-  }
-  if (alignment.getNumberOfSequences() > 0) {
+  auto_ptr<SiteContainer> alignment(getSiteContainer(block));
+  if (alignment->getNumberOfSequences() > 0) {
     for (unsigned int i = 0; i < block.getNumberOfSites(); ++i) {
       //Note: we do not rely on SiteTool::getCounts as it would be unefficient to count everything.
-      const Site& site = alignment.getSite(i);
+      const Site& site = alignment->getSite(i);
       map<int, unsigned int> counts;
       for (unsigned int j = 0; j < site.size(); ++j) {
         state = site[j];
@@ -160,5 +167,35 @@ void SiteFrequencySpectrumMafStatistics::compute(const MafBlock& block)
   for (size_t i = 0; i < counts_.size(); ++i) {
     result_.setValue("Bin" + TextTools::toString(i + 1), counts_[i]);
   }
+}
+
+vector<string> SiteMafStatistics::getSupportedTags() const
+{
+  vector<string> tags;
+  tags.push_back("NbWithoutGap");
+  tags.push_back("NbComplete");
+  tags.push_back("NbParsimonyInformative");
+  return tags;
+}
+
+void SiteMafStatistics::compute(const MafBlock& block)
+{
+  auto_ptr<SiteContainer> alignment(getSiteContainer(block));
+  unsigned int nbNg = 0;
+  unsigned int nbCo = 0;
+  unsigned int nbPi = 0;
+  if (alignment->getNumberOfSequences() > 0) {
+    for (unsigned int i = 0; i < alignment->getNumberOfSites(); ++i) {
+      if (!SiteTools::hasGap(alignment->getSite(i)))
+        nbNg++;
+      if (SiteTools::isComplete(alignment->getSite(i)))
+        nbCo++;
+      if (SiteTools::isParsimonyInformativeSite(alignment->getSite(i)))
+        nbPi++;
+    }
+  }
+  result_.setValue("NbWithoutGap", nbNg);
+  result_.setValue("NbComplete", nbCo);
+  result_.setValue("NbParsimonyInformative", nbPi);
 }
 
