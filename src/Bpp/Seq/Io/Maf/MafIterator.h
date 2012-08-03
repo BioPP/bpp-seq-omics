@@ -184,6 +184,41 @@ class AbstractFilterMafIterator:
 /**
  * @brief Filter maf blocks to keep only the ones with a minimum number of sites.
  */
+class BlockLengthMafIterator:
+  public AbstractFilterMafIterator
+{
+  private:
+    unsigned int minLength_;
+
+  public:
+    BlockLengthMafIterator(MafIterator* iterator, unsigned int minLength) :
+      AbstractFilterMafIterator(iterator),
+      minLength_(minLength)
+    {}
+
+  private:
+    MafBlock* analyseCurrentBlock_() throw (Exception) {
+      bool test;
+      do {
+        currentBlock_ = iterator_->nextBlock();
+        if (!currentBlock_) break;
+        test = (currentBlock_->getNumberOfSites() < minLength_);
+        if (test) {
+          if (logstream_) {
+            (*logstream_ << "BLOCK LENGTH FILTER: block " << currentBlock_->getDescription() << " with size " << currentBlock_->getNumberOfSites() << " was discarded.").endLine();
+          }
+          delete currentBlock_;
+          currentBlock_ = 0;
+        }
+      } while (test);
+      return currentBlock_;
+    }
+
+};
+
+/**
+ * @brief Filter maf blocks to keep only the ones with a minimum number of species.
+ */
 class BlockSizeMafIterator:
   public AbstractFilterMafIterator
 {
@@ -202,7 +237,7 @@ class BlockSizeMafIterator:
       do {
         currentBlock_ = iterator_->nextBlock();
         if (!currentBlock_) break;
-        test = (currentBlock_->getNumberOfSites() < minSize_);
+        test = (currentBlock_->getNumberOfSequences() < minSize_);
         if (test) {
           if (logstream_) {
             (*logstream_ << "BLOCK SIZE FILTER: block " << currentBlock_->getDescription() << " with size " << currentBlock_->getNumberOfSites() << " was discarded.").endLine();

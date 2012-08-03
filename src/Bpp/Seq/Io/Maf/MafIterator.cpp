@@ -1463,7 +1463,7 @@ MafBlock* WindowSplitMafIterator::analyseCurrentBlock_() throw (Exception)
       default             : { }
     }
     //cout << "Effective size: " << size << endl;
-    for(unsigned int i = pos; i < bSize; i += size) {
+    for(unsigned int i = pos; i + size < bSize; i += size) {
       MafBlock* newBlock = new MafBlock();
       newBlock->setScore(block->getScore());
       newBlock->setPass(block->getPass());
