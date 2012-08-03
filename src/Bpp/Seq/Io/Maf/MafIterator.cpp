@@ -82,7 +82,9 @@ MafBlock* SequenceFilterMafIterator::analyseCurrentBlock_() throw (Exception)
         if (logstream_) {
           (*logstream_ << "SEQUENCE FILTER: remove sequence '" << species << "' from current block " << currentBlock_->getDescription() << ".").endLine();
         }
-        currentBlock_->getAlignment().deleteSequence(i - 1);
+        if (!keep_) {
+          currentBlock_->getAlignment().deleteSequence(i - 1);
+        }
       } else {
         counts[species]++;
       }
