@@ -96,7 +96,7 @@ class MafBlock:
 
     MafBlock* clone() const { return new MafBlock(*this); }
 
-    ~MafBlock() { deleteProperties_(); }
+    virtual ~MafBlock() { deleteProperties_(); }
 
   public:
     void setScore(double score) { score_ = score; }
@@ -240,7 +240,7 @@ class MafBlock:
   private:
     void deleteProperties_()
     {
-      std::map<std::string, Clonable*>::const_iterator it;
+      std::map<std::string, Clonable*>::iterator it;
       for (it = properties_.begin(); it != properties_.end(); ++it) {
         delete it->second;
       }

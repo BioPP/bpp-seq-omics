@@ -1483,8 +1483,9 @@ MafBlock* WindowSplitMafIterator::analyseCurrentBlock_() throw (Exception)
       }
       blockBuffer_.push_back(newBlock);
     }
+    delete block;
   }
-  
+ 
   MafBlock* nxtBlock = blockBuffer_.front();
   blockBuffer_.pop_front();
   return nxtBlock;
