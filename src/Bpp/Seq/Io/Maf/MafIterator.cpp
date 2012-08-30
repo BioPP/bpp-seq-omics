@@ -408,6 +408,8 @@ MafBlock* AlignmentFilterMafIterator::analyseCurrentBlock_() throw (Exception)
       window_.clear();
       //Init window:
       size_t i;
+      if (nc < windowSize_)
+        throw Exception("AlignmentFilterMafIterator::analyseCurrentBlock_. Block is smaller than window size: " + TextTools::toString(nc));
       for (i = 0; i < windowSize_; ++i) {
         for (size_t j = 0; j < nr; ++j) {
           col[j] = (aln[j][i] == gap || aln[j][i] == unk);

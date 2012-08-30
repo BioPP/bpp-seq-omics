@@ -530,7 +530,7 @@ class AlignmentFilterMafIterator:
  * @brief Filter maf blocks to remove ambiguously aligned or non-informative regions.
  *
  * This iterators offers a different algorithm than AlignmentFilterMafIterator.
- * It takes two parameters: g=maxGap and n=maxPos. windows with at more than n positions containing each of them more than g=maxPos gaps will be discarded.
+ * It takes two parameters: g=maxGap and n=maxPos. Windows with more than n positions containing each of them more than g=maxPos gaps will be discarded.
  * In addition, consecutives patterns are only counted once.
  */
 class AlignmentFilter2MafIterator:
