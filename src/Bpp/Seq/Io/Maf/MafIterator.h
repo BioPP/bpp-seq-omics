@@ -486,6 +486,7 @@ class FullGapFilterMafIterator:
  *
  * Regions with a too high proportion of gaps or unknown character in a set of species will be removed,
  * and blocks adjusted accordingly. 
+ * In case a sequence from the list is missing, it can be either ignored or counted as a full sequence of gaps.
  */
 class AlignmentFilterMafIterator:
   public AbstractFilterMafIterator,
@@ -500,9 +501,10 @@ class AlignmentFilterMafIterator:
     std::deque<MafBlock*> trashBuffer_;
     std::deque< std::vector<bool> > window_;
     bool keepTrashedBlocks_;
+    bool missingAsGap_;
 
   public:
-    AlignmentFilterMafIterator(MafIterator* iterator, const std::vector<std::string>& species, unsigned int windowSize, unsigned int step, unsigned int maxGap, bool keepTrashedBlocks) :
+    AlignmentFilterMafIterator(MafIterator* iterator, const std::vector<std::string>& species, unsigned int windowSize, unsigned int step, unsigned int maxGap, bool keepTrashedBlocks, bool missingAsGap) :
       AbstractFilterMafIterator(iterator),
       species_(species),
       windowSize_(windowSize),
@@ -511,7 +513,8 @@ class AlignmentFilterMafIterator:
       blockBuffer_(),
       trashBuffer_(),
       window_(species.size()),
-      keepTrashedBlocks_(keepTrashedBlocks)
+      keepTrashedBlocks_(keepTrashedBlocks),
+      missingAsGap_(missingAsGap)
     {}
 
   public:
@@ -532,6 +535,7 @@ class AlignmentFilterMafIterator:
  * This iterators offers a different algorithm than AlignmentFilterMafIterator.
  * It takes two parameters: g=maxGap and n=maxPos. Windows with more than n positions containing each of them more than g=maxPos gaps will be discarded.
  * In addition, consecutives patterns are only counted once.
+ * In case a sequence from the list is missing, it can be either ignored or counted as a full sequence of gaps.
  */
 class AlignmentFilter2MafIterator:
   public AbstractFilterMafIterator,
@@ -547,9 +551,10 @@ class AlignmentFilter2MafIterator:
     std::deque<MafBlock*> trashBuffer_;
     std::deque< std::vector<bool> > window_;
     bool keepTrashedBlocks_;
+    bool missingAsGap_;
 
   public:
-    AlignmentFilter2MafIterator(MafIterator* iterator, const std::vector<std::string>& species, unsigned int windowSize, unsigned int step, unsigned int maxGap, unsigned int maxPos, bool keepTrashedBlocks) :
+    AlignmentFilter2MafIterator(MafIterator* iterator, const std::vector<std::string>& species, unsigned int windowSize, unsigned int step, unsigned int maxGap, unsigned int maxPos, bool keepTrashedBlocks, bool missingAsGap) :
       AbstractFilterMafIterator(iterator),
       species_(species),
       windowSize_(windowSize),
@@ -559,7 +564,8 @@ class AlignmentFilter2MafIterator:
       blockBuffer_(),
       trashBuffer_(),
       window_(species.size()),
-      keepTrashedBlocks_(keepTrashedBlocks)
+      keepTrashedBlocks_(keepTrashedBlocks),
+      missingAsGap_(missingAsGap)
     {}
 
   public:

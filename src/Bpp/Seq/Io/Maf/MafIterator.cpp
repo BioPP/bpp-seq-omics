@@ -395,12 +395,33 @@ MafBlock* AlignmentFilterMafIterator::analyseCurrentBlock_() throw (Exception)
       //Parse block.
       int gap = AlphabetTools::DNA_ALPHABET.getGapCharacterCode();
       int unk = AlphabetTools::DNA_ALPHABET.getUnknownCharacterCode();
-      size_t nr = species_.size();
-      vector< vector<int> > aln(nr);
-      for (size_t i = 0; i < nr; ++i) {
-        aln[i] = block->getSequenceForSpecies(species_[i]).getContent();
+      size_t nr;
+      size_t nc = static_cast<size_t>(block->getNumberOfSites());
+
+      vector< vector<int> > aln;
+      if (missingAsGap_) {
+        nr = species_.size();
+        aln.resize(nr);
+        for (size_t i = 0; i < nr; ++i) {
+          if (block->hasSequenceForSpecies(species_[i]))
+            aln[i] = block->getSequenceForSpecies(species_[i]).getContent();
+          else {
+            aln[i].resize(nc); 
+            fill(aln[i].begin(), aln[i].end(), gap);
+          } 
+        }
+      } else {
+        vector<string> speciesSet = VectorTools::vectorIntersection(species_, block->getSpeciesList());
+        nr = speciesSet.size();
+        aln.resize(nr);
+        for (size_t i = 0; i < nr; ++i) {
+          aln[i] = block->getSequenceForSpecies(species_[i]).getContent();
+        }
       }
-      size_t nc = block->getNumberOfSites();
+
+
+
+
       //First we create a mask:
       vector<unsigned int> pos;
       vector<bool> col(nr);
@@ -566,12 +587,29 @@ MafBlock* AlignmentFilter2MafIterator::analyseCurrentBlock_() throw (Exception)
       //Parse block.
       int gap = AlphabetTools::DNA_ALPHABET.getGapCharacterCode();
       int unk = AlphabetTools::DNA_ALPHABET.getUnknownCharacterCode();
-      size_t nr = species_.size();
-      vector< vector<int> > aln(nr);
-      for (size_t i = 0; i < nr; ++i) {
-        aln[i] = block->getSequenceForSpecies(species_[i]).getContent();
+      size_t nr;
+      size_t nc = static_cast<size_t>(block->getNumberOfSites());
+
+      vector< vector<int> > aln;
+      if (missingAsGap_) {
+        nr = species_.size();
+        aln.resize(nr);
+        for (size_t i = 0; i < nr; ++i) {
+          if (block->hasSequenceForSpecies(species_[i]))
+            aln[i] = block->getSequenceForSpecies(species_[i]).getContent();
+          else {
+            aln[i].resize(nc); 
+            fill(aln[i].begin(), aln[i].end(), gap);
+          } 
+        }
+      } else {
+        vector<string> speciesSet = VectorTools::vectorIntersection(species_, block->getSpeciesList());
+        nr = speciesSet.size();
+        aln.resize(nr);
+        for (size_t i = 0; i < nr; ++i) {
+          aln[i] = block->getSequenceForSpecies(species_[i]).getContent();
+        }
       }
-      size_t nc = block->getNumberOfSites();
       //First we create a mask:
       vector<unsigned int> pos;
       vector<bool> col(nr);
