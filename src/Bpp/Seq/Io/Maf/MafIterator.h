@@ -399,7 +399,7 @@ class DuplicateFilterMafIterator:
  * The user specifies the focus species. Sequences that are not in this set will
  * be automatically merged and their coordinates removed.
  * The scores, if any, will be averaged for the block, weighted by the corresponding block sizes.
- * the pass value will be removed if it is different for the two blocks.
+ * The pass value will be removed if it is different for the two blocks.
  * It is possible to define a maximum distance for the merging. Setting a distance of zero implies that the blocks
  * have to be exactly contiguous. Alternatively, the appropriate number of 'N' will be inserted in all species.
  * All species however have to be distant of the exact same amount.
@@ -455,6 +455,49 @@ class BlockMergerMafIterator:
     MafBlock* analyseCurrentBlock_() throw (Exception);
 
 };
+
+/**
+ * @brief Concatenate blocks up to a certain size.
+ *
+ * Blocks are appended regardless of their coordinates, to form concatenated blocks of at least a given number of positions.
+ * The scores, if any, will be averaged for the block, weighted by the corresponding block sizes.
+ * The pass value will be removed if it is different for the blocks.
+ */
+class ConcatenateMafIterator:
+  public AbstractFilterMafIterator
+{
+  private:
+    MafBlock* incomingBlock_;
+    unsigned int minimumSize_;
+
+  public:
+    ConcatenateMafIterator(MafIterator* iterator, unsigned int minimumSize) :
+      AbstractFilterMafIterator(iterator),
+      incomingBlock_(0),
+      minimumSize_(minimumSize)
+    {
+      incomingBlock_ = iterator->nextBlock();
+    }
+
+  private:
+    ConcatenateMafIterator(const ConcatenateMafIterator& iterator) :
+      AbstractFilterMafIterator(0),
+      incomingBlock_(iterator.incomingBlock_),
+      minimumSize_(iterator.minimumSize_)
+    {}
+    
+    ConcatenateMafIterator& operator=(const ConcatenateMafIterator& iterator)
+    {
+      incomingBlock_ = iterator.incomingBlock_;
+      minimumSize_ = iterator.minimumSize_;
+      return *this;
+    }
+
+  private:
+    MafBlock* analyseCurrentBlock_() throw (Exception);
+
+};
+
 
 /**
  * @brief Filter maf blocks to remove in each block the positions made only of gaps.
@@ -844,45 +887,81 @@ class OutputMafIterator:
 
 /**
  * @brief This iterator forward the iterator given as input after having printed its content to an alignment file.
- * The syntax for ENSMBL meta data is used. For now the output format is clustal.
+ * The syntax for ENSEMBL meta data is used.
  */
 class OutputAlignmentMafIterator:
   public AbstractFilterMafIterator
 {
   private:
     std::ostream* output_;
+    std::string file_;
     bool mask_;
-    Clustal writer_;
+    std::auto_ptr<OAlignment> writer_;
+    unsigned int currentBlockIndex_;
 
   public:
-    OutputAlignmentMafIterator(MafIterator* iterator, std::ostream* out, bool mask = true) :
-      AbstractFilterMafIterator(iterator), output_(out), mask_(mask), writer_()
-    {}
+    /**
+     * @brief Creates a new OutputAlignmentMafIterator object.
+     *
+     * All block will be printed as separate alignment, yet one after the other on the stream.
+     * Be aware that not all format will recognize the resulting file as a multiple alignment file (Mase and Clustal will for instance, not Fasta).
+     * @param iterator The input iterator
+     * @param out A pointer toward the output stream. The stream will not be own by this instance, and will not be copied neither destroyed.
+     * @param writer A pointer toward an alignment writer object which specifies the format to use when writing sequences.
+     * The underlying object will be own by this instance, and destroyed when this object is deleted.
+     * @param mask Tell if sequences should be printed masked (if applicable).
+     */
+    OutputAlignmentMafIterator(MafIterator* iterator, std::ostream* out, OAlignment* writer, bool mask = true) :
+      AbstractFilterMafIterator(iterator), output_(out), file_(), mask_(mask), writer_(writer), currentBlockIndex_(1)
+    {
+      if (!writer)
+        throw Exception("OutputAlignmentMafIterator (constructor 1): sequence writer should not be a NULL pointer!");
+    }
+
+    /**
+     * @brief Creates a new OutputAlignmentMafIterator object.
+     *
+     * All block will be printed as separate alignment, yet one after the other on the stream.
+     * Be aware that not all format will recognize the resulting file as a multiple alignment file (Mase and Clustal will for instance, not Fasta).
+     * @param iterator The input iterator
+     * @param file A string describing the path to the output files. Each block will be written to a distinct file.
+     * If "file" is a fixed string, it will only contain the last block. Using the %i code in the file name allows to generate one file per block, %i denoting the block index.
+     * @param writer A pointer toward an alignment writer object which specifies the format to use when writing sequences.
+     * The underlying object will be own by this instance, and destroyed when this object is deleted.
+     * @param mask Tell if sequences should be printed masked (if applicable).
+     */
+    OutputAlignmentMafIterator(MafIterator* iterator, const std::string& file, OAlignment* writer, bool mask = true) :
+      AbstractFilterMafIterator(iterator), output_(0), file_(file), mask_(mask), writer_(writer), currentBlockIndex_(1)
+    {
+      if (!writer)
+        throw Exception("OutputAlignmentMafIterator (constructor 2): sequence writer should not be a NULL pointer!");
+    }
+
+    ~OutputAlignmentMafIterator() {}
 
   private:
     OutputAlignmentMafIterator(const OutputAlignmentMafIterator& iterator) :
       AbstractFilterMafIterator(0),
       output_(iterator.output_),
+      file_(iterator.file_),
       mask_(iterator.mask_),
-      writer_(iterator.writer_)
+      writer_(),
+      currentBlockIndex_(iterator.currentBlockIndex_)
     {}
     
     OutputAlignmentMafIterator& operator=(const OutputAlignmentMafIterator& iterator)
     {
       output_ = iterator.output_;
+      file_   = iterator.file_;
       mask_   = iterator.mask_;
-      writer_ = iterator.writer_;
+      writer_.release();
+      currentBlockIndex_ = iterator.currentBlockIndex_;
       return *this;
     }
 
 
   private:
-    MafBlock* analyseCurrentBlock_() throw (Exception) {
-      MafBlock* block = iterator_->nextBlock();
-      if (output_ && block)
-        writeBlock(*output_, *block);
-      return block;
-    }
+    MafBlock* analyseCurrentBlock_() throw (Exception);
 
     void writeBlock(std::ostream& out, const MafBlock& block) const;
 };

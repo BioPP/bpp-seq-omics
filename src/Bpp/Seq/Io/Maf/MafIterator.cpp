@@ -44,6 +44,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <Bpp/Seq/SequenceWalker.h>
 #include <Bpp/Seq/Alphabet/AlphabetTools.h>
 #include <Bpp/Seq/Container/VectorSiteContainer.h>
+#include <Bpp/Seq/Container/SequenceContainerTools.h>
 #include <Bpp/Seq/SiteTools.h>
 
 using namespace bpp;
@@ -311,6 +312,84 @@ MafBlock* BlockMergerMafIterator::analyseCurrentBlock_() throw (Exception)
         seq->setToSizeL(seq->size() + currentBlock_->getNumberOfSites() + globalSpace);
         if (logstream_) {
           (*logstream_ << "BLOCK MERGER: adding " << ref2 << " and extend it with " << currentBlock_->getNumberOfSites() << " gaps on the left.").endLine();
+        }
+      }
+      mergedBlock->addSequence(*seq);
+    }
+    //Cleaning stuff:
+    delete currentBlock_;
+    delete incomingBlock_;
+    currentBlock_ = mergedBlock;
+    //We check if we can also merge the next block:
+    incomingBlock_ = iterator_->nextBlock();
+  }
+  return currentBlock_;
+}
+
+MafBlock* ConcatenateMafIterator::analyseCurrentBlock_() throw (Exception)
+{
+  if (!incomingBlock_) return 0;
+  currentBlock_  = incomingBlock_;
+  incomingBlock_ = iterator_->nextBlock();
+  while (incomingBlock_) {
+    if (currentBlock_->getNumberOfSites() >= minimumSize_) {
+      return currentBlock_;
+    }
+    //We merge the two blocks:
+    vector<string> sp1 = currentBlock_->getSpeciesList();
+    vector<string> sp2 = incomingBlock_->getSpeciesList();
+    vector<string> allSp = VectorTools::unique(VectorTools::vectorUnion(sp1, sp2));
+    //We need to create a new MafBlock:
+    MafBlock* mergedBlock = new MafBlock();
+    //We average the score and pass values:
+    unsigned int p1 = currentBlock_->getPass();
+    unsigned int p2 = incomingBlock_->getPass();
+    if (p1 == p2) mergedBlock->setPass(p1);
+    double s1 = currentBlock_->getScore();
+    double n1 = static_cast<double>(currentBlock_->getNumberOfSites());
+    double s2 = incomingBlock_->getScore();
+    double n2 = static_cast<double>(incomingBlock_->getNumberOfSites());
+    mergedBlock->setScore((s1 * n1 + s2 * n2) / (n1 + n2));
+
+    //Now fill the new block:
+    for (size_t i = 0; i < allSp.size(); ++i) {
+      auto_ptr<MafSequence> seq;
+      try {
+        seq.reset(new MafSequence(currentBlock_->getSequenceForSpecies(allSp[i])));
+
+        //Check is there is a second sequence:
+        try {
+          auto_ptr<MafSequence> tmp(new MafSequence(incomingBlock_->getSequenceForSpecies(allSp[i])));
+          string ref1 = seq->getDescription(), ref2 = tmp->getDescription();
+          if (seq->getChromosome() != tmp->getChromosome()) {
+            seq->setChromosome(seq->getChromosome() + "-" + tmp->getChromosome());
+            seq->removeCoordinates();
+          }
+          if (seq->getStrand() != tmp->getStrand()) {
+            seq->setStrand('?');
+            seq->removeCoordinates();
+          }
+          if (seq->getName() != tmp->getName())
+            tmp->setName(seq->getName()); //force name conversion to prevent exception in 'merge'.
+          seq->merge(*tmp);
+          if (logstream_) {
+            (*logstream_ << "BLOCK CONCATENATE: merging " << ref1 << " with " << ref2 << " into " << seq->getDescription()).endLine();
+          }
+        } catch (SequenceNotFoundException& snfe2) {
+          //There was a first sequence, we just extend it:
+          string ref1 = seq->getDescription();
+          seq->setToSizeR(seq->size() + incomingBlock_->getNumberOfSites());
+          if (logstream_) {
+            (*logstream_ << "BLOCK CONCATENATE: extending " << ref1 << " with " << incomingBlock_->getNumberOfSites() << " gaps on the right.").endLine();
+          }
+        }
+      } catch (SequenceNotFoundException& snfe1) {
+        //There must be a second sequence then:
+        seq.reset(new MafSequence(incomingBlock_->getSequenceForSpecies(allSp[i])));
+        string ref2 = seq->getDescription();
+        seq->setToSizeL(seq->size() + currentBlock_->getNumberOfSites());
+        if (logstream_) {
+          (*logstream_ << "BLOCK CONCATENATE: adding " << ref2 << " and extend it with " << currentBlock_->getNumberOfSites() << " gaps on the left.").endLine();
         }
       }
       mergedBlock->addSequence(*seq);
@@ -1464,9 +1543,27 @@ void OutputMafIterator::writeBlock(std::ostream& out, const MafBlock& block) con
   out << endl;
 }
 
+MafBlock* OutputAlignmentMafIterator::analyseCurrentBlock_() throw (Exception)
+{
+  MafBlock* block = iterator_->nextBlock();
+  if (block) {
+    if (output_) {
+      writeBlock(*output_, *block);
+    } else {
+      string file = file_;
+      TextTools::replaceAll(file, "%i", TextTools::toString(++currentBlockIndex_));
+      std::ofstream output(file.c_str(), ios::out);
+      writeBlock(output, *block);
+    }
+  }
+  return block;
+}
+
 void OutputAlignmentMafIterator::writeBlock(std::ostream& out, const MafBlock& block) const {
   //First get alignment:
-  AlignedSequenceContainer aln(block.getAlignment());
+  AlignedSequenceContainer aln(&AlphabetTools::DNA_ALPHABET);
+  //We cannot copy directly the container because we want to convert from MafSequence to BasicSequence (needed for renaiming):
+  SequenceContainerTools::convertContainer<AlignedSequenceContainer, AlignedSequenceContainer, BasicSequence>(block.getAlignment(), aln);
   //Format sequence names:
   vector<string> names(aln.getNumberOfSequences());
   for (unsigned int i = 0; i < aln.getNumberOfSequences(); ++i) {
@@ -1474,7 +1571,7 @@ void OutputAlignmentMafIterator::writeBlock(std::ostream& out, const MafBlock& b
     names[i] = mafseq.getSpecies() + "-" + mafseq.getChromosome() + "(" + mafseq.getStrand() + ")/" + TextTools::toString(mafseq.start() + 1) + "-" + TextTools::toString(mafseq.stop() + 1);
   }
   aln.setSequencesNames(names);
-  writer_.write(out, aln);
+  writer_->write(out, aln);
 }
 
 const short WindowSplitMafIterator::RAGGED_LEFT = 0;
