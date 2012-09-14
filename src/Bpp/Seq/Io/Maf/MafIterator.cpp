@@ -633,13 +633,18 @@ MafBlock* AlignmentFilter2MafIterator::analyseCurrentBlock_() throw (Exception)
           ApplicationTools::displayGauge(i - windowSize_, nc - windowSize_ - 1, '>');
         //Evaluate current window:
         unsigned int count = 0;
+        bool posIsGap = true;
         for (size_t u = 0; u < window_.size(); ++u) {
           unsigned int partialCount = 0;
-          if (u > 0 && window_[u] != window_[u - 1]) {
+          if (!posIsGap || (u > 0 && window_[u] != window_[u - 1])) {
             for (size_t v = 0; v < window_[u].size(); ++v)
               if (window_[u][v]) partialCount++;
-            if (partialCount > maxGap_)
+            if (partialCount > maxGap_) {
               count++;
+              posIsGap = true;
+            } else {
+              posIsGap = false;
+            }
           }
         }
         if (count > maxPos_) {
@@ -669,13 +674,18 @@ MafBlock* AlignmentFilter2MafIterator::analyseCurrentBlock_() throw (Exception)
 
       //Evaluate last window:
       unsigned int count = 0;
+      bool posIsGap = true;
       for (size_t u = 0; u < window_.size(); ++u) {
         unsigned int partialCount = 0;
-        if (u > 0 && window_[u] != window_[u - 1]) {
+        if (!posIsGap || (u > 0 && window_[u] != window_[u - 1])) {
           for (size_t v = 0; v < window_[u].size(); ++v)
             if (window_[u][v]) partialCount++;
-          if (partialCount > maxGap_)
+          if (partialCount > maxGap_) {
             count++;
+            posIsGap = true;
+          } else {
+            posIsGap = false;
+          }
         }
       }
       if (count > maxPos_) {
