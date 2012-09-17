@@ -1581,7 +1581,7 @@ void OutputAlignmentMafIterator::writeBlock(std::ostream& out, const MafBlock& b
     names[i] = mafseq.getSpecies() + "-" + mafseq.getChromosome() + "(" + mafseq.getStrand() + ")/" + TextTools::toString(mafseq.start() + 1) + "-" + TextTools::toString(mafseq.stop() + 1);
   }
   aln.setSequencesNames(names);
-  writer_->write(out, aln);
+  writer_->writeAlignment(out, aln);
 }
 
 const short WindowSplitMafIterator::RAGGED_LEFT = 0;
