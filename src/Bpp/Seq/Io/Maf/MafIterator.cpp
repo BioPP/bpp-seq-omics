@@ -362,7 +362,7 @@ MafBlock* ConcatenateMafIterator::analyseCurrentBlock_() throw (Exception)
           auto_ptr<MafSequence> tmp(new MafSequence(incomingBlock_->getSequenceForSpecies(allSp[i])));
           string ref1 = seq->getDescription(), ref2 = tmp->getDescription();
           if (seq->getChromosome() != tmp->getChromosome()) {
-            seq->setChromosome(seq->getChromosome() + "-" + tmp->getChromosome());
+            seq->setChromosome("fus");
             seq->removeCoordinates();
           }
           if (seq->getStrand() != tmp->getStrand()) {
