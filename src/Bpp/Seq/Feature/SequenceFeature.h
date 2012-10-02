@@ -170,6 +170,11 @@ class SequenceFeature:
      * @return Coordinates as a Range object.
      */
     virtual SeqRange getRange() const = 0;
+
+    /**
+     * @return True if the features overlap.
+     */
+    virtual bool overlap(const SequenceFeature& feat) const = 0;
     
     /**
      * @return The score associated to the feature (eg, an E-value or a P-value).
@@ -228,6 +233,7 @@ class BasicSequenceFeature:
     SeqRange range_;
     double score_;
     mutable std::map<std::string, std::string> attributes_;
+    //SequenceFeatureSet subFeatures_;
 
   public:
     BasicSequenceFeature(
@@ -242,6 +248,7 @@ class BasicSequenceFeature:
       id_(id), sequenceId_(seqId), source_(source),
       type_(type), range_(start, end, strand), score_(score),
       attributes_()
+      //attributes_(), subFeatures_()
     {}
 
     virtual BasicSequenceFeature* clone() const { return new BasicSequenceFeature(*this); }
@@ -296,6 +303,16 @@ class BasicSequenceFeature:
     SeqRange getRange() const {
       return SeqRange(range_);
     }
+
+    bool overlap(const SequenceFeature& feat) const {
+      if (feat.getSequenceId() == sequenceId_) {
+        return range_.overlap(feat.getRange());
+      }
+      return false;
+    }
+
+    //const SequenceFeatureSet& getSubFeatures() const { return subFeatures; }
+    //SequenceFeatureSet& getSubFeatures() { return subFeatures; }
 
 };
 
