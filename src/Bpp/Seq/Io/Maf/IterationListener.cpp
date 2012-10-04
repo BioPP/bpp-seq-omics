@@ -60,7 +60,10 @@ void CsvStatisticsOutputIterationListener::iterationMoves(const MafBlock& curren
   const vector<double>& values = statsIterator_->getResults();
   if (currentBlock.hasSequenceForSpecies(refSpecies_)) {
     const MafSequence& refSeq = currentBlock.getSequenceForSpecies(refSpecies_);
-    *output_ << refSeq.getChromosome() << sep_ << refSeq.start() << sep_ << refSeq.stop();
+    if (refSeq.hasCoordinates()) 
+      *output_ << refSeq.getChromosome() << sep_ << refSeq.start() << sep_ << refSeq.stop();
+    else
+      *output_ << "NA" << sep_ << "NA" << sep_ << "NA";
   } else {
     *output_ << "NA" << sep_ << "NA" << sep_ << "NA";
   }
