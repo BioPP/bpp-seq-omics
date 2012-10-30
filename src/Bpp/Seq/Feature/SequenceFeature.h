@@ -83,6 +83,15 @@ class SeqRange:
 
     virtual bool isNegativeStrand() const { return strand_ == '-'; }
     virtual bool isStranded() const { return strand_ == '+' || strand_ == '-'; }
+    virtual void invert() {
+      if (isStranded()) {
+        if (isNegativeStrand()) {
+          strand_ = '+';
+        } else {
+          strand_ = '-';
+        }
+      }
+    }
 
 };
 
@@ -165,6 +174,11 @@ class SequenceFeature:
      * @return True if the sequence is coded on the negative strand. False if it is on the positive one or unknown.
      */
     virtual bool isNegativeStrand() const = 0;
+
+    /**
+     * Change the orientation of the feature.
+     */
+    virtual void invert() = 0;
 
     /**
      * @return Coordinates as a Range object.
@@ -266,6 +280,9 @@ class BasicSequenceFeature:
     const unsigned int getEnd() const { return range_.end(); }
     bool isStranded() const { return range_.isStranded(); }
     bool isNegativeStrand() const { return range_.isNegativeStrand(); }
+    void invert() {
+      range_.invert();
+    }
     const double& getScore() const { return score_; }
     void setScore(double score) { score_ = score; }
 

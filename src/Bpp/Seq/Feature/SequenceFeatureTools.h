@@ -60,9 +60,19 @@ class SequenceFeatureTools
      * @param range The SeqRange to extract.
      * @return A new Sequence object with the given subsequence oriented
      * according to the SeqRange.
+     * @author Sylvain Gaillard
      */
     static Sequence* extract(const Sequence& seq, const SeqRange& range);
 
+    /**
+     * @brief Get ORF features for a Sequence.
+     *
+     * @param seq The Sequence where to find ORF. Must be a nucleic sequence.
+     * @param featSet A SequenceFeatureSet to fill with the annotations.
+     * @return The number of ORF found.
+     * @author Sylvain Gaillard
+     */
+    static unsigned int getOrfs(const Sequence& seq, SequenceFeatureSet& featSet);
 
 };
 

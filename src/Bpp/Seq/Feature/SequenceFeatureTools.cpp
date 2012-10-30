@@ -40,7 +40,12 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "SequenceFeatureTools.h"
 
 //From bpp-seq:
-#include <Bpp/Seq/SequenceTools.h>
+#include <Bpp/Seq/SequenceTools.h> 
+#include <Bpp/Seq/Alphabet/AlphabetTools.h>
+#include <Bpp/Seq/Alphabet/AlphabetExceptions.h>
+
+//From STL
+#include <vector>
 
 using namespace bpp;
 
@@ -59,3 +64,39 @@ Sequence* SequenceFeatureTools::extract(const Sequence& seq, const SeqRange& ran
 
 /******************************************************************************/
 
+unsigned int SequenceFeatureTools::getOrfs(const Sequence& seq, SequenceFeatureSet& featSet) {
+  if (! AlphabetTools::isNucleicAlphabet(seq.getAlphabet())) {
+    throw AlphabetException("SequenceFeatureTools::getOrfs: Sequence alphabet must be nucleic!", seq.getAlphabet());
+  }
+  unsigned int orfCpt = 0;
+  bpp::StandardCodonAlphabet codonAlpha(dynamic_cast< const NucleicAlphabet* >(seq.getAlphabet()));
+  std::vector< std::vector< size_t > > starts(3), stops(3);
+  unsigned int phase = 0;
+  for (unsigned int p = 0 ; p < seq.size() - 2 ; p++) {
+    phase = p % 3;
+    if (codonAlpha.isInit(codonAlpha.getCodon(seq.getValue(p), seq.getValue(p + 1), seq.getValue(p + 2)))) {
+      starts[phase].push_back(p);
+      //std::cerr << "Start: " << p << " (" << phase << ")" << std::endl;
+    } else if (codonAlpha.isStop(codonAlpha.getCodon(seq.getValue(p), seq.getValue(p + 1), seq.getValue(p + 2)))) {
+      stops[phase].push_back(p);
+      //std::cerr << "Stop:  " << p << " (" << phase << ")" << std::endl;
+    }
+  }
+  for (size_t i = 0 ; i < 3 ; ++i) {
+    std::vector< size_t >::iterator start(starts[i].begin()), stop(stops[i].begin());
+    while (stop != stops[i].end() && start != starts[i].end()) {
+      if (*stop < *start) {
+        stop++;
+      } else {
+        orfCpt++;
+        //std::cerr << "ORF:  " << *start << " - " << *stop + 2 << " (" << i << ")" << std::endl;
+        bpp::BasicSequenceFeature feat("", seq.getName(), "Bio++", "CDS", *start, *stop + 2, '+');
+        featSet.addFeature(feat);
+        start++;
+      }
+    }
+  }
+  return orfCpt;
+}
+
+/******************************************************************************/
