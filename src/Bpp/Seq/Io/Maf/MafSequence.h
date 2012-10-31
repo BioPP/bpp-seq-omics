@@ -78,18 +78,20 @@ class MafSequence:
       size_ = 0;
     }
 
-    MafSequence(const std::string& name, const std::string& sequence):
+    MafSequence(const std::string& name, const std::string& sequence, bool parseName = true):
       SequenceWithAnnotation(name, sequence, &AlphabetTools::DNA_ALPHABET), hasCoordinates_(false), begin_(0), species_(""), chromosome_(""), strand_(0), size_(0), srcSize_(0)
     {
       size_ = SequenceTools::getNumberOfSites(*this);
-      splitNameIntoSpeciesAndChromosome(name, species_, chromosome_);
+      if (parseName)
+        splitNameIntoSpeciesAndChromosome(name, species_, chromosome_);
     }
 
-    MafSequence(const std::string& name, const std::string& sequence, unsigned int begin, char strand, unsigned int srcSize) :
+    MafSequence(const std::string& name, const std::string& sequence, unsigned int begin, char strand, unsigned int srcSize, bool parseName = true) :
       SequenceWithAnnotation(name, sequence, &AlphabetTools::DNA_ALPHABET), hasCoordinates_(true), begin_(begin), species_(""), chromosome_(""), strand_(strand), size_(0), srcSize_(srcSize)
     {
       size_ = SequenceTools::getNumberOfSites(*this);
-      splitNameIntoSpeciesAndChromosome(name, species_, chromosome_);
+      if (parseName)
+        splitNameIntoSpeciesAndChromosome(name, species_, chromosome_);
     }
 
     MafSequence* clone() const { return new MafSequence(*this); }
@@ -117,7 +119,13 @@ class MafSequence:
     }
 
     void setName(const std::string& name) {
-      splitNameIntoSpeciesAndChromosome(name, chromosome_, species_);
+      try {
+        splitNameIntoSpeciesAndChromosome(name, species_, chromosome_);
+      } catch (Exception& e) {
+        species_ = "";
+        chromosome_ = "";
+      }
+      std::cout << "HERE: " << species_ << "\t" << chromosome_ << std::endl;
       SequenceWithAnnotation::setName(name);
     }
 

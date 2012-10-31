@@ -6,6 +6,7 @@
 SET(CPP_FILES
   Bpp/Seq/Io/Fastq.cpp
   Bpp/Seq/Io/Maf/MafAlignmentParser.cpp
+  Bpp/Seq/Io/Maf/SequenceStreamToMafIterator.cpp
   Bpp/Seq/Io/Maf/MafIterator.cpp
   Bpp/Seq/Io/Maf/MafSequence.cpp
   Bpp/Seq/Io/Maf/MafStatistics.cpp
@@ -20,6 +21,7 @@ SET(H_FILES
   Bpp/Seq/Io/Fastq.h
   Bpp/Seq/Io/Maf/MafSequence.h
   Bpp/Seq/Io/Maf/MafAlignmentParser.h
+  Bpp/Seq/Io/Maf/SequenceStreamToMafIterator.h
   Bpp/Seq/Io/Maf/MafIterator.h
   Bpp/Seq/Io/Maf/MafStatistics.h
   Bpp/Seq/Io/Maf/IterationListener.h

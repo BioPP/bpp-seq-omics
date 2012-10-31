@@ -1,3 +1,6 @@
+31/10/12 Julien Dutheil
+* Added SequenceStreamToMafIterator
+
 30/07/12 Julien Dutheil
 * Migrated files from bpp-seq to bpp-seq-omics.
 
