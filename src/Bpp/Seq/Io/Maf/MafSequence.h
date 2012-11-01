@@ -125,7 +125,6 @@ class MafSequence:
         species_ = "";
         chromosome_ = "";
       }
-      std::cout << "HERE: " << species_ << "\t" << chromosome_ << std::endl;
       SequenceWithAnnotation::setName(name);
     }
 
