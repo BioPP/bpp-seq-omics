@@ -54,11 +54,14 @@ using namespace std;
 
 void PairwiseDivergenceMafStatistics::compute(const MafBlock& block)
 {
-  if (block.hasSequenceForSpecies(species1_) && block.hasSequenceForSpecies(species2_)) {
-    result_.setValue(100. - SequenceTools::getPercentIdentity(block.getSequenceForSpecies(species1_), block.getSequenceForSpecies(species2_), true));
-  } else {
+  vector<const MafSequence*> seqs1 = block.getSequencesForSpecies(species1_);
+  vector<const MafSequence*> seqs2 = block.getSequencesForSpecies(species2_);
+  if (seqs1.size() > 1 || seqs2.size() > 1)
+    throw Exception("PairwiseDivergenceMafStatistics::compute. Duplicated sequence for species " + species1_ + "or " + species2_ + ".");
+  if (seqs1.size() == 0 || seqs2.size() == 0)
     result_.setValue(NumConstants::NaN);
-  }
+  else
+    result_.setValue(100. - SequenceTools::getPercentIdentity(*seqs1[0], *seqs2[0], true));
 }
 
 vector<string> CharacterCountsMafStatistics::getSupportedTags() const

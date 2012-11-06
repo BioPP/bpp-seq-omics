@@ -253,6 +253,37 @@ class BlockLengthMafStatistics:
 };
 
 /**
+ * @brief Retrieve the sequence length (number of nucleotides) for a given species in a maf block.
+ *
+ * If no sequence is found for the current block, 0 is returned.
+ * If several sequences are found for a given species, an exception is thrown.
+ */
+class SequenceLengthMafStatistics:
+  public AbstractMafStatisticsSimple
+{
+  private:
+    std::string species_;
+
+  public:
+    SequenceLengthMafStatistics(const std::string& species): AbstractMafStatisticsSimple("BlockSize"), species_(species) {}
+    ~SequenceLengthMafStatistics() {}
+
+  public:
+    std::string getShortName() const { return "SequenceLengthFor" + species_; }
+    std::string getFullName() const { return "Sequence length for species " + species_; }
+    void compute(const MafBlock& block) {
+      std::vector<const MafSequence*> seqs = block.getSequencesForSpecies(species_);
+      if (seqs.size() == 0)
+        result_.setValue(0.);
+      else if (seqs.size() == 1)
+        result_.setValue(static_cast<double>(SequenceTools::getNumberOfSites(*seqs[0])));
+      else
+        throw Exception("SequenceLengthMafStatistics::compute. More than one sequence found for species " + species_ + " in current block.");
+    }
+};
+
+
+/**
  * @brief Retrieves the alignment score of a maf block.
  */
 class AlignmentScoreMafStatistics:

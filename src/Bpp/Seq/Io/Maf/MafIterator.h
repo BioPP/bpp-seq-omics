@@ -857,7 +857,7 @@ class FeatureExtractor:
      * @param iterator The input iterator
      * @param refSpecies The reference species for feature coordinates
      * @param features The set of features to extract
-     * @param ignoreStrand If true, features will be extracted 'as is', without being reversed in case they ar eon the negative strand.
+     * @param ignoreStrand If true, features will be extracted 'as is', without being reversed in case they are on the negative strand.
      */
     FeatureExtractor(MafIterator* iterator, const std::string& refSpecies, const SequenceFeatureSet& features, bool ignoreStrand = false) :
       AbstractFilterMafIterator(iterator),
