@@ -1,5 +1,5 @@
 //
-// File: MafIterator.cpp
+// File: MaskFilterMafIterator.h
 // Authors: Julien Dutheil
 // Created: Tue Sep 07 2010
 //
@@ -37,32 +37,64 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 
-#include "MafIterator.h"
-#include "IterationListener.h"
+#ifndef _MASKFILTERMAFITERATOR_H_
+#define _MASKFILTERMAFITERATOR_H_
 
-using namespace bpp;
+#include "MafIterator.h"
 
 //From the STL:
+#include <iostream>
 #include <string>
-#include <numeric>
+#include <deque>
 
-using namespace std;
+namespace bpp {
 
-void AbstractMafIterator::fireIterationStartSignal_() {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationStarts();
-  }
-}
+/**
+ * @brief Filter maf blocks to remove regions with masked positions.
+ *
+ * Regions with a too high proportion of masked position in a set of species will be removed,
+ * and blocks adjusted accordingly. 
+ */
+class MaskFilterMafIterator:
+  public AbstractFilterMafIterator,
+  public MafTrashIterator
+{
+  private:
+    std::vector<std::string> species_;
+    unsigned int windowSize_;
+    unsigned int step_;
+    unsigned int maxMasked_;
+    std::deque<MafBlock*> blockBuffer_;
+    std::deque<MafBlock*> trashBuffer_;
+    std::deque< std::vector<bool> > window_;
+    bool keepTrashedBlocks_;
 
-void AbstractMafIterator::fireIterationMoveSignal_(const MafBlock& currentBlock) {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationMoves(currentBlock);
-  }
-}
+  public:
+    MaskFilterMafIterator(MafIterator* iterator, const std::vector<std::string>& species, unsigned int windowSize, unsigned int step, unsigned int maxMasked, bool keepTrashedBlocks) :
+      AbstractFilterMafIterator(iterator),
+      species_(species),
+      windowSize_(windowSize),
+      step_(step),
+      maxMasked_(maxMasked),
+      blockBuffer_(),
+      trashBuffer_(),
+      window_(species.size()),
+      keepTrashedBlocks_(keepTrashedBlocks)
+    {}
 
-void AbstractMafIterator::fireIterationStopSignal_() {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationStops();
-  }
-}
+  public:
+    MafBlock* nextRemovedBlock() throw (Exception) {
+      if (trashBuffer_.size() == 0) return 0;
+      MafBlock* block = trashBuffer_.front();
+      trashBuffer_.pop_front();
+      return block;
+    }
 
+  private:
+    MafBlock* analyseCurrentBlock_() throw (Exception);
+
+};
+
+} // end of namespace bpp.
+
+#endif //_MASKFILTERMAFITERATOR_H_

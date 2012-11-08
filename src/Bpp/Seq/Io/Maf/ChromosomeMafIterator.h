@@ -1,5 +1,5 @@
 //
-// File: MafIterator.cpp
+// File: ChromosomeMafIterator.h
 // Authors: Julien Dutheil
 // Created: Tue Sep 07 2010
 //
@@ -37,32 +37,59 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 
-#include "MafIterator.h"
-#include "IterationListener.h"
+#ifndef _CHROMOSOMEMAFITERATOR_H_
+#define _CHROMOSOMEMAFITERATOR_H_
 
-using namespace bpp;
+#include "MafIterator.h"
 
 //From the STL:
+#include <iostream>
 #include <string>
-#include <numeric>
+#include <deque>
 
-using namespace std;
+namespace bpp {
 
-void AbstractMafIterator::fireIterationStartSignal_() {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationStarts();
-  }
-}
+/**
+ * @brief Filter maf blocks to keep only the block corresponding to one chromosome (of a reference sequence).
+ */
+class ChromosomeMafIterator:
+  public AbstractFilterMafIterator
+{
+  private:
+    std::string ref_;
+    std::string chr_;
 
-void AbstractMafIterator::fireIterationMoveSignal_(const MafBlock& currentBlock) {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationMoves(currentBlock);
-  }
-}
+  public:
+    /**
+     * @param iterator The input iterator.
+     * @param reference The reference species name.
+     * @param chr the chromosome name to filter.
+     */
+    ChromosomeMafIterator(MafIterator* iterator, const std::string& reference, const std::string& chr) :
+      AbstractFilterMafIterator(iterator),
+      ref_(reference),
+      chr_(chr)
+    {}
 
-void AbstractMafIterator::fireIterationStopSignal_() {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationStops();
-  }
-}
+  private:
+    ChromosomeMafIterator(const ChromosomeMafIterator& iterator) :
+      AbstractFilterMafIterator(0),
+      ref_(iterator.ref_),
+      chr_(iterator.chr_)
+    {}
+    
+    ChromosomeMafIterator& operator=(const ChromosomeMafIterator& iterator)
+    {
+      ref_ = iterator.ref_;
+      chr_ = iterator.chr_;
+      return *this;
+    }
 
+  private:
+    MafBlock* analyseCurrentBlock_() throw (Exception);
+
+};
+
+} // end of namespace bpp.
+
+#endif //_CHROMOSOMEMAFITERATOR_H_

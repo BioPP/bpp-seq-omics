@@ -1,5 +1,5 @@
 //
-// File: MafIterator.cpp
+// File: OutputAlignmentMafIterator.cpp
 // Authors: Julien Dutheil
 // Created: Tue Sep 07 2010
 //
@@ -37,8 +37,10 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 
-#include "MafIterator.h"
-#include "IterationListener.h"
+#include "OutputAlignmentMafIterator.h"
+
+//From bpp-seq:
+#include <Bpp/Seq/Container/SequenceContainerTools.h>
 
 using namespace bpp;
 
@@ -48,21 +50,34 @@ using namespace bpp;
 
 using namespace std;
 
-void AbstractMafIterator::fireIterationStartSignal_() {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationStarts();
+MafBlock* OutputAlignmentMafIterator::analyseCurrentBlock_() throw (Exception)
+{
+  MafBlock* block = iterator_->nextBlock();
+  if (block) {
+    if (output_) {
+      writeBlock(*output_, *block);
+    } else {
+      string file = file_;
+      TextTools::replaceAll(file, "%i", TextTools::toString(++currentBlockIndex_));
+      std::ofstream output(file.c_str(), ios::out);
+      writeBlock(output, *block);
+    }
   }
+  return block;
 }
 
-void AbstractMafIterator::fireIterationMoveSignal_(const MafBlock& currentBlock) {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationMoves(currentBlock);
+void OutputAlignmentMafIterator::writeBlock(std::ostream& out, const MafBlock& block) const {
+  //First get alignment:
+  AlignedSequenceContainer aln(&AlphabetTools::DNA_ALPHABET);
+  //We cannot copy directly the container because we want to convert from MafSequence to BasicSequence (needed for renaiming):
+  SequenceContainerTools::convertContainer<AlignedSequenceContainer, AlignedSequenceContainer, BasicSequence>(block.getAlignment(), aln);
+  //Format sequence names:
+  vector<string> names(aln.getNumberOfSequences());
+  for (unsigned int i = 0; i < aln.getNumberOfSequences(); ++i) {
+    const MafSequence& mafseq = block.getSequence(i);
+    names[i] = mafseq.getSpecies() + "-" + mafseq.getChromosome() + "(" + mafseq.getStrand() + ")/" + TextTools::toString(mafseq.start() + 1) + "-" + TextTools::toString(mafseq.stop() + 1);
   }
-}
-
-void AbstractMafIterator::fireIterationStopSignal_() {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationStops();
-  }
+  aln.setSequencesNames(names);
+  writer_->writeAlignment(out, aln);
 }
 

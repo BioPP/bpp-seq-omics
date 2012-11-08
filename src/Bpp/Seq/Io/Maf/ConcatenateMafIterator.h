@@ -1,5 +1,5 @@
 //
-// File: MafIterator.cpp
+// File: ConcatenateMafIterator.h
 // Authors: Julien Dutheil
 // Created: Tue Sep 07 2010
 //
@@ -37,32 +37,60 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 
-#include "MafIterator.h"
-#include "IterationListener.h"
+#ifndef _CONCATENATEMAFITERATOR_H_
+#define _CONCATENATEMAFITERATOR_H_
 
-using namespace bpp;
+#include "MafIterator.h"
 
 //From the STL:
+#include <iostream>
 #include <string>
-#include <numeric>
+#include <deque>
 
-using namespace std;
+namespace bpp {
 
-void AbstractMafIterator::fireIterationStartSignal_() {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationStarts();
-  }
-}
+/**
+ * @brief Concatenate blocks up to a certain size.
+ *
+ * Blocks are appended regardless of their coordinates, to form concatenated blocks of at least a given number of positions.
+ * The scores, if any, will be averaged for the block, weighted by the corresponding block sizes.
+ * The pass value will be removed if it is different for the blocks.
+ */
+class ConcatenateMafIterator:
+  public AbstractFilterMafIterator
+{
+  private:
+    MafBlock* incomingBlock_;
+    unsigned int minimumSize_;
 
-void AbstractMafIterator::fireIterationMoveSignal_(const MafBlock& currentBlock) {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationMoves(currentBlock);
-  }
-}
+  public:
+    ConcatenateMafIterator(MafIterator* iterator, unsigned int minimumSize) :
+      AbstractFilterMafIterator(iterator),
+      incomingBlock_(0),
+      minimumSize_(minimumSize)
+    {
+      incomingBlock_ = iterator->nextBlock();
+    }
 
-void AbstractMafIterator::fireIterationStopSignal_() {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationStops();
-  }
-}
+  private:
+    ConcatenateMafIterator(const ConcatenateMafIterator& iterator) :
+      AbstractFilterMafIterator(0),
+      incomingBlock_(iterator.incomingBlock_),
+      minimumSize_(iterator.minimumSize_)
+    {}
+    
+    ConcatenateMafIterator& operator=(const ConcatenateMafIterator& iterator)
+    {
+      incomingBlock_ = iterator.incomingBlock_;
+      minimumSize_ = iterator.minimumSize_;
+      return *this;
+    }
 
+  private:
+    MafBlock* analyseCurrentBlock_() throw (Exception);
+
+};
+
+} // end of namespace bpp.
+
+#endif //_CONCATENATEMAFITERATOR_H_

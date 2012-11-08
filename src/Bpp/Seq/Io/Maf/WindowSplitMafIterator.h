@@ -1,5 +1,5 @@
 //
-// File: MafIterator.cpp
+// File: WindowSplitMafIterator.h
 // Authors: Julien Dutheil
 // Created: Tue Sep 07 2010
 //
@@ -37,32 +37,50 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 
-#include "MafIterator.h"
-#include "IterationListener.h"
+#ifndef _WINDOWSPLITMAFITERATOR_H_
+#define _WINDOWSPLITMAFITERATOR_H_
 
-using namespace bpp;
+#include "MafIterator.h"
 
 //From the STL:
+#include <iostream>
 #include <string>
-#include <numeric>
+#include <deque>
 
-using namespace std;
+namespace bpp {
 
-void AbstractMafIterator::fireIterationStartSignal_() {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationStarts();
-  }
-}
+/**
+ * @brief Splits block into windows of given sizes.
+ */
+class WindowSplitMafIterator:
+  public AbstractFilterMafIterator
+{
+  private:
+    unsigned int windowSize_;
+    short align_;
+    std::deque<MafBlock*> blockBuffer_;
 
-void AbstractMafIterator::fireIterationMoveSignal_(const MafBlock& currentBlock) {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationMoves(currentBlock);
-  }
-}
+  public:
+    static const short RAGGED_LEFT;
+    static const short RAGGED_RIGHT;
+    static const short CENTER;
+    static const short ADJUST;
 
-void AbstractMafIterator::fireIterationStopSignal_() {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationStops();
-  }
-}
+  public:
+    WindowSplitMafIterator(MafIterator* iterator, unsigned int windowSize, short splitOption = CENTER) throw (Exception):
+      AbstractFilterMafIterator(iterator),
+      windowSize_(windowSize), align_(splitOption), blockBuffer_()
+    {
+      if (splitOption != RAGGED_LEFT && splitOption != RAGGED_RIGHT
+          && splitOption != CENTER && splitOption != ADJUST)
+        throw Exception("WindowSplitMafIterator: unvalid split option: " + splitOption);
+    }
 
+  private:
+    MafBlock* analyseCurrentBlock_() throw (Exception);
+
+};
+
+} // end of namespace bpp.
+
+#endif //_WINDOWSPLITMAFITERATOR_H_

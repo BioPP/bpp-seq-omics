@@ -1,5 +1,5 @@
 //
-// File: MafIterator.cpp
+// File: OutputMafIterator.h
 // Authors: Julien Dutheil
 // Created: Tue Sep 07 2010
 //
@@ -37,32 +37,64 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 
-#include "MafIterator.h"
-#include "IterationListener.h"
+#ifndef _OUTPUTMAFITERATOR_H_
+#define _OUTPUTMAFITERATOR_H_
 
-using namespace bpp;
+#include "MafIterator.h"
 
 //From the STL:
+#include <iostream>
 #include <string>
-#include <numeric>
+#include <deque>
 
-using namespace std;
+namespace bpp {
 
-void AbstractMafIterator::fireIterationStartSignal_() {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationStarts();
-  }
-}
+/**
+ * @brief This iterator forward the iterator given as input after having printed its content to a file.
+ */
+class OutputMafIterator:
+  public AbstractFilterMafIterator
+{
+  private:
+    std::ostream* output_;
+    bool mask_;
 
-void AbstractMafIterator::fireIterationMoveSignal_(const MafBlock& currentBlock) {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationMoves(currentBlock);
-  }
-}
+  public:
+    OutputMafIterator(MafIterator* iterator, std::ostream* out, bool mask = true) :
+      AbstractFilterMafIterator(iterator), output_(out), mask_(mask)
+    {
+      if (output_)
+        writeHeader(*output_);
+    }
 
-void AbstractMafIterator::fireIterationStopSignal_() {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationStops();
-  }
-}
+  private:
+    OutputMafIterator(const OutputMafIterator& iterator) :
+      AbstractFilterMafIterator(0),
+      output_(iterator.output_),
+      mask_(iterator.mask_)
+    {}
+    
+    OutputMafIterator& operator=(const OutputMafIterator& iterator)
+    {
+      output_ = iterator.output_;
+      mask_   = iterator.mask_;
+      return *this;
+    }
 
+
+  public:
+    MafBlock* analyseCurrentBlock_() throw (Exception) {
+      currentBlock_ = iterator_->nextBlock();
+      if (output_ && currentBlock_)
+        writeBlock(*output_, *currentBlock_);
+      return currentBlock_;
+    }
+
+  private:
+    void writeHeader(std::ostream& out) const;
+    void writeBlock(std::ostream& out, const MafBlock& block) const;
+};
+
+} // end of namespace bpp.
+
+#endif //_OUTPUTMAFITERATOR_H_

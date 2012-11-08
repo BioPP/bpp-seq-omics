@@ -1,5 +1,5 @@
 //
-// File: MafIterator.cpp
+// File: QualityFilterMafIterator.h
 // Authors: Julien Dutheil
 // Created: Tue Sep 07 2010
 //
@@ -37,32 +37,63 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 
-#include "MafIterator.h"
-#include "IterationListener.h"
+#ifndef _QUALITYFILTERMAFITERATOR_H_
+#define _QUALITYFILTERMAFITERATOR_H_
 
-using namespace bpp;
+#include "MafIterator.h"
 
 //From the STL:
+#include <iostream>
 #include <string>
-#include <numeric>
+#include <deque>
 
-using namespace std;
+namespace bpp {
 
-void AbstractMafIterator::fireIterationStartSignal_() {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationStarts();
-  }
-}
+/**
+ * @brief Filter maf blocks to remove regions with low quality.
+ *
+ * Regions with a too low average quality in a set of species will be removed,
+ * and blocks adjusted accordingly. 
+ */
+class QualityFilterMafIterator:
+  public AbstractFilterMafIterator,
+  public MafTrashIterator
+{
+  private:
+    std::vector<std::string> species_;
+    unsigned int windowSize_;
+    unsigned int step_;
+    unsigned int minQual_;
+    std::deque<MafBlock*> blockBuffer_;
+    std::deque<MafBlock*> trashBuffer_;
+    std::deque< std::vector<int> > window_;
+    bool keepTrashedBlocks_;
 
-void AbstractMafIterator::fireIterationMoveSignal_(const MafBlock& currentBlock) {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationMoves(currentBlock);
-  }
-}
+  public:
+    QualityFilterMafIterator(MafIterator* iterator, const std::vector<std::string>& species, unsigned int windowSize, unsigned int step, unsigned int minQual, bool keepTrashedBlocks) :
+      AbstractFilterMafIterator(iterator),
+      species_(species),
+      windowSize_(windowSize),
+      step_(step),
+      minQual_(minQual),
+      blockBuffer_(),
+      trashBuffer_(),
+      window_(species.size()),
+      keepTrashedBlocks_(keepTrashedBlocks)
+    {}
 
-void AbstractMafIterator::fireIterationStopSignal_() {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationStops();
-  }
-}
+  public:
+    MafBlock* nextRemovedBlock() throw (Exception) {
+      if (trashBuffer_.size() == 0) return 0;
+      MafBlock* block = trashBuffer_.front();
+      trashBuffer_.pop_front();
+      return block;
+    }
 
+  private:
+    MafBlock* analyseCurrentBlock_() throw (Exception);
+};
+
+} // end of namespace bpp.
+
+#endif //_QUALITYFILTERMAFITERATOR_H_

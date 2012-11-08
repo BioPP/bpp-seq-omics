@@ -41,11 +41,12 @@ knowledge of the CeCILL license and that you accept its terms.
 #define _ITERATIONLISTENER_H_
 
 #include "MafIterator.h"
+#include "SequenceStatisticsMafIterator.h"
 
 namespace bpp {
 
 /**
- * @brief Listneer which enable to catch events when parsing a Maf file.
+ * @brief Listener which enable to catch events when parsing a Maf file.
  */
 class IterationListener
 {

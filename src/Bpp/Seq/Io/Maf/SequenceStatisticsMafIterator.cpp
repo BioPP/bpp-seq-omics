@@ -1,5 +1,5 @@
 //
-// File: MafIterator.cpp
+// File: SequenceStatisticsMafIterator.cpp
 // Authors: Julien Dutheil
 // Created: Tue Sep 07 2010
 //
@@ -37,8 +37,7 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 
-#include "MafIterator.h"
-#include "IterationListener.h"
+#include "SequenceStatisticsMafIterator.h"
 
 using namespace bpp;
 
@@ -48,21 +47,47 @@ using namespace bpp;
 
 using namespace std;
 
-void AbstractMafIterator::fireIterationStartSignal_() {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationStarts();
+SequenceStatisticsMafIterator::SequenceStatisticsMafIterator(MafIterator* iterator, const std::vector<MafStatistics*> statistics) :
+  AbstractFilterMafIterator(iterator),
+  statistics_(statistics),
+  results_(),
+  names_()
+{
+  string name;
+  for (size_t i = 0; i < statistics_.size(); ++i) {
+    name = statistics_[i]->getShortName();
+    vector<string> tags = statistics_[i]->getSupportedTags();
+    if (tags.size() > 1) {
+      for (size_t j = 0; j < tags.size(); ++j) {
+        names_.push_back(name + "." + tags[j]);
+      }
+    } else {
+      names_.push_back(name);
+    }
   }
+  results_.resize(names_.size());
 }
 
-void AbstractMafIterator::fireIterationMoveSignal_(const MafBlock& currentBlock) {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationMoves(currentBlock);
+MafBlock* SequenceStatisticsMafIterator::analyseCurrentBlock_() throw (Exception)
+{
+  vector<string> tags;
+  currentBlock_ = iterator_->nextBlock();
+  if (currentBlock_) {
+    size_t k = 0;
+    for (size_t i = 0; i < statistics_.size(); ++i) {
+      statistics_[i]->compute(*currentBlock_);
+      const MafStatisticsResult& result = statistics_[i]->getResult();
+      tags = statistics_[i]->getSupportedTags();
+      for (size_t j = 0; j < tags.size(); ++j) {
+        if (result.hasValue(tags[j])) {
+          results_[k] = result.getValue(tags[j]);
+        } else {
+          results_[k] = NumConstants::NaN;
+        }
+        k++;
+      }
+    }
   }
-}
-
-void AbstractMafIterator::fireIterationStopSignal_() {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationStops();
-  }
+  return currentBlock_;
 }
 

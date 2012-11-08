@@ -1,5 +1,5 @@
 //
-// File: MafIterator.cpp
+// File: ChromosomeMafIterator.cpp
 // Authors: Julien Dutheil
 // Created: Tue Sep 07 2010
 //
@@ -37,8 +37,7 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 
-#include "MafIterator.h"
-#include "IterationListener.h"
+#include "ChromosomeMafIterator.h"
 
 using namespace bpp;
 
@@ -48,21 +47,37 @@ using namespace bpp;
 
 using namespace std;
 
-void AbstractMafIterator::fireIterationStartSignal_() {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationStarts();
-  }
-}
+MafBlock* ChromosomeMafIterator::analyseCurrentBlock_() throw (Exception)
+{
+  currentBlock_ = iterator_->nextBlock();
+  while (currentBlock_) {
+    bool foundRef = false;
+    string chr = "";
+    for (size_t i = 0; i < currentBlock_->getNumberOfSequences() && !foundRef; ++i) {
+      string species = currentBlock_->getSequence(i).getSpecies(); 
+      if (species == ref_) {
+        foundRef = true;
+        chr = currentBlock_->getSequence(i).getChromosome();
+      }
+    }
+    if (!foundRef) {
+      if (logstream_) {
+        (*logstream_ << "CHROMOSOME FILTER: block does not contain reference species and was removed.").endLine();
+      }
+      delete currentBlock_;
+    } else if (chr != chr_) {
+      if (logstream_) {
+        (*logstream_ << "CHROMOSOME FILTER: reference species without queried chromosome was removed.").endLine();
+      }
+      delete currentBlock_;
+    } else {
+      return currentBlock_;
+    }
 
-void AbstractMafIterator::fireIterationMoveSignal_(const MafBlock& currentBlock) {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationMoves(currentBlock);
+    //Look for the next block:
+    currentBlock_ = iterator_->nextBlock();
   }
-}
-
-void AbstractMafIterator::fireIterationStopSignal_() {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationStops();
-  }
+  
+  return currentBlock_;
 }
 

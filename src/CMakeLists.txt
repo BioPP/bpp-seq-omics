@@ -8,6 +8,22 @@ SET(CPP_FILES
   Bpp/Seq/Io/Maf/MafAlignmentParser.cpp
   Bpp/Seq/Io/Maf/SequenceStreamToMafIterator.cpp
   Bpp/Seq/Io/Maf/MafIterator.cpp
+  Bpp/Seq/Io/Maf/SequenceFilterMafIterator.cpp
+  Bpp/Seq/Io/Maf/ChromosomeMafIterator.cpp
+  Bpp/Seq/Io/Maf/DuplicateFilterMafIterator.cpp
+  Bpp/Seq/Io/Maf/BlockMergerMafIterator.cpp
+  Bpp/Seq/Io/Maf/ConcatenateMafIterator.cpp
+  Bpp/Seq/Io/Maf/FullGapFilterMafIterator.cpp
+  Bpp/Seq/Io/Maf/AlignmentFilterMafIterator.cpp
+  Bpp/Seq/Io/Maf/EntropyFilterMafIterator.cpp
+  Bpp/Seq/Io/Maf/MaskFilterMafIterator.cpp
+  Bpp/Seq/Io/Maf/QualityFilterMafIterator.cpp
+  Bpp/Seq/Io/Maf/FeatureFilterMafIterator.cpp
+  Bpp/Seq/Io/Maf/FeatureExtractorMafIterator.cpp
+  Bpp/Seq/Io/Maf/OutputMafIterator.cpp
+  Bpp/Seq/Io/Maf/OutputAlignmentMafIterator.cpp
+  Bpp/Seq/Io/Maf/SequenceStatisticsMafIterator.cpp
+  Bpp/Seq/Io/Maf/WindowSplitMafIterator.cpp
   Bpp/Seq/Io/Maf/MafSequence.cpp
   Bpp/Seq/Io/Maf/MafStatistics.cpp
   Bpp/Seq/Io/Maf/IterationListener.cpp
@@ -23,6 +39,24 @@ SET(H_FILES
   Bpp/Seq/Io/Maf/MafAlignmentParser.h
   Bpp/Seq/Io/Maf/SequenceStreamToMafIterator.h
   Bpp/Seq/Io/Maf/MafIterator.h
+  Bpp/Seq/Io/Maf/BlockLengthMafIterator.h
+  Bpp/Seq/Io/Maf/BlockSizeMafIterator.h
+  Bpp/Seq/Io/Maf/SequenceFilterMafIterator.h
+  Bpp/Seq/Io/Maf/ChromosomeMafIterator.h
+  Bpp/Seq/Io/Maf/DuplicateFilterMafIterator.h
+  Bpp/Seq/Io/Maf/BlockMergerMafIterator.h
+  Bpp/Seq/Io/Maf/ConcatenateMafIterator.h
+  Bpp/Seq/Io/Maf/FullGapFilterMafIterator.h
+  Bpp/Seq/Io/Maf/AlignmentFilterMafIterator.h
+  Bpp/Seq/Io/Maf/EntropyFilterMafIterator.h
+  Bpp/Seq/Io/Maf/MaskFilterMafIterator.h
+  Bpp/Seq/Io/Maf/QualityFilterMafIterator.h
+  Bpp/Seq/Io/Maf/FeatureFilterMafIterator.h
+  Bpp/Seq/Io/Maf/FeatureExtractorMafIterator.h
+  Bpp/Seq/Io/Maf/OutputMafIterator.h
+  Bpp/Seq/Io/Maf/OutputAlignmentMafIterator.h
+  Bpp/Seq/Io/Maf/SequenceStatisticsMafIterator.h
+  Bpp/Seq/Io/Maf/WindowSplitMafIterator.h
   Bpp/Seq/Io/Maf/MafStatistics.h
   Bpp/Seq/Io/Maf/IterationListener.h
   Bpp/Seq/Feature/SequenceFeature.h

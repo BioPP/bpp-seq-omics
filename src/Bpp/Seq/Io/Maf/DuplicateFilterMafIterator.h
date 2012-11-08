@@ -1,5 +1,5 @@
 //
-// File: MafIterator.cpp
+// File: DuplicateFilterMafIterator.h
 // Authors: Julien Dutheil
 // Created: Tue Sep 07 2010
 //
@@ -37,32 +37,61 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 
-#include "MafIterator.h"
-#include "IterationListener.h"
+#ifndef _DUPLICATEFILTERMAFITERATOR_H_
+#define _DUPLICATEFILTERMAFITERATOR_H_
 
-using namespace bpp;
+#include "MafIterator.h"
 
 //From the STL:
+#include <iostream>
 #include <string>
-#include <numeric>
+#include <deque>
 
-using namespace std;
+namespace bpp {
 
-void AbstractMafIterator::fireIterationStartSignal_() {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationStarts();
-  }
-}
+/**
+ * @brief Filter maf blocks to remove duplicated blocks, according to a reference sequence).
+ */
+class DuplicateFilterMafIterator:
+  public AbstractFilterMafIterator
+{
+  private:
+    std::string ref_;
+    /**
+     * Contains the list of 'seen' block, as [chr][strand][start][stop]
+     */
+    std::map< std::string, std::map< char, std::map< unsigned int, std::map< unsigned int, unsigned int > > > > blocks_;
 
-void AbstractMafIterator::fireIterationMoveSignal_(const MafBlock& currentBlock) {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationMoves(currentBlock);
-  }
-}
+  public:
+    /**
+     * @param iterator The input iterator.
+     * @param reference The reference species name.
+     */
+    DuplicateFilterMafIterator(MafIterator* iterator, const std::string& reference) :
+      AbstractFilterMafIterator(iterator),
+      ref_(reference),
+      blocks_()
+    {}
 
-void AbstractMafIterator::fireIterationStopSignal_() {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it) {
-    (*it)->iterationStops();
-  }
-}
+  private:
+    DuplicateFilterMafIterator(const DuplicateFilterMafIterator& iterator) :
+      AbstractFilterMafIterator(0),
+      ref_(iterator.ref_),
+      blocks_(iterator.blocks_)
+    {}
+    
+    DuplicateFilterMafIterator& operator=(const DuplicateFilterMafIterator& iterator)
+    {
+      ref_    = iterator.ref_;
+      blocks_ = iterator.blocks_;
+      return *this;
+    }
 
+  private:
+    MafBlock* analyseCurrentBlock_() throw (Exception);
+
+};
+
+} // end of namespace bpp.
+
+#endif //_DUPLICATEFILTERMAFITERATOR_H_
