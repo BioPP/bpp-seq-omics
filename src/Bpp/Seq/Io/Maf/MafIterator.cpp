@@ -673,7 +673,7 @@ MafBlock* AlignmentFilterMafIterator::analyseCurrentBlock_() throw (Exception)
   return block;
 }
 
-MafBlock* EntropyFilter2MafIterator::analyseCurrentBlock_() throw (Exception)
+MafBlock* EntropyFilterMafIterator::analyseCurrentBlock_() throw (Exception)
 {
   if (blockBuffer_.size() == 0) {
     //Else there is no more block in the buffer, we need to parse more:
@@ -860,9 +860,6 @@ MafBlock* EntropyFilter2MafIterator::analyseCurrentBlock_() throw (Exception)
   blockBuffer_.pop_front();
   return block;
 }
-
-
-
 
 MafBlock* AlignmentFilter2MafIterator::analyseCurrentBlock_() throw (Exception)
 {

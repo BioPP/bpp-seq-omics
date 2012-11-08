@@ -644,7 +644,7 @@ class AlignmentFilter2MafIterator:
  * In addition, consecutives patterns are only counted once.
  * In case a sequence from the list is missing, it can be either ignored or counted as a full sequence of gaps.
  */
-class EntropyFilter2MafIterator:
+class EntropyFilterMafIterator:
   public AbstractFilterMafIterator,
   public virtual MafTrashIterator
 {
@@ -662,7 +662,7 @@ class EntropyFilter2MafIterator:
     bool ignoreGaps_;
 
   public:
-    EntropyFilter2MafIterator(MafIterator* iterator, const std::vector<std::string>& species, unsigned int windowSize, unsigned int step, double maxEnt, unsigned int maxPos, bool keepTrashedBlocks, bool missingAsGap, bool ignoreGaps) :
+    EntropyFilterMafIterator(MafIterator* iterator, const std::vector<std::string>& species, unsigned int windowSize, unsigned int step, double maxEnt, unsigned int maxPos, bool keepTrashedBlocks, bool missingAsGap, bool ignoreGaps) :
       AbstractFilterMafIterator(iterator),
       species_(species),
       windowSize_(windowSize),
