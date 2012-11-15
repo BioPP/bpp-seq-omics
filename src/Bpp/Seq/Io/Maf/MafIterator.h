@@ -68,9 +68,9 @@ class MafIterator
      */
     virtual MafBlock* nextBlock() throw (Exception) = 0;
 
-    virtual bool verbose() const = 0;
+    virtual bool isVerbose() const = 0;
     
-    virtual void verbose(bool yn) = 0;
+    virtual void setVerbose(bool yn) = 0;
     
     virtual void addIterationListener(IterationListener* listener) = 0;
     
@@ -113,8 +113,8 @@ class AbstractMafIterator:
       return block;
     }
     
-    bool verbose() const { return verbose_; }
-    void verbose(bool yn) { verbose_ = yn; }
+    bool isVerbose() const { return verbose_; }
+    void setVerbose(bool yn) { verbose_ = yn; }
 
   protected:
     virtual MafBlock* analyseCurrentBlock_() = 0;
