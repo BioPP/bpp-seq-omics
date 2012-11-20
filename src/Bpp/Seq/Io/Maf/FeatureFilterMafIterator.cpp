@@ -92,7 +92,13 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_() throw (Exception)
       int gap = refSeq.getAlphabet()->getGapCharacterCode();
       long int refPos = static_cast<long int>(refSeq.start()) - 1;
       std::vector<size_t> pos;
+      if (verbose_) {
+        ApplicationTools::message->endLine();
+        ApplicationTools::displayTask("Removing features", true);
+      }
       for (size_t alnPos = 0; alnPos < refSeq.size() && refBounds.size() > 0; ++alnPos) {
+        if (verbose_)
+          ApplicationTools::displayGauge(alnPos, refSeq.size() - 1, '>');
         if (refSeq[alnPos] != gap) {
           refPos++;
           //check if this position is a bound:
@@ -102,6 +108,9 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_() throw (Exception)
           }
         }
       }
+      if (verbose_)
+        ApplicationTools::displayTaskDone();
+
       //Check if the last bound matches the end of the alignment:
       if (refBounds.size() > 0 && refBounds.front() == refSeq.stop() + 1) {
         pos.push_back(refSeq.size());
@@ -124,7 +133,6 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_() throw (Exception)
           (*logstream_ << "FEATURE FILTER: block " << block->getDescription() << " with size "<< block->getNumberOfSites() << " will be split into " << (pos.size() / 2 + 1) << " blocks.").endLine();
         }
         if (verbose_) {
-          ApplicationTools::message->endLine();
           ApplicationTools::displayTask("Spliting block", true);
         }
         for (size_t i = 0; i < pos.size(); i+=2) {
