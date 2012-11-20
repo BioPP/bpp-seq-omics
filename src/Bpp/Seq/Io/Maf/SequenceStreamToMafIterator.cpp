@@ -59,6 +59,8 @@ MafBlock* SequenceStreamToMafIterator::analyseCurrentBlock_() throw (Exception)
     string species = st.nextToken();
     string chr     = st.nextToken();
     unsigned int start   = TextTools::to<unsigned int>(st.nextToken());
+    if (!zeroBasedCoords_)
+      start--;
     string strand  = st.nextToken();
     unsigned int length  = TextTools::to<unsigned int>(st.nextToken());
     mafSeq.setName(species + "." + chr);

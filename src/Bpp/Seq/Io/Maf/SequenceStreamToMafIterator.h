@@ -63,16 +63,21 @@ class SequenceStreamToMafIterator:
   private:
     std::auto_ptr<ISequenceStream> seqStream_;
     std::istream* stream_;
+    bool zeroBasedCoords_;
     bool firstBlock_;
 
   public:
-    SequenceStreamToMafIterator(ISequenceStream* seqStream, std::istream* stream, bool parseMask = false) :
-      seqStream_(seqStream), stream_(stream), firstBlock_(true) {}
+    SequenceStreamToMafIterator(ISequenceStream* seqStream, std::istream* stream, bool parseMask = false, bool zeroBasedCoordinates = true) :
+      seqStream_(seqStream), stream_(stream), zeroBasedCoords_(zeroBasedCoordinates), firstBlock_(true) {}
 
   private:
     //Recopy is forbidden!
-    SequenceStreamToMafIterator(const SequenceStreamToMafIterator& ss2mi): seqStream_(0), stream_(0), firstBlock_(ss2mi.firstBlock_) {}
-    SequenceStreamToMafIterator& operator=(const SequenceStreamToMafIterator& ss2mi) { seqStream_.reset(); stream_ = 0; firstBlock_ = ss2mi.firstBlock_; return *this; }
+    SequenceStreamToMafIterator(const SequenceStreamToMafIterator& ss2mi):
+      seqStream_(0), stream_(0), zeroBasedCoords_(ss2mi.zeroBasedCoords_), firstBlock_(ss2mi.firstBlock_) {}
+    SequenceStreamToMafIterator& operator=(const SequenceStreamToMafIterator& ss2mi) {
+      seqStream_.reset(); stream_ = 0; zeroBasedCoords_ = ss2mi.zeroBasedCoords_; firstBlock_ = ss2mi.firstBlock_;
+      return *this;
+    }
 
   private:
     MafBlock* analyseCurrentBlock_() throw (Exception);
