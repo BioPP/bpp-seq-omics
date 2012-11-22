@@ -41,6 +41,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define _GTFFEATUREREADER_H_
 
 #include "../SequenceFeature.h"
+#include "../FeatureReader.h"
 
 //From bpp-core:
 #include <Bpp/Exceptions.h>
@@ -62,7 +63,8 @@ namespace bpp {
  *
  * @author Sylvain Gaillard
  */
-class GtfFeatureReader
+class GtfFeatureReader:
+  public virtual FeatureReader
 {
   public:
     static const std::string GTF_PHASE;

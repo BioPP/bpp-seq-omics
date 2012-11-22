@@ -41,6 +41,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #define _GFFFEATUREREADER_H_
 
 #include "../SequenceFeature.h"
+#include "../FeatureReader.h"
 
 //From bpp-core:
 #include <Bpp/Exceptions.h>
@@ -62,7 +63,8 @@ namespace bpp {
  *
  * @author Julien Dutheil, Sylvain Gaillard
  */
-class GffFeatureReader
+class GffFeatureReader:
+  public virtual FeatureReader
 {
   public:
     static const std::string GFF_STRAND;

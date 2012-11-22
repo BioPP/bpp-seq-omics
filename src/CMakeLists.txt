@@ -61,6 +61,7 @@ SET(H_FILES
   Bpp/Seq/Io/Maf/IterationListener.h
   Bpp/Seq/Feature/SequenceFeature.h
   Bpp/Seq/Feature/SequenceFeatureTools.h
+  Bpp/Seq/Feature/FeatureReader.h
   Bpp/Seq/Feature/Gff/GffFeatureReader.h
   Bpp/Seq/Feature/Gtf/GtfFeatureReader.h
   )
