@@ -62,6 +62,7 @@ class FeatureExtractor:
 {
   private:
     std::string refSpecies_;
+    bool completeOnly_;
     bool ignoreStrand_;
     std::deque<MafBlock*> blockBuffer_;
     std::map<std::string, RangeSet<unsigned int> > ranges_;
@@ -72,12 +73,14 @@ class FeatureExtractor:
      *
      * @param iterator The input iterator
      * @param refSpecies The reference species for feature coordinates
+     * @param complete Tell if features should be extracted only if they can be extracted in full
      * @param features The set of features to extract
      * @param ignoreStrand If true, features will be extracted 'as is', without being reversed in case they are on the negative strand.
      */
-    FeatureExtractor(MafIterator* iterator, const std::string& refSpecies, const SequenceFeatureSet& features, bool ignoreStrand = false) :
+    FeatureExtractor(MafIterator* iterator, const std::string& refSpecies, const SequenceFeatureSet& features, bool complete = false, bool ignoreStrand = false) :
       AbstractFilterMafIterator(iterator),
       refSpecies_(refSpecies),
+      completeOnly_(complete),
       ignoreStrand_(ignoreStrand),
       blockBuffer_(),
       ranges_()

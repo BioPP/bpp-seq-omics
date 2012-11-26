@@ -70,7 +70,10 @@ MafBlock* FeatureExtractor::analyseCurrentBlock_() throw (Exception)
       goto START;
         
     RangeSet<unsigned int> ranges = mr->second;
-    ranges.restrictTo(Range<unsigned int>(refSeq.start(), refSeq.stop()));
+    if (completeOnly_)
+      ranges.filterWithin(Range<unsigned int>(refSeq.start(), refSeq.stop()));
+    else  
+      ranges.restrictTo(Range<unsigned int>(refSeq.start(), refSeq.stop()));
     if (ranges.isEmpty())
       goto START;
 
