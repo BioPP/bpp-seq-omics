@@ -56,10 +56,10 @@ class BlockLengthMafIterator:
   public AbstractFilterMafIterator
 {
   private:
-    unsigned int minLength_;
+    size_t minLength_;
 
   public:
-    BlockLengthMafIterator(MafIterator* iterator, unsigned int minLength) :
+    BlockLengthMafIterator(MafIterator* iterator, size_t minLength) :
       AbstractFilterMafIterator(iterator),
       minLength_(minLength)
     {}

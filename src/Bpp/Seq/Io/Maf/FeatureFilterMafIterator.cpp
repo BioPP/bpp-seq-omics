@@ -66,7 +66,7 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_() throw (Exception)
       //Get the feature ranges for this block:
       const MafSequence& refSeq = block->getSequenceForSpecies(refSpecies_);
       //first check if there is one (for now we assume that features refer to the chromosome or contig name, with implicit species):
-      std::map<std::string, MultiRange<unsigned int> >::iterator mr = ranges_.find(refSeq.getChromosome());
+      std::map<std::string, MultiRange<size_t> >::iterator mr = ranges_.find(refSeq.getChromosome());
       if (mr == ranges_.end()) {
         if (logstream_) {
           (*logstream_ << "FEATURE FILTER: block " << block->getDescription() << " does not contain any feature and was kept as is.").endLine(); 
@@ -74,16 +74,16 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_() throw (Exception)
         return block;
       }
       //else
-      MultiRange<unsigned int> mRange = mr->second;
-      mRange.restrictTo(Range<unsigned int>(refSeq.start(), refSeq.stop() + 1));
+      MultiRange<size_t> mRange = mr->second;
+      mRange.restrictTo(Range<size_t>(refSeq.start(), refSeq.stop() + 1));
       if (mRange.isEmpty()) {
         if (logstream_) {
           (*logstream_ << "FEATURE FILTER: block " << block->getDescription() << " does not contain any feature and was kept as is.").endLine(); 
         }
         return block;
       }
-      std::vector<unsigned int> tmp = mRange.getBounds(); 
-      std::deque<unsigned int> refBounds(tmp.begin(), tmp.end()); 
+      std::vector<size_t> tmp = mRange.getBounds(); 
+      std::deque<size_t> refBounds(tmp.begin(), tmp.end()); 
 
       //Now extract corresponding alignments. We use the range to split the original block.
       //Only thing to watch out is the coordinates, refering to the ref species...
@@ -102,7 +102,7 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_() throw (Exception)
         if (refSeq[alnPos] != gap) {
           refPos++;
           //check if this position is a bound:
-          if (refBounds.front() == static_cast<unsigned int>(refPos)) {
+          if (refBounds.front() == static_cast<size_t>(refPos)) {
             pos.push_back(alnPos);
             refBounds.pop_front();
           }
@@ -118,7 +118,7 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_() throw (Exception)
       }
 
       if (refBounds.size() > 0) {
-        VectorTools::print(vector<unsigned int>(refBounds.begin(), refBounds.end()));
+        VectorTools::print(vector<size_t>(refBounds.begin(), refBounds.end()));
         throw Exception("FeatureFilterMafIterator::nextBlock(). An error occurred here, " + TextTools::toString(refBounds.size()) + " coordinates are left... this is most likely a bug, please report!");
       }
 
@@ -145,7 +145,7 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_() throw (Exception)
             MafBlock* newBlock = new MafBlock();
             newBlock->setScore(block->getScore());
             newBlock->setPass(block->getPass());
-            for (unsigned int j = 0; j < block->getNumberOfSequences(); ++j) {
+            for (size_t j = 0; j < block->getNumberOfSequences(); ++j) {
               MafSequence* subseq;
               if (i == 0) {
                 subseq = block->getSequence(j).subSequence(0, pos[i]);
@@ -162,7 +162,7 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_() throw (Exception)
             MafBlock* outBlock = new MafBlock();
             outBlock->setScore(block->getScore());
             outBlock->setPass(block->getPass());
-            for (unsigned int j = 0; j < block->getNumberOfSequences(); ++j) {
+            for (size_t j = 0; j < block->getNumberOfSequences(); ++j) {
               MafSequence* outseq = block->getSequence(j).subSequence(pos[i], pos[i + 1] - pos[i]);
               outBlock->addSequence(*outseq);
               delete outseq;
@@ -175,7 +175,7 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_() throw (Exception)
           MafBlock* newBlock = new MafBlock();
           newBlock->setScore(block->getScore());
           newBlock->setPass(block->getPass());
-          for (unsigned int j = 0; j < block->getNumberOfSequences(); ++j) {
+          for (size_t j = 0; j < block->getNumberOfSequences(); ++j) {
             MafSequence* subseq;
             subseq = block->getSequence(j).subSequence(pos[pos.size() - 1], block->getNumberOfSites() - pos[pos.size() - 1]);
             newBlock->addSequence(*subseq);

@@ -65,15 +65,15 @@ MafBlock* FeatureExtractor::analyseCurrentBlock_() throw (Exception)
     //Get the feature ranges for this block:
     const MafSequence& refSeq = block->getSequenceForSpecies(refSpecies_);
     //first check if there is one (for now we assume that features refer to the chromosome or contig name, with implicit species):
-    std::map<std::string, RangeSet<unsigned int> >::iterator mr = ranges_.find(refSeq.getChromosome());
+    std::map<std::string, RangeSet<size_t> >::iterator mr = ranges_.find(refSeq.getChromosome());
     if (mr == ranges_.end())
       goto START;
         
-    RangeSet<unsigned int> ranges = mr->second;
+    RangeSet<size_t> ranges = mr->second;
     if (completeOnly_)
-      ranges.filterWithin(Range<unsigned int>(refSeq.start(), refSeq.stop()));
+      ranges.filterWithin(Range<size_t>(refSeq.start(), refSeq.stop()));
     else  
-      ranges.restrictTo(Range<unsigned int>(refSeq.start(), refSeq.stop()));
+      ranges.restrictTo(Range<size_t>(refSeq.start(), refSeq.stop()));
     if (ranges.isEmpty())
       goto START;
 
@@ -89,8 +89,8 @@ MafBlock* FeatureExtractor::analyseCurrentBlock_() throw (Exception)
       (*logstream_ << "FEATURE EXTRACTOR: extracting " << ranges.getSet().size() << " features from block " << block->getDescription() << ".").endLine();
     }
 
-    unsigned int i = 0;
-    for (set<Range<unsigned int>*>::iterator it = ranges.getSet().begin();
+    size_t i = 0;
+    for (set<Range<size_t>*>::iterator it = ranges.getSet().begin();
         it !=  ranges.getSet().end();
         ++it)
     {
@@ -100,10 +100,10 @@ MafBlock* FeatureExtractor::analyseCurrentBlock_() throw (Exception)
       MafBlock* newBlock = new MafBlock();
       newBlock->setScore(block->getScore());
       newBlock->setPass(block->getPass());
-      for (unsigned int j = 0; j < block->getNumberOfSequences(); ++j) {
+      for (size_t j = 0; j < block->getNumberOfSequences(); ++j) {
         auto_ptr<MafSequence> subseq;
-        unsigned int a = walker.getAlignmentPosition((**it).begin() - refSeq.start());
-        unsigned int b = walker.getAlignmentPosition((**it).end() - refSeq.start() - 1);
+        size_t a = walker.getAlignmentPosition((**it).begin() - refSeq.start());
+        size_t b = walker.getAlignmentPosition((**it).end() - refSeq.start() - 1);
         subseq.reset(block->getSequence(j).subSequence(a, b - a + 1));
         if (!ignoreStrand_) {
           if (dynamic_cast<SeqRange*>(*it)->isNegativeStrand()) {

@@ -380,10 +380,10 @@ class SiteFrequencySpectrumMafStatistics:
         }
 
       public:
-        unsigned int getNumberOfCategories() const { return (bounds_.size() - 1); }
+        size_t getNumberOfCategories() const { return (bounds_.size() - 1); }
 
         //Category numbers start at 1!
-        unsigned int getCategory(double value) const throw (OutOfRangeException) {
+        size_t getCategory(double value) const throw (OutOfRangeException) {
           if (value < bounds_[0])
             throw OutOfRangeException("SiteFrequencySpectrumMafStatistics::Categorizer::getCategory.", value, *bounds_.begin(), *bounds_.rbegin());
           for (size_t i = 1; i < bounds_.size(); ++i) {
@@ -397,7 +397,7 @@ class SiteFrequencySpectrumMafStatistics:
   private:
     const Alphabet* alphabet_;
     Categorizer categorizer_;
-    std::vector<unsigned int> counts_;
+    std::vector<size_t> counts_;
 
   public:
     SiteFrequencySpectrumMafStatistics(const Alphabet* alphabet, const std::vector<double>& bounds, const std::vector<std::string>& ingroup):

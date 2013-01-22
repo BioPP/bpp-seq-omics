@@ -108,9 +108,9 @@ class MafBlock:
     AlignedSequenceContainer& getAlignment() { return alignment_; }
     const AlignedSequenceContainer& getAlignment() const { return alignment_; }
 
-    unsigned int getNumberOfSequences() const { return alignment_.getNumberOfSequences(); }
+    size_t getNumberOfSequences() const { return alignment_.getNumberOfSequences(); }
     
-    unsigned int getNumberOfSites() const { return alignment_.getNumberOfSites(); }
+    size_t getNumberOfSites() const { return alignment_.getNumberOfSites(); }
 
     void addSequence(const MafSequence& sequence) { alignment_.addSequence(sequence, false); }
 
@@ -122,12 +122,12 @@ class MafBlock:
       return dynamic_cast<const MafSequence&>(getAlignment().getSequence(name));
     }
 
-    const MafSequence& getSequence(unsigned int i) const throw (IndexOutOfBoundsException) {
+    const MafSequence& getSequence(size_t i) const throw (IndexOutOfBoundsException) {
       return dynamic_cast<const MafSequence&>(getAlignment().getSequence(i));
     }
 
     bool hasSequenceForSpecies(const std::string& species) const {
-      for (unsigned int i = 0; i < getNumberOfSequences(); ++i) {
+      for (size_t i = 0; i < getNumberOfSequences(); ++i) {
         const MafSequence& seq = getSequence(i);
         if (seq.getSpecies() == species)
           return true;
@@ -137,7 +137,7 @@ class MafBlock:
 
     //Return the first sequence with the species name.
     const MafSequence& getSequenceForSpecies(const std::string& species) const throw (SequenceNotFoundException) {
-      for (unsigned int i = 0; i < getNumberOfSequences(); ++i) {
+      for (size_t i = 0; i < getNumberOfSequences(); ++i) {
         const MafSequence& seq = getSequence(i);
         if (seq.getSpecies() == species)
           return seq;
@@ -148,7 +148,7 @@ class MafBlock:
     //Return all sequences with the species name.
     std::vector<const MafSequence*> getSequencesForSpecies(const std::string& species) const throw (SequenceNotFoundException) {
       std::vector<const MafSequence*> selection;
-      for (unsigned int i = 0; i < getNumberOfSequences(); ++i) {
+      for (size_t i = 0; i < getNumberOfSequences(); ++i) {
         const MafSequence* seq = &getSequence(i);
         if (seq->getSpecies() == species)
           selection.push_back(seq);
@@ -161,13 +161,13 @@ class MafBlock:
      */
     std::vector<std::string> getSpeciesList() const {
       std::vector<std::string> lst;
-      for (unsigned int i = 0; i < getNumberOfSequences(); ++i) {
+      for (size_t i = 0; i < getNumberOfSequences(); ++i) {
         lst.push_back(getSequence(i).getSpecies());
       }
       return lst;
     }
 
-    void removeCoordinatesFromSequence(unsigned int i) throw (IndexOutOfBoundsException) {
+    void removeCoordinatesFromSequence(size_t i) throw (IndexOutOfBoundsException) {
       //This is a bit of a trick, but avoid useless recopies.
       //It is safe here because the AlignedSequenceContainer is fully encapsulated.
       //It would not work if a VectorSiteContainer was used.

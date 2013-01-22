@@ -63,7 +63,7 @@ class FeatureFilterMafIterator:
     std::deque<MafBlock*> blockBuffer_;
     std::deque<MafBlock*> trashBuffer_;
     bool keepTrashedBlocks_;
-    std::map<std::string, MultiRange<unsigned int> > ranges_;
+    std::map<std::string, MultiRange<size_t> > ranges_;
 
   public:
     FeatureFilterMafIterator(MafIterator* iterator, const std::string& refSpecies, const SequenceFeatureSet& features, bool keepTrashedBlocks) :

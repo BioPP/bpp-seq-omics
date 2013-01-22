@@ -85,12 +85,13 @@ bool Fastq::nextSequence(std::istream& input, Sequence& seq) const throw (Except
 
 /******************************************************************************/
 
-void Fastq::writeSequence(std::ostream& output, const Sequence& seq) const throw (Exception) {
+void Fastq::writeSequence(std::ostream& output, const Sequence& seq) const throw (Exception)
+{
   std::string qual(seq.size(), static_cast<char>(33));
   try {
     const SequenceWithQuality& sq = dynamic_cast<const SequenceWithQuality&>(seq);
     for (size_t i = 0 ; i < sq.size() ; i++) {
-      int q = sq.getQuality(i);
+      char q = static_cast<char>(sq.getQuality(i));
       if (q < 33 || q > 126) {
         throw BadIntegerException("Quality must lie between 33 and 126", q);
       }

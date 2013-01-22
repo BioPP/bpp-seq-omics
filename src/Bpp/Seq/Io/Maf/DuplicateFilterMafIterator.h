@@ -60,7 +60,7 @@ class DuplicateFilterMafIterator:
     /**
      * Contains the list of 'seen' block, as [chr][strand][start][stop]
      */
-    std::map< std::string, std::map< char, std::map< unsigned int, std::map< unsigned int, unsigned int > > > > blocks_;
+    std::map< std::string, std::map< char, std::map< size_t, std::map< size_t, size_t > > > > blocks_;
 
   public:
     /**

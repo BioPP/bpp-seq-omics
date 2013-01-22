@@ -65,7 +65,7 @@ class FeatureExtractor:
     bool completeOnly_;
     bool ignoreStrand_;
     std::deque<MafBlock*> blockBuffer_;
-    std::map<std::string, RangeSet<unsigned int> > ranges_;
+    std::map<std::string, RangeSet<size_t> > ranges_;
 
   public:
     /**

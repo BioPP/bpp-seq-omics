@@ -66,11 +66,11 @@ MafBlock* FullGapFilterMafIterator::analyseCurrentBlock_() throw (Exception)
     ApplicationTools::message->endLine();
     ApplicationTools::displayTask("Cleaning block for gap sites", true);
   }
-  unsigned int n = block->getNumberOfSites();
-  vector <unsigned int> start;
+  size_t n = block->getNumberOfSites();
+  vector <size_t> start;
   vector <unsigned int> count;
   bool test = false;
-  for(unsigned int i = 0; i < n; ++i) {
+  for (size_t i = 0; i < n; ++i) {
     const Site* site = &vsc.getSite(i);
     if (SiteTools::isGapOnly(*site)) {
       if (test) {
@@ -85,7 +85,7 @@ MafBlock* FullGapFilterMafIterator::analyseCurrentBlock_() throw (Exception)
     }
   }
   //Now remove blocks:
-  unsigned int totalRemoved = 0;
+  size_t totalRemoved = 0;
   for(size_t i = start.size(); i > 0; --i) {
     if (verbose_)
       ApplicationTools::displayGauge(start.size() - i, start.size() - 1, '=');
@@ -97,7 +97,7 @@ MafBlock* FullGapFilterMafIterator::analyseCurrentBlock_() throw (Exception)
   
   //Correct coordinates:
   if (totalRemoved > 0) {
-    for (unsigned int i = 0; i < block->getNumberOfSequences(); ++i) {
+    for (size_t i = 0; i < block->getNumberOfSequences(); ++i) {
       const MafSequence* seq = &block->getSequence(i);
       if (!VectorTools::contains(species_, seq->getSpecies())) {
         block->removeCoordinatesFromSequence(i);

@@ -54,8 +54,8 @@ MafBlock* DuplicateFilterMafIterator::analyseCurrentBlock_() throw (Exception)
     bool foundRef = false;
     string chr = "";
     char strand = '+';
-    unsigned int start = 0;
-    unsigned int stop  = 0;
+    size_t start = 0;
+    size_t stop  = 0;
     for (size_t i = 0; i < currentBlock_->getNumberOfSequences() && !foundRef; ++i) {
       string species = currentBlock_->getSequence(i).getSpecies(); 
       if (species == ref_) {
@@ -72,7 +72,7 @@ MafBlock* DuplicateFilterMafIterator::analyseCurrentBlock_() throw (Exception)
       }
       delete currentBlock_;
     } else {
-      unsigned int occurrence = blocks_[chr][strand][start][stop]++;
+      size_t occurrence = blocks_[chr][strand][start][stop]++;
       if (occurrence > 0) {
         if (logstream_) {
           (*logstream_ << "DUPLICATE FILTER: sequence in reference species was found in a previous block. New block was removed.").endLine();

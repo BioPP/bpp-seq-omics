@@ -83,7 +83,7 @@ MafBlock* EntropyFilterMafIterator::analyseCurrentBlock_() throw (Exception)
         }
       }
       //First we create a mask:
-      vector<unsigned int> pos;
+      vector<size_t> pos;
       //Reset window:
       window_.clear();
       //Init window:
@@ -123,7 +123,7 @@ MafBlock* EntropyFilterMafIterator::analyseCurrentBlock_() throw (Exception)
         }
       
         //Move forward:
-        for (unsigned int k = 0; k < step_; ++k) {
+        for (size_t k = 0; k < step_; ++k) {
           vector<int> col;
           for (size_t j = 0; j < nr; ++j) {
             int x = aln[j][i];
@@ -184,7 +184,7 @@ MafBlock* EntropyFilterMafIterator::analyseCurrentBlock_() throw (Exception)
             MafBlock* newBlock = new MafBlock();
             newBlock->setScore(block->getScore());
             newBlock->setPass(block->getPass());
-            for (unsigned int j = 0; j < block->getNumberOfSequences(); ++j) {
+            for (size_t j = 0; j < block->getNumberOfSequences(); ++j) {
               MafSequence* subseq;
               if (i == 0) {
                 subseq = block->getSequence(j).subSequence(0, pos[i]);
@@ -201,7 +201,7 @@ MafBlock* EntropyFilterMafIterator::analyseCurrentBlock_() throw (Exception)
             MafBlock* outBlock = new MafBlock();
             outBlock->setScore(block->getScore());
             outBlock->setPass(block->getPass());
-            for (unsigned int j = 0; j < block->getNumberOfSequences(); ++j) {
+            for (size_t j = 0; j < block->getNumberOfSequences(); ++j) {
               MafSequence* outseq = block->getSequence(j).subSequence(pos[i], pos[i + 1] - pos[i]);
               outBlock->addSequence(*outseq);
               delete outseq;
@@ -214,7 +214,7 @@ MafBlock* EntropyFilterMafIterator::analyseCurrentBlock_() throw (Exception)
           MafBlock* newBlock = new MafBlock();
           newBlock->setScore(block->getScore());
           newBlock->setPass(block->getPass());
-          for (unsigned int j = 0; j < block->getNumberOfSequences(); ++j) {
+          for (size_t j = 0; j < block->getNumberOfSequences(); ++j) {
             MafSequence* subseq;
             subseq = block->getSequence(j).subSequence(pos[pos.size() - 1], block->getNumberOfSites() - pos[pos.size() - 1]);
             newBlock->addSequence(*subseq);

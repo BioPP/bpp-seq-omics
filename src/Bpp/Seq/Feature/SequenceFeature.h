@@ -55,11 +55,11 @@ namespace bpp
 
 /**
  * @brief a coordinate range on a sequence.
- * Stores coordiantes as a Range<unsigned int> object,
+ * Stores coordiantes as a Range<size_t> object,
  * but also keep the strand information.
  */
 class SeqRange:
-  public Range<unsigned int>
+  public Range<size_t>
 {
   private:
     char strand_;
@@ -70,8 +70,8 @@ class SeqRange:
      * @param b Second position
      * @param strand The strand information. Can take one of the four values: '+' for positive strand, '-' for negative, '.' if not stranded or '?' if strandedness is relevant but unknown.
      */
-    SeqRange(unsigned int a, unsigned int b, char strand = '.'):
-      Range<unsigned int>(a, b), strand_(strand) {
+    SeqRange(size_t a, size_t b, char strand = '.'):
+      Range<size_t>(a, b), strand_(strand) {
         if (strand != '+' && strand != '-' && strand != '?' && strand != '.')
           strand_ = '.';
     }
@@ -158,12 +158,12 @@ class SequenceFeature:
     /**
      * @return The starting position of the feature, 0-based, included.
      */
-    virtual const unsigned int getStart() const = 0;
+    virtual const size_t getStart() const = 0;
 
     /**
      * @return The ending position of the feature, 0-based, excluded.
      */
-    virtual const unsigned int getEnd() const = 0;
+    virtual const size_t getEnd() const = 0;
 
     /**
      * @return True if the feature is stranded.
@@ -255,8 +255,8 @@ class BasicSequenceFeature:
         const std::string& seqId,
         const std::string& source,
         const std::string& type,
-        unsigned int start,
-        unsigned int end,
+        size_t start,
+        size_t end,
         char strand,
         double score = -1):
       id_(id), sequenceId_(seqId), source_(source),
@@ -276,8 +276,8 @@ class BasicSequenceFeature:
     void setSource(const std::string& source) { source_ = source; }
     const std::string& getType() const { return type_; }
     void setType(const std::string& type) { type_ = type; }
-    const unsigned int getStart() const { return range_.begin(); }
-    const unsigned int getEnd() const { return range_.end(); }
+    const size_t getStart() const { return range_.begin(); }
+    const size_t getEnd() const { return range_.end(); }
     bool isStranded() const { return range_.isStranded(); }
     bool isNegativeStrand() const { return range_.isNegativeStrand(); }
     void invert() {
@@ -392,23 +392,23 @@ class SequenceFeatureSet
      * @param i The index of the feature.
      * @return A reference toward the feature.
      */
-    const SequenceFeature& getFeature(unsigned int i) const {
+    const SequenceFeature& getFeature(size_t i) const {
       return *features_[i];
     }
 
     /**
      * @param i The index of the feature.
      * @return A reference toward the feature.
-     * @see getFeature(unsigned int i)
+     * @see getFeature(size_t i)
      */
-    const SequenceFeature& operator[](unsigned int i) const {
+    const SequenceFeature& operator[](size_t i) const {
       return *features_[i];
     }
 
     /**
      * @return The number of features in this set.
      */
-    unsigned int getNumberOfFeatures() const { return features_.size(); }
+    size_t getNumberOfFeatures() const { return features_.size(); }
 
     /**
      * @brief Add a feature to the container. The feature will be copied and the copy owned by the container.
@@ -451,7 +451,7 @@ class SequenceFeatureSet
      * @param seqId The name of the sequence id to consider.
      * @param coords [out] a container where to add the coordinates of each feature.
      */
-    void fillRangeCollectionForSequence(const std::string& seqId, RangeCollection<unsigned int>& coords) const {
+    void fillRangeCollectionForSequence(const std::string& seqId, RangeCollection<size_t>& coords) const {
       for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
           it != features_.end();
           ++it) {

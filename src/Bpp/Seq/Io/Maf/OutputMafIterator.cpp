@@ -68,9 +68,9 @@ void OutputMafIterator::writeBlock(std::ostream& out, const MafBlock& block) con
   
   //Now we write sequences. First need to count characters for aligning blocks:
   size_t mxcSrc = 0, mxcStart = 0, mxcSize = 0, mxcSrcSize = 0;
-  for (unsigned int i = 0; i < block.getNumberOfSequences(); i++) {
+  for (size_t i = 0; i < block.getNumberOfSequences(); i++) {
     const MafSequence* seq = &block.getSequence(i);
-    unsigned int start = 0; //Maybe we should output sthg else here?
+    size_t start = 0; //Maybe we should output sthg else here?
     if (seq->hasCoordinates())
       start = seq->start();
     mxcSrc     = max(mxcSrc    , seq->getName().size());
@@ -79,11 +79,11 @@ void OutputMafIterator::writeBlock(std::ostream& out, const MafBlock& block) con
     mxcSrcSize = max(mxcSrcSize, TextTools::toString(seq->getSrcSize()).size());
   }
   //Now print each sequence:
-  for (unsigned int i = 0; i < block.getNumberOfSequences(); i++) {
+  for (size_t i = 0; i < block.getNumberOfSequences(); i++) {
     const MafSequence* seq = &block.getSequence(i);
     out << "s ";
     out << TextTools::resizeRight(seq->getName(), mxcSrc, ' ') << " ";
-    unsigned int start = 0; //Maybe we should output sthg else here?
+    size_t start = 0; //Maybe we should output sthg else here?
     if (seq->hasCoordinates())
       start = seq->start();
     out << TextTools::resizeLeft(TextTools::toString(start), mxcStart, ' ') << " ";
@@ -94,8 +94,8 @@ void OutputMafIterator::writeBlock(std::ostream& out, const MafBlock& block) con
     string seqstr = seq->toString();
     if (mask_ && seq->hasAnnotation(SequenceMask::MASK)) {
       const SequenceMask* mask = &dynamic_cast<const SequenceMask&>(seq->getAnnotation(SequenceMask::MASK));
-      for (unsigned int j = 0; j < seqstr.size(); ++j) {
-        char c = ((*mask)[j] ? tolower(seqstr[j]) : seqstr[j]);
+      for (size_t j = 0; j < seqstr.size(); ++j) {
+        char c = ((*mask)[j] ? TextTools::toLower(seqstr[j]) : seqstr[j]);
         out << c;
       }
     } else {
@@ -108,7 +108,7 @@ void OutputMafIterator::writeBlock(std::ostream& out, const MafBlock& block) con
       out << "q ";
       out << TextTools::resizeRight(seq->getName(), mxcSrc + mxcStart + mxcSize + mxcSrcSize + 5, ' ') << " ";
       string qualStr;
-      for (unsigned int j = 0; j < seq->size(); ++j) {
+      for (size_t j = 0; j < seq->size(); ++j) {
         int s = (*qual)[j];
         if (s == -1) {
           qualStr += "-";

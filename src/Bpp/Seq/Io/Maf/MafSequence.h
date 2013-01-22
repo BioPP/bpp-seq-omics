@@ -64,12 +64,12 @@ class MafSequence:
 {
   private:
     bool         hasCoordinates_;
-    unsigned int begin_;
+    size_t begin_;
     std::string  species_;
     std::string  chromosome_;
     char         strand_;
-    unsigned int size_;
-    unsigned int srcSize_;
+    size_t size_;
+    size_t srcSize_;
 
   public:
     MafSequence():
@@ -86,7 +86,7 @@ class MafSequence:
         splitNameIntoSpeciesAndChromosome(name, species_, chromosome_);
     }
 
-    MafSequence(const std::string& name, const std::string& sequence, unsigned int begin, char strand, unsigned int srcSize, bool parseName = true) :
+    MafSequence(const std::string& name, const std::string& sequence, size_t begin, char strand, size_t srcSize, bool parseName = true) :
       SequenceWithAnnotation(name, sequence, &AlphabetTools::DNA_ALPHABET), hasCoordinates_(true), begin_(begin), species_(""), chromosome_(""), strand_(strand), size_(0), srcSize_(srcSize)
     {
       size_ = SequenceTools::getNumberOfSites(*this);
@@ -103,18 +103,18 @@ class MafSequence:
 
     void removeCoordinates() { hasCoordinates_ = false; begin_ = 0; }
 
-    unsigned int start() const throw (Exception) { 
+    size_t start() const throw (Exception) { 
       if (hasCoordinates_) return begin_;
       else throw Exception("MafSequence::start(). Sequence " + getName() + " does not have coordinates.");
     }
 
-    unsigned int stop() const { 
+    size_t stop() const { 
       if (hasCoordinates_) return begin_ + size_ - 1;
       else throw Exception("MafSequence::stop(). Sequence " + getName() + " does not have coordinates.");
     }
 
-    Range<unsigned int> getRange() const {
-      if (hasCoordinates_) return Range<unsigned int>(start(), stop());
+    Range<size_t> getRange() const {
+      if (hasCoordinates_) return Range<size_t>(start(), stop());
       else throw Exception("MafSequence::getRange(). Sequence " + getName() + " does not have coordinates.");
     }
 
@@ -144,11 +144,11 @@ class MafSequence:
     
     char getStrand() const { return strand_; }
     
-    unsigned int getGenomicSize() const { return size_; }
+    size_t getGenomicSize() const { return size_; }
     
-    unsigned int getSrcSize() const { return srcSize_; }
+    size_t getSrcSize() const { return srcSize_; }
     
-    void setStart(unsigned int begin) { begin_ = begin; hasCoordinates_ = true; }
+    void setStart(size_t begin) { begin_ = begin; hasCoordinates_ = true; }
     
     void setChromosome(const std::string& chr) {
       chromosome_ = chr;
@@ -162,7 +162,7 @@ class MafSequence:
     
     void setStrand(char s) { strand_ = s; }
     
-    void setSrcSize(unsigned int srcSize) { srcSize_ = srcSize; }
+    void setSrcSize(size_t srcSize) { srcSize_ = srcSize; }
   
     std::string getDescription() const { return getName() + strand_ + ":" + (hasCoordinates_ ? TextTools::toString(start()) + "-" + TextTools::toString(stop()) : "?-?"); }
   
@@ -173,7 +173,7 @@ class MafSequence:
      * @param startAt Begining of sub-sequence.
      * @param length  the length of the sub-sequence.
      */
-    MafSequence* subSequence(unsigned int startAt, unsigned int length) const;
+    MafSequence* subSequence(size_t startAt, size_t length) const;
     
   private:
     void beforeSequenceChanged(const SymbolListEditionEvent& event) {}

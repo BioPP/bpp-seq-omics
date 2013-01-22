@@ -53,8 +53,8 @@ MafBlock* BlockMergerMafIterator::analyseCurrentBlock_() throw (Exception)
   currentBlock_  = incomingBlock_;
   incomingBlock_ = iterator_->nextBlock();
   while (incomingBlock_) {
-    unsigned int globalSpace = 0;
-    for (unsigned int i = 0; i < species_.size(); ++i) {
+    size_t globalSpace = 0;
+    for (size_t i = 0; i < species_.size(); ++i) {
       try {
         const MafSequence* seq1 = &currentBlock_->getSequenceForSpecies(species_[i]); 
         const MafSequence* seq2 = &incomingBlock_->getSequenceForSpecies(species_[i]);
@@ -63,7 +63,7 @@ MafBlock* BlockMergerMafIterator::analyseCurrentBlock_() throw (Exception)
 
         if (seq1->stop() >= seq2->start())
           return currentBlock_;
-        unsigned int space = seq2->start() - seq1->stop() - 1;
+        size_t space = seq2->start() - seq1->stop() - 1;
         if (space > maxDist_)
           return currentBlock_;
         if (i == 0)

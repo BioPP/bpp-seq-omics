@@ -1,3 +1,6 @@
+21/01/13 Julien Dutheil
+* Compiles with -Wconversion
+
 31/10/12 Julien Dutheil
 * Added SequenceStreamToMafIterator
 
