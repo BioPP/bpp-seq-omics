@@ -127,7 +127,7 @@ void SiteFrequencySpectrumMafStatistics::compute(const MafBlock& block)
   int state;
   auto_ptr<SiteContainer> alignment(getSiteContainer(block));
   if (alignment->getNumberOfSequences() > 0) {
-    for (unsigned int i = 0; i < block.getNumberOfSites(); ++i) {
+    for (size_t i = 0; i < block.getNumberOfSites(); ++i) {
       //Note: we do not rely on SiteTool::getCounts as it would be unefficient to count everything.
       const Site& site = alignment->getSite(i);
       map<int, unsigned int> counts;

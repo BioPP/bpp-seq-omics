@@ -59,15 +59,15 @@ MafBlock* WindowSplitMafIterator::analyseCurrentBlock_() throw (Exception)
     MafBlock* block = iterator_->nextBlock();
     if (!block) return 0; //No more block.
 
-    unsigned int pos = 0;
-    unsigned int size = windowSize_;
-    unsigned int bSize = block->getNumberOfSites();
+    size_t pos = 0;
+    size_t size = windowSize_;
+    size_t bSize = block->getNumberOfSites();
 
     switch (align_) {
       case (RAGGED_RIGHT) : { pos = bSize % windowSize_; break; }
       case (CENTER)       : { pos = (bSize % windowSize_) / 2; break; }
       case (ADJUST)       : {
-          unsigned int x = bSize / windowSize_;
+          size_t x = bSize / windowSize_;
           if (x == 0) size = bSize;
           else        size = bSize / x;
           break;
@@ -75,7 +75,7 @@ MafBlock* WindowSplitMafIterator::analyseCurrentBlock_() throw (Exception)
       default             : { }
     }
     //cout << "Effective size: " << size << endl;
-    for(unsigned int i = pos; i + size < bSize; i += size) {
+    for(size_t i = pos; i + size < bSize; i += size) {
       MafBlock* newBlock = new MafBlock();
       newBlock->setScore(block->getScore());
       newBlock->setPass(block->getPass());

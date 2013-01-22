@@ -95,7 +95,7 @@ void OutputMafIterator::writeBlock(std::ostream& out, const MafBlock& block) con
     if (mask_ && seq->hasAnnotation(SequenceMask::MASK)) {
       const SequenceMask* mask = &dynamic_cast<const SequenceMask&>(seq->getAnnotation(SequenceMask::MASK));
       for (size_t j = 0; j < seqstr.size(); ++j) {
-        char c = ((*mask)[j] ? TextTools::toLower(seqstr[j]) : seqstr[j]);
+        char c = ((*mask)[j] ? static_cast<char>(tolower(static_cast<int>(seqstr[j]))) : seqstr[j]);
         out << c;
       }
     } else {

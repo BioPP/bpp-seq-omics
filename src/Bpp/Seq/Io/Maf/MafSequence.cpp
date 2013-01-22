@@ -45,10 +45,10 @@ knowledge of the CeCILL license and that you accept its terms.
 using namespace bpp;
 using namespace std;
 
-MafSequence* MafSequence::subSequence(unsigned int startAt, unsigned int length) const
+MafSequence* MafSequence::subSequence(size_t startAt, size_t length) const
 {
   string subseq = toString().substr(startAt, length);
-  unsigned int begin = begin_;
+  size_t begin = begin_;
   if (hasCoordinates_) {
     for (unsigned int i = 0; i < startAt; ++i) {
       if (! getAlphabet()->isGap(operator[](i))) begin++;

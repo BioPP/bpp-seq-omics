@@ -397,7 +397,7 @@ class SiteFrequencySpectrumMafStatistics:
   private:
     const Alphabet* alphabet_;
     Categorizer categorizer_;
-    std::vector<size_t> counts_;
+    std::vector<unsigned int> counts_;
 
   public:
     SiteFrequencySpectrumMafStatistics(const Alphabet* alphabet, const std::vector<double>& bounds, const std::vector<std::string>& ingroup):
