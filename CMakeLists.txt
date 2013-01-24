@@ -141,7 +141,6 @@ SET(CPACK_SOURCE_IGNORE_FILES
  "Seq.tag"
  "Testing"
  "build-stamp"
- "genIncludes.py"
  "install_manifest.txt"
  "DartConfiguration.tcl"
  ${CPACK_SOURCE_IGNORE_FILES}

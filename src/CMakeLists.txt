@@ -88,7 +88,8 @@ TARGET_LINK_LIBRARIES(bppseqomics-shared ${LIBS})
 INSTALL(TARGETS bppseqomics-static bppseqomics-shared DESTINATION lib${LIB_SUFFIX})
 
 # Install headers
-INSTALL(DIRECTORY Bpp/ DESTINATION include/Bpp FILES_MATCHING PATTERN "*.h" PATTERN "*.all")
+INSTALL(DIRECTORY Bpp/ DESTINATION include/Bpp FILES_MATCHING PATTERN "*.h")
 
+# Generate generic include files (.all)
 INSTALL(CODE "EXECUTE_PROCESS(COMMAND python ${CMAKE_SOURCE_DIR}/genIncludes.py ${CMAKE_PREFIX_PATH}/include/Bpp/Seq)")
 
