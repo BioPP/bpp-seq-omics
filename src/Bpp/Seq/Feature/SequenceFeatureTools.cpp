@@ -41,6 +41,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 //From bpp-seq:
 #include <Bpp/Seq/SequenceTools.h> 
+#include <Bpp/Seq/Alphabet/StandardCodonAlphabet.h>
 #include <Bpp/Seq/Alphabet/AlphabetTools.h>
 #include <Bpp/Seq/Alphabet/AlphabetExceptions.h>
 
@@ -69,10 +70,10 @@ unsigned int SequenceFeatureTools::getOrfs(const Sequence& seq, SequenceFeatureS
     throw AlphabetException("SequenceFeatureTools::getOrfs: Sequence alphabet must be nucleic!", seq.getAlphabet());
   }
   unsigned int orfCpt = 0;
-  bpp::StandardCodonAlphabet codonAlpha(dynamic_cast< const NucleicAlphabet* >(seq.getAlphabet()));
-  std::vector< std::vector< size_t > > starts(3), stops(3);
-  unsigned int phase = 0;
-  for (unsigned int p = 0 ; p < seq.size() - 2 ; p++) {
+  StandardCodonAlphabet codonAlpha(dynamic_cast<const NucleicAlphabet*>(seq.getAlphabet()));
+  std::vector< std::vector<size_t> > starts(3), stops(3);
+  size_t phase = 0;
+  for (size_t p = 0 ; p < seq.size() - 2 ; p++) {
     phase = p % 3;
     if (codonAlpha.isInit(codonAlpha.getCodon(seq.getValue(p), seq.getValue(p + 1), seq.getValue(p + 2)))) {
       starts[phase].push_back(p);

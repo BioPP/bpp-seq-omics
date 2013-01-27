@@ -5,7 +5,7 @@ from os.path import *;
 import sys;
 
 for root, dirs, files in os.walk(sys.argv[1]):
-    print "-- Creating generic include file " + str(root) + ".all"
+    print "-- Creating generic include file: " + str(root) + ".all"
     f = open(str(root) + ".all", 'w')
     head, tail = split(root)
     files.sort()
