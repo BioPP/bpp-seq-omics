@@ -82,7 +82,7 @@ MafBlock* SequenceStatisticsMafIterator::analyseCurrentBlock_() throw (Exception
         if (result.hasValue(tags[j])) {
           results_[k] = result.getValue(tags[j]);
         } else {
-          results_[k] = NumConstants::NaN;
+          results_[k] = NumConstants::NaN();
         }
         k++;
       }

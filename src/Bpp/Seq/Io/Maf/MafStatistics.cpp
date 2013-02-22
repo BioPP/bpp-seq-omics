@@ -59,7 +59,7 @@ void PairwiseDivergenceMafStatistics::compute(const MafBlock& block)
   if (seqs1.size() > 1 || seqs2.size() > 1)
     throw Exception("PairwiseDivergenceMafStatistics::compute. Duplicated sequence for species " + species1_ + "or " + species2_ + ".");
   if (seqs1.size() == 0 || seqs2.size() == 0)
-    result_.setValue(NumConstants::NaN);
+    result_.setValue(NumConstants::NaN());
   else
     result_.setValue(100. - SequenceTools::getPercentIdentity(*seqs1[0], *seqs2[0], true));
 }
