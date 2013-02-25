@@ -50,12 +50,26 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <Bpp/Clonable.h>
 #include <Bpp/Numeric/Range.h>
 
+/**
+ * @mainpage
+ *
+ * @par
+ * The bpp-seq-omics library adds 'omics' components to the bpp-seq library.
+ * These components notably include the bpp::SequenceFeature class, for storing generic sequence features and their coordinates.
+ * Parsers are provided for loading such features from a bpp::Gff file for instance, as well as tools for extracting the corresponding sequences (bpp::SequenceFeatureTools).
+ *
+ * @par
+ * Next-Generation Sequencing data are also supported, with the bpp::FastQ parser, which instanciates bpp::SequenceWithQuality objects.
+ * Genome alignments can be efficiently analyzed via the bpp::MafParser class and a large range of bpp::MafIterator classes.
+ * Genome alignment blocks are stored in bpp::MafBlock instances, which are containers of bpp::MafSequence objects with their corresponding genome coordinates.
+ */
+
 namespace bpp
 {
 
 /**
  * @brief a coordinate range on a sequence.
- * Stores coordiantes as a Range<size_t> object,
+ * Stores coordinates as a Range<size_t> object,
  * but also keep the strand information.
  */
 class SeqRange:
