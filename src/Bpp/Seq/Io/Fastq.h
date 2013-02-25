@@ -93,7 +93,7 @@ namespace bpp
        * @{
        */
       /**
-       * @copydoc ISequenceStream::nextSequence(std::istream& input, Sequence& seq) const
+       * @copydoc bpp::ISequenceStream::nextSequence()
        * @author Sylvain Gaillard
        *
        * @par Usage
@@ -127,7 +127,7 @@ namespace bpp
        * @{
        */
       /**
-       * @copydoc OSequenceStream::writeSequence(std::ostream& output, const Sequence& seq) const
+       * @copydoc OSequenceStream::writeSequence()
        * @author Sylvain Gaillard
        */
       void writeSequence(std::ostream& output, const Sequence& seq) const throw (Exception);
