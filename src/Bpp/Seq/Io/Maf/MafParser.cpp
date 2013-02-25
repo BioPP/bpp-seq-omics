@@ -1,5 +1,5 @@
 //
-// File: MafAlignmentParser.cpp
+// File: MafParser.cpp
 // Authors: Julien Dutheil
 // Created: Tue Apr 27 2010
 //
@@ -37,7 +37,7 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 
-#include "MafAlignmentParser.h"
+#include "MafParser.h"
 #include <Bpp/Seq/SequenceWithQuality.h>
 #include <Bpp/Seq/SequenceWithAnnotationTools.h>
 #include <Bpp/Text/TextTools.h>
@@ -46,7 +46,7 @@ knowledge of the CeCILL license and that you accept its terms.
 using namespace std;
 using namespace bpp;
 
-MafBlock* MafAlignmentParser::analyseCurrentBlock_() throw (Exception)
+MafBlock* MafParser::analyseCurrentBlock_() throw (Exception)
 {
   MafBlock* block = 0;
 

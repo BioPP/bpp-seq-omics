@@ -1,5 +1,5 @@
 //
-// File: MafAlignmentParser.h
+// File: MafParser.h
 // Authors: Julien Dutheil
 // Created: Tue Apr 27 2010
 //
@@ -37,8 +37,8 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 
-#ifndef _MAFALIGNMENTPARSER_H_
-#define _MAFALIGNMENTPARSER_H_
+#ifndef _MAFPARSER_H_
+#define _MAFPARSER_H_
 
 #include "MafIterator.h"
 #include <Bpp/Seq/Alphabet/CaseMaskedAlphabet.h>
@@ -58,7 +58,7 @@ namespace bpp {
  *
  * @author Julien Dutheil
  */
-class MafAlignmentParser:
+class MafParser:
   public AbstractMafIterator
 {
   private:
@@ -68,13 +68,13 @@ class MafAlignmentParser:
     bool firstBlock_;
 
   public:
-    MafAlignmentParser(std::istream* stream, bool parseMask = false) :
+    MafParser(std::istream* stream, bool parseMask = false) :
       stream_(stream), mask_(parseMask), cmAlphabet_(&AlphabetTools::DNA_ALPHABET), firstBlock_(true) {}
 
   private:
     //Recopy is forbidden!
-    MafAlignmentParser(const MafAlignmentParser& maf): stream_(0), mask_(maf.mask_), cmAlphabet_(&AlphabetTools::DNA_ALPHABET), firstBlock_(maf.firstBlock_) {}
-    MafAlignmentParser& operator=(const MafAlignmentParser& maf) { stream_ = 0; mask_ = maf.mask_; firstBlock_ = maf.firstBlock_; return *this; }
+    MafParser(const MafParser& maf): stream_(0), mask_(maf.mask_), cmAlphabet_(&AlphabetTools::DNA_ALPHABET), firstBlock_(maf.firstBlock_) {}
+    MafParser& operator=(const MafParser& maf) { stream_ = 0; mask_ = maf.mask_; firstBlock_ = maf.firstBlock_; return *this; }
 
   private:
     MafBlock* analyseCurrentBlock_() throw (Exception);
@@ -83,5 +83,5 @@ class MafAlignmentParser:
 
 } // end of namespace bpp.
 
-#endif //_MAFALIGNMENTPARSER_H_
+#endif //_MAFPARSER_H_
 
