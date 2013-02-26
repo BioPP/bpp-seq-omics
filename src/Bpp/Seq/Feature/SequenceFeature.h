@@ -59,7 +59,7 @@ knowledge of the CeCILL license and that you accept its terms.
  * Parsers are provided for loading such features from a bpp::Gff file for instance, as well as tools for extracting the corresponding sequences (bpp::SequenceFeatureTools).
  *
  * @par
- * Next-Generation Sequencing data are also supported, with the bpp::FastQ parser, which instanciates bpp::SequenceWithQuality objects.
+ * Next-Generation Sequencing data are also supported, with the bpp::Fastq parser, which instanciates bpp::SequenceWithQuality objects.
  * Genome alignments can be efficiently analyzed via the bpp::MafParser class and a large range of bpp::MafIterator classes.
  * Genome alignment blocks are stored in bpp::MafBlock instances, which are containers of bpp::MafSequence objects with their corresponding genome coordinates.
  */
