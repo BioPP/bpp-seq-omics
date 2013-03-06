@@ -35,9 +35,7 @@ createGeneric() {
   done;
 }
 
-if [ "$1" = "remove" ]; then
-  # Automatically added by dh_makeshlibs
-  ldconfig
+if [ "$1" = "configure" ]; then
   # Actualize .all files
   createGeneric /usr/include/Bpp
 fi

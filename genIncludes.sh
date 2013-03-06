@@ -1,8 +1,5 @@
 #! /bin/bash
 
-# Abort if any command returns an error value
-set -e
-
 createGeneric() {
   echo "-- Creating generic include file: $1.all"
   #Make sure we run into subdirectories first:
@@ -35,11 +32,4 @@ createGeneric() {
   done;
 }
 
-if [ "$1" = "remove" ]; then
-  # Automatically added by dh_makeshlibs
-  ldconfig
-  # Actualize .all files
-  createGeneric /usr/include/Bpp
-fi
-
-exit 0
+createGeneric $1

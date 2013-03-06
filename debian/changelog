@@ -1,3 +1,9 @@
+libbpp-seq-omics (2.1.0-1) unstable; urgency=low
+
+  * Maf to VCF tool added as a MafIterator.
+
+ -- Julien Dutheil <julien.dutheil@univ-montp2.fr>  Wed, 06 Mar 2013 14:34:00 +0100
+
 libbpp-seq-omics (2.0.3-1) unstable; urgency=low
 
   * Initial release, forking from bpp-seq.

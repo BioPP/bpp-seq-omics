@@ -1,5 +1,5 @@
 %define _basename bpp-seq-omics
-%define _version 2.0.3
+%define _version 2.1.0
 %define _release 1
 %define _prefix /usr
 
@@ -39,7 +39,6 @@ Group: Development/Libraries/C and C++
 This library contains the genomics components of the Bio++ sequence library.
 It is part of the Bio++ project.
 
-
 %package -n libbpp-seq-omics-devel
 Summary: Bio++ Sequence library: genomics components
 Group: Development/Libraries/C and C++
@@ -73,7 +72,99 @@ rm -rf $RPM_BUILD_ROOT
 
 %post -n libbpp-seq-omics1 -p /sbin/ldconfig
 
+%post -n libbpp-seq-omics-devel
+createGeneric() {
+  echo "-- Creating generic include file: $1.all"
+  #Make sure we run into subdirectories first:
+  dirs=()
+  for file in "$1"/*
+  do
+    if [ -d "$file" ]
+    then
+      # Recursion:
+      dirs+=( "$file" )
+    fi
+  done
+  for dir in ${dirs[@]}
+  do
+    createGeneric $dir
+  done
+  #Now list all files, including newly created .all files:
+  if [ -f $1.all ]
+  then
+    rm $1.all
+  fi
+  dir=`basename $1`
+  for file in "$1"/*
+  do
+    if [ -f "$file" ] && ( [ "${file##*.}" == "h" ] || [ "${file##*.}" == "all" ] )
+    then
+      file=`basename $file`
+      echo "#include \"$dir/$file\"" >> $1.all
+    fi
+  done;
+}
+# Actualize .all files
+createGeneric %{_prefix}/include/Bpp
+exit 0
+
+%preun -n libbpp-seq-devel
+removeGeneric() {
+  if [ -f $1.all ]
+  then
+    echo "-- Remove generic include file: $1.all"
+    rm $1.all
+  fi
+  for file in "$1"/*
+  do
+    if [ -d "$file" ]
+    then
+      # Recursion:
+      removeGeneric $file
+    fi
+  done
+}
+# Actualize .all files
+removeGeneric %{_prefix}/include/Bpp
+exit 0
+
 %postun -n libbpp-seq-omics1 -p /sbin/ldconfig
+
+%postun -n libbpp-seq-omics-devel
+createGeneric() {
+  echo "-- Creating generic include file: $1.all"
+  #Make sure we run into subdirectories first:
+  dirs=()
+  for file in "$1"/*
+  do
+    if [ -d "$file" ]
+    then
+      # Recursion:
+      dirs+=( "$file" )
+    fi
+  done
+  for dir in ${dirs[@]}
+  do
+    createGeneric $dir
+  done
+  #Now list all files, including newly created .all files:
+  if [ -f $1.all ]
+  then
+    rm $1.all
+  fi
+  dir=`basename $1`
+  for file in "$1"/*
+  do
+    if [ -f "$file" ] && ( [ "${file##*.}" == "h" ] || [ "${file##*.}" == "all" ] )
+    then
+      file=`basename $file`
+      echo "#include \"$dir/$file\"" >> $1.all
+    fi
+  done;
+}
+# Actualize .all files
+createGeneric %{_prefix}/include/Bpp
+exit 0
 
 %files -n libbpp-seq-omics1
 %defattr(-,root,root)
@@ -88,6 +179,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_prefix}/include/*
 
 %changelog
+* Wed Mar 06 2013 Julien Dutheil <julien.dutheil@univ-montp2.fr> 2.1.0-1
+- Maf to VCF tool added as a MafIterator.
 * Tue Nov 06 2012 Julien Dutheil <julien.dutheil@univ-montp2.fr> 2.0.3-1
 - First draft of the spec file
 
