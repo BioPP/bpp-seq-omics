@@ -108,7 +108,7 @@ createGeneric() {
 createGeneric %{_prefix}/include/Bpp
 exit 0
 
-%preun -n libbpp-seq-devel
+%preun -n libbpp-seq-omics-devel
 removeGeneric() {
   if [ -f $1.all ]
   then
