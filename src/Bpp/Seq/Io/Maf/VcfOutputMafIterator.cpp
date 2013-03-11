@@ -75,7 +75,9 @@ void VcfOutputMafIterator::writeBlock(std::ostream& out, const MafBlock& block) 
   string chr = refSeq.getChromosome();
   size_t offset = refSeq.start();
   int gap = refSeq.getAlphabet()->getGapCharacterCode();
-  string chars = "ACGT";
+  string chars = "";
+  for (int i = 0; i < static_cast<int>(AlphabetTools::DNA_ALPHABET.getNumberOfTypes()); ++i)
+    chars += AlphabetTools::DNA_ALPHABET.intToChar(i);
   VectorSiteContainer sites(block.getAlignment());
   //Now we look all sites for SNPs:
   for (size_t i = 0; i < sites.getNumberOfSites(); i++) {
