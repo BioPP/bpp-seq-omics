@@ -9,6 +9,7 @@ SET(CPP_FILES
   Bpp/Seq/Io/Maf/SequenceStreamToMafIterator.cpp
   Bpp/Seq/Io/Maf/MafIterator.cpp
   Bpp/Seq/Io/Maf/SequenceFilterMafIterator.cpp
+  Bpp/Seq/Io/Maf/OrphanSequenceFilterMafIterator.cpp
   Bpp/Seq/Io/Maf/ChromosomeMafIterator.cpp
   Bpp/Seq/Io/Maf/DuplicateFilterMafIterator.cpp
   Bpp/Seq/Io/Maf/BlockMergerMafIterator.cpp
@@ -43,6 +44,7 @@ SET(H_FILES
   Bpp/Seq/Io/Maf/BlockLengthMafIterator.h
   Bpp/Seq/Io/Maf/BlockSizeMafIterator.h
   Bpp/Seq/Io/Maf/SequenceFilterMafIterator.h
+  Bpp/Seq/Io/Maf/OrphanSequenceFilterMafIterator.h
   Bpp/Seq/Io/Maf/ChromosomeMafIterator.h
   Bpp/Seq/Io/Maf/DuplicateFilterMafIterator.h
   Bpp/Seq/Io/Maf/BlockMergerMafIterator.h
