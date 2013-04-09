@@ -63,10 +63,18 @@ void VcfOutputMafIterator::writeHeader(std::ostream& out) const
   out << "##source=Bio++" << endl;  
   out << "##FILTER=<ID=gap,Description=\"At least one sequence contains a gap\">" << endl;
   out << "##FILTER=<ID=unk,Description=\"At least one sequence contains an unresolved character\">" << endl;
+  if (genotypes_.size() > 0)
+    out << "##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">" << endl;
   //There are more options in the header that we may want to support...
 
   //Now write the header line:
-  out << "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO" << endl;
+  out << "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO";
+  if (genotypes_.size() > 0) {
+    out << "\tFORMAT";
+    for (size_t i = 0; i < genotypes_.size(); ++i)
+      out << "\t" << genotypes_[i];
+  }
+  out << endl;
 }
 
 void VcfOutputMafIterator::writeBlock(std::ostream& out, const MafBlock& block) const
@@ -79,6 +87,8 @@ void VcfOutputMafIterator::writeBlock(std::ostream& out, const MafBlock& block) 
   for (int i = 0; i < static_cast<int>(AlphabetTools::DNA_ALPHABET.getNumberOfTypes()); ++i)
     chars += AlphabetTools::DNA_ALPHABET.intToChar(i);
   VectorSiteContainer sites(block.getAlignment());
+  //Where to store genotype information, if any:
+  vector<int> gt(genotypes_.size());
   //Now we look all sites for SNPs:
   for (size_t i = 0; i < sites.getNumberOfSites(); i++) {
     if (refSeq[i] == gap)
@@ -100,6 +110,9 @@ void VcfOutputMafIterator::writeBlock(std::ostream& out, const MafBlock& block) 
     int ref = refSeq[i];
     string alt = "";
     string ac = "";
+    
+    map<int, int> snps;
+    int c = 0;
     for (int x = 0; x < 4; ++x) {
       if (x != ref) {
         size_t f = counts[x];
@@ -110,11 +123,33 @@ void VcfOutputMafIterator::writeBlock(std::ostream& out, const MafBlock& block) 
           }
           alt += TextTools::toString<char>(chars[x]);
           ac += TextTools::toString(f);
+          snps[x] = ++c;
         }
+      } else {
+        snps[x] = 0;
       }
     }
     if (ac != "") {
-      out << chr << "\t" << (offset + i + 1) << "\t.\t" << chars[refSeq[i]] << "\t" << alt << "\t.\t" << filter << "\tAC=" << ac << endl;
+      out << chr << "\t" << (offset + i + 1) << "\t.\t" << chars[refSeq[i]] << "\t" << alt << "\t.\t" << filter << "\tAC=" << ac;
+      //Write genotpyes:
+      if (genotypes_.size() > 0) {
+        out << "\tGT";
+        for (size_t g = 0; g < genotypes_.size(); ++g) {
+          vector<const MafSequence*> sequences = block.getSequencesForSpecies(genotypes_[g]);
+          if (sequences.size() == 0)
+            out << "\t.";
+          else if (sequences.size() > 1)
+            throw Exception("VcfOutputMafIterator::writeBlock(). Duplicated sequence for species '" + genotypes_[g] + ",.");
+          else {
+            int state = (*sequences[0])[i];
+            if (AlphabetTools::DNA_ALPHABET.isGap(state) || AlphabetTools::DNA_ALPHABET.isUnresolved(state))
+              out << "\t.";
+            else 
+              out << "\t" << snps[state];
+          }
+        }
+      }
+      out << endl;
     }
   }
 }

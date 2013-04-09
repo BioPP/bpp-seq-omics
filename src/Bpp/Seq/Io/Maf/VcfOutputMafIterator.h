@@ -60,10 +60,19 @@ class VcfOutputMafIterator:
   private:
     std::ostream* output_;
     std::string refSpecies_;
+    std::vector<std::string> genotypes_;
 
   public:
-    VcfOutputMafIterator(MafIterator* iterator, std::ostream* out, const std::string& reference) :
-      AbstractFilterMafIterator(iterator), output_(out), refSpecies_(reference)
+    /**
+     * @brief Build a new VcfOutputMafIterator object.
+     *
+     * @param iterator The input iterator.
+     * @param out The output stream where to write the VCF file.
+     * @param reference The species to use as a reference.
+     * @param genotypes A list of species for which genotype information should be written in the VCF file. There will be one extra column per genotype, +1 format column.
+     */
+    VcfOutputMafIterator(MafIterator* iterator, std::ostream* out, const std::string& reference, const std::vector<std::string>& genotypes) :
+      AbstractFilterMafIterator(iterator), output_(out), refSpecies_(reference), genotypes_(genotypes)
     {
       if (output_)
         writeHeader(*output_);
@@ -73,13 +82,15 @@ class VcfOutputMafIterator:
     VcfOutputMafIterator(const VcfOutputMafIterator& iterator) :
       AbstractFilterMafIterator(0),
       output_(iterator.output_),
-      refSpecies_(iterator.refSpecies_)
+      refSpecies_(iterator.refSpecies_),
+      genotypes_(iterator.genotypes_)
     {}
     
     VcfOutputMafIterator& operator=(const VcfOutputMafIterator& iterator)
     {
       output_ = iterator.output_;
       refSpecies_ = iterator.refSpecies_;
+      genotypes_ = iterator.genotypes_;
       return *this;
     }
 
