@@ -73,7 +73,7 @@ void OutputAlignmentMafIterator::writeBlock(std::ostream& out, const MafBlock& b
   SequenceContainerTools::convertContainer<AlignedSequenceContainer, AlignedSequenceContainer, BasicSequence>(block.getAlignment(), aln);
   //Format sequence names:
   vector<string> names(aln.getNumberOfSequences());
-  for (unsigned int i = 0; i < aln.getNumberOfSequences(); ++i) {
+  for (size_t i = 0; i < aln.getNumberOfSequences(); ++i) {
     const MafSequence& mafseq = block.getSequence(i);
     names[i] = mafseq.getSpecies() + "-" + mafseq.getChromosome() + "(" + mafseq.getStrand() + ")/" + TextTools::toString(mafseq.start() + 1) + "-" + TextTools::toString(mafseq.stop() + 1);
   }

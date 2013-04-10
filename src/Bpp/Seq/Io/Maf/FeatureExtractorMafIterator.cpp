@@ -52,7 +52,7 @@ using namespace std;
 
 MafBlock* FeatureExtractor::analyseCurrentBlock_() throw (Exception)
 {
-  if (blockBuffer_.size() == 0) {
+  while (blockBuffer_.size() == 0) {
     //Unless there is no more block in the buffer, we need to parse more:
     START:
     MafBlock* block = iterator_->nextBlock();

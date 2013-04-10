@@ -79,7 +79,7 @@ class OutputAlignmentMafIterator:
      * @param mask Tell if sequences should be printed masked (if applicable).
      */
     OutputAlignmentMafIterator(MafIterator* iterator, std::ostream* out, OAlignment* writer, bool mask = true) :
-      AbstractFilterMafIterator(iterator), output_(out), file_(), mask_(mask), writer_(writer), currentBlockIndex_(1)
+      AbstractFilterMafIterator(iterator), output_(out), file_(), mask_(mask), writer_(writer), currentBlockIndex_(0)
     {
       if (!writer)
         throw Exception("OutputAlignmentMafIterator (constructor 1): sequence writer should not be a NULL pointer!");
@@ -98,7 +98,7 @@ class OutputAlignmentMafIterator:
      * @param mask Tell if sequences should be printed masked (if applicable).
      */
     OutputAlignmentMafIterator(MafIterator* iterator, const std::string& file, OAlignment* writer, bool mask = true) :
-      AbstractFilterMafIterator(iterator), output_(0), file_(file), mask_(mask), writer_(writer), currentBlockIndex_(1)
+      AbstractFilterMafIterator(iterator), output_(0), file_(file), mask_(mask), writer_(writer), currentBlockIndex_(0)
     {
       if (!writer)
         throw Exception("OutputAlignmentMafIterator (constructor 2): sequence writer should not be a NULL pointer!");
