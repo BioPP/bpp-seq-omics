@@ -125,41 +125,87 @@ void SiteFrequencySpectrumMafStatistics::compute(const MafBlock& block)
   unsigned int nbIgnored = 0;
   counts_.assign(categorizer_.getNumberOfCategories(), 0);
   int state;
-  auto_ptr<SiteContainer> alignment(getSiteContainer(block));
-  if (alignment->getNumberOfSequences() > 0) {
+  bool hasOutgroup = (outgroup_ != "");
+  bool isAnalyzable;
+  auto_ptr<SiteContainer> alignment;
+  const Sequence* outgroupSeq = 0;
+  if (hasOutgroup) {
+    isAnalyzable = (block.hasSequenceForSpecies(outgroup_) && block.getNumberOfSequences() > 1);
+    if (isAnalyzable) {
+      //We need to extract the outgroup sequence:
+      outgroupSeq = &block.getSequenceForSpecies(outgroup_); //Here we assume there is only one! Otherwise we take the first one...
+      alignment.reset(getSiteContainer(block));
+      alignment->deleteSequence(outgroupSeq->getName());
+    }
+  } else {
+    isAnalyzable = (block.getNumberOfSequences() > 0);
+    if (isAnalyzable)
+      alignment.reset(getSiteContainer(block));
+  }
+  if (isAnalyzable) {
     for (size_t i = 0; i < block.getNumberOfSites(); ++i) {
       //Note: we do not rely on SiteTool::getCounts as it would be unefficient to count everything.
       const Site& site = alignment->getSite(i);
       map<int, unsigned int> counts;
-      for (unsigned int j = 0; j < site.size(); ++j) {
+      bool isUnresolved = false;
+      bool isSaturated = false;
+      for (size_t j = 0; !isUnresolved && !isSaturated && j < site.size(); ++j) {
         state = site[j];
         if (alphabet_->isGap(state) || alphabet_->isUnresolved(state)) {
-          nbUnresolved++;
-          break;
+          isUnresolved = true;
         } else {
           counts[state]++;
           if (counts.size() > 2) {
-            nbSaturated++;
-            break;
+            isSaturated = true;
           }
         }
       }
-      if (counts.size() > 0) {
+      if (isUnresolved) {
+        nbUnresolved++;
+      } else if (isSaturated) {
+        nbSaturated++;
+      } else if (hasOutgroup && (
+          alignment->getAlphabet()->isGap((*outgroupSeq)[i]) ||
+          alignment->getAlphabet()->isUnresolved((*outgroupSeq)[i]))) {
+        nbUnresolved++;
+      } else {
         //Determine frequency class:
         double count;
         if (counts.size() == 1) {
-          count = 0;
+          if (hasOutgroup) {
+            if (counts.begin()->first == (*outgroupSeq)[i])
+              count = 0; //This is the ancestral state.
+            else
+              count = counts.begin()->second; //This is a derived state.
+          } else {
+            count = 0; //In this case we do not know, so we put 0.
+          }
         } else {
           map<int, unsigned int>::iterator it = counts.begin();
           unsigned int count1 = it->second;
           it++;
           unsigned int count2 = it->second;
-          count = min(count1, count2);
+          if (hasOutgroup) {
+            if (counts.begin()->first == (*outgroupSeq)[i])
+              count = counts.rbegin()->second; //This is the ancestral state, therefore we other one is the derived state.
+            else if (counts.rbegin()->first == (*outgroupSeq)[i])
+              count = counts.begin()->second; //The second state is the ancestral one, therefore the first one is the derived state.
+            else {
+              //None of the two states are ancestral! The position is therefore discarded.
+              isSaturated = true;
+            }
+          } else {
+            count = min(count1, count2); //In this case we do not know, so we take the minimum of the two values.
+          }
         }
-        try {
-          counts_[categorizer_.getCategory(count) - 1]++;
-        } catch (OutOfRangeException& oof) {
-          nbIgnored++;
+        if (isSaturated)
+          nbSaturated++;
+        else {
+          try {
+            counts_[categorizer_.getCategory(count) - 1]++;
+          } catch (OutOfRangeException& oof) {
+            nbIgnored++;
+          }
         }
       }
     }

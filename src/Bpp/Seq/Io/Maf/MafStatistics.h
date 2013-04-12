@@ -375,7 +375,8 @@ class SiteFrequencySpectrumMafStatistics:
         std::vector<double> bounds_;
 
       public:
-        Categorizer(const std::vector<double>& bounds): bounds_(bounds) {
+        Categorizer(const std::vector<double>& bounds):
+          bounds_(bounds) {
           std::sort(bounds_.begin(), bounds_.end());
         }
 
@@ -398,14 +399,16 @@ class SiteFrequencySpectrumMafStatistics:
     const Alphabet* alphabet_;
     Categorizer categorizer_;
     std::vector<unsigned int> counts_;
+    std::string outgroup_;
 
   public:
-    SiteFrequencySpectrumMafStatistics(const Alphabet* alphabet, const std::vector<double>& bounds, const std::vector<std::string>& ingroup):
+    SiteFrequencySpectrumMafStatistics(const Alphabet* alphabet, const std::vector<double>& bounds, const std::vector<std::string>& ingroup, const std::string outgroup = ""):
       AbstractMafStatistics(),
       AbstractSpeciesSelectionMafStatistics(ingroup),
       alphabet_(alphabet),
       categorizer_(bounds),
-      counts_(bounds.size() - 1)
+      counts_(bounds.size() - 1),
+      outgroup_(outgroup)
     {}
 
     SiteFrequencySpectrumMafStatistics(const SiteFrequencySpectrumMafStatistics& stats):
@@ -413,7 +416,8 @@ class SiteFrequencySpectrumMafStatistics:
       AbstractSpeciesSelectionMafStatistics(stats),
       alphabet_(stats.alphabet_),
       categorizer_(stats.categorizer_),
-      counts_(stats.counts_)
+      counts_(stats.counts_),
+      outgroup_(stats.outgroup_)
     {}
 
     SiteFrequencySpectrumMafStatistics& operator=(const SiteFrequencySpectrumMafStatistics& stats) {
@@ -422,6 +426,7 @@ class SiteFrequencySpectrumMafStatistics:
       alphabet_    = stats.alphabet_;
       categorizer_ = stats.categorizer_;
       counts_      = stats.counts_;
+      outgroup_    = stats.outgroup_;
       return *this;
     }
 
