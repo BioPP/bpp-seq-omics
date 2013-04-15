@@ -135,7 +135,6 @@ void SiteFrequencySpectrumMafStatistics::compute(const MafBlock& block)
       //We need to extract the outgroup sequence:
       outgroupSeq = &block.getSequenceForSpecies(outgroup_); //Here we assume there is only one! Otherwise we take the first one...
       alignment.reset(getSiteContainer(block));
-      alignment->deleteSequence(outgroupSeq->getName());
     }
   } else {
     isAnalyzable = (block.getNumberOfSequences() > 0);
