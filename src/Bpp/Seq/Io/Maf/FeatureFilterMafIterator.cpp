@@ -75,15 +75,26 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_() throw (Exception)
       }
       //else
       MultiRange<size_t> mRange = mr->second;
-      mRange.restrictTo(Range<size_t>(refSeq.start(), refSeq.stop() + 1));
+      //mRange.restrictTo(Range<size_t>(refSeq.start(), refSeq.stop() + 1)); jdutheil on 17/04/13: do we really need the +1 here?
+      mRange.restrictTo(refSeq.getRange(true));
       if (mRange.isEmpty()) {
         if (logstream_) {
           (*logstream_ << "FEATURE FILTER: block " << block->getDescription() << " does not contain any feature and was kept as is.").endLine(); 
         }
         return block;
       }
-      std::vector<size_t> tmp = mRange.getBounds(); 
-      std::deque<size_t> refBounds(tmp.begin(), tmp.end()); 
+      std::vector<size_t> tmp = mRange.getBounds();
+
+      //If the reference sequence is on the negative strand, then we have to correct the coordinates:
+      std::deque<size_t> refBounds;
+      if (refSeq.getStrand() == '-') {
+        for (size_t i = 0; i < tmp.size(); ++i)
+        {
+          refBounds.push_front(refSeq.getSrcSize() - tmp[i]);
+        }
+      } else {
+        refBounds = deque<size_t>(tmp.begin(), tmp.end());
+      }
 
       //Now extract corresponding alignments. We use the range to split the original block.
       //Only thing to watch out is the coordinates, refering to the ref species...

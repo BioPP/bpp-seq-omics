@@ -71,11 +71,23 @@ MafBlock* FeatureExtractor::analyseCurrentBlock_() throw (Exception)
         
     RangeSet<size_t> ranges = mr->second;
     if (completeOnly_)
-      ranges.filterWithin(Range<size_t>(refSeq.start(), refSeq.stop()));
+      ranges.filterWithin(refSeq.getRange(true));
     else  
-      ranges.restrictTo(Range<size_t>(refSeq.start(), refSeq.stop()));
+      ranges.restrictTo(refSeq.getRange(true));
     if (ranges.isEmpty())
       goto START;
+
+    //If the reference sequence is on the negative strand, then we have to correct the coordinates:
+    if (refSeq.getStrand() == '-') {
+      RangeSet<size_t> cRanges;
+      for (set<Range<size_t>*>::iterator it = ranges.getSet().begin();
+          it !=  ranges.getSet().end();
+          ++it)
+      {
+        cRanges.addRange(Range<size_t>(refSeq.getSrcSize() - (**it).end(), refSeq.getSrcSize() - (**it).begin()));
+      }
+      ranges = cRanges;
+    }
 
     //We will need to convert to alignment positions, using a sequence walker:
     SequenceWalker walker(refSeq);
