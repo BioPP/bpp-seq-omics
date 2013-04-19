@@ -84,6 +84,7 @@ MafBlock* FeatureExtractor::analyseCurrentBlock_() throw (Exception)
           it !=  ranges.getSet().end();
           ++it)
       {
+        cout << "CONVERT: " << (**it).begin() << ";" << (**it).end() << "\t" << refSeq.getSrcSize() << "\t" << refSeq.getSrcSize() - (**it).end() << ";" << refSeq.getSrcSize() - (**it).begin() << endl;
         cRanges.addRange(Range<size_t>(refSeq.getSrcSize() - (**it).end(), refSeq.getSrcSize() - (**it).begin()));
       }
       ranges = cRanges;
