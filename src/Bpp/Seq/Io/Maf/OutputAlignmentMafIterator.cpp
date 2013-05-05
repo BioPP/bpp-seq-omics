@@ -75,7 +75,10 @@ void OutputAlignmentMafIterator::writeBlock(std::ostream& out, const MafBlock& b
   vector<string> names(aln.getNumberOfSequences());
   for (size_t i = 0; i < aln.getNumberOfSequences(); ++i) {
     const MafSequence& mafseq = block.getSequence(i);
-    names[i] = mafseq.getSpecies() + "-" + mafseq.getChromosome() + "(" + mafseq.getStrand() + ")/" + TextTools::toString(mafseq.start() + 1) + "-" + TextTools::toString(mafseq.stop() + 1);
+    if (mafseq.hasCoordinates())
+      names[i] = mafseq.getSpecies() + "-" + mafseq.getChromosome() + "(" + mafseq.getStrand() + ")/" + TextTools::toString(mafseq.start() + 1) + "-" + TextTools::toString(mafseq.stop() + 1);
+    else
+      names[i] = mafseq.getSpecies();
   }
   aln.setSequencesNames(names);
   writer_->writeAlignment(out, aln);
