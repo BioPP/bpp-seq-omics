@@ -92,7 +92,7 @@ void CharacterCountsMafStatistics::compute(const MafBlock& block)
   result_.setValue("Unresolved", countUnres);
 }
 
-SiteContainer* AbstractSpeciesSelectionMafStatistics::getSiteContainer(const MafBlock& block)
+SiteContainer* AbstractSpeciesSelectionMafStatistics::getSiteContainer_(const MafBlock& block)
 {
   VectorSiteContainer* alignment = new VectorSiteContainer(block.getAlignment().getAlphabet());
   for (size_t i = 0; i < species_.size(); ++i) {
@@ -104,6 +104,35 @@ SiteContainer* AbstractSpeciesSelectionMafStatistics::getSiteContainer(const Maf
     }
   }
   return alignment;
+}
+
+AbstractSpeciesMultipleSelectionMafStatistics::AbstractSpeciesMultipleSelectionMafStatistics(const std::vector< std::vector<std::string> >& species):
+  species_(species)
+{
+  size_t n = VectorTools::vectorUnion(species).size();
+  size_t m = 0;
+  for (size_t i =  0; i < species.size(); ++i)
+    m += species_[i].size();
+  if (m != n)
+    throw Exception("AbstractSpeciesMultipleSelectionMafStatistics (constructor). Species selections must be fully distinct.");
+}
+
+vector<SiteContainer*> AbstractSpeciesMultipleSelectionMafStatistics::getSiteContainers_(const MafBlock& block)
+{
+  vector<SiteContainer*> alignments;
+  for (size_t k = 0; k < species_.size(); ++k) {
+    VectorSiteContainer* alignment = new VectorSiteContainer(block.getAlignment().getAlphabet());
+    for (size_t i = 0; i < species_[k].size(); ++i) {
+      if (block.hasSequenceForSpecies(species_[k][i])) {
+        vector<const MafSequence*> selection = block.getSequencesForSpecies(species_[k][i]);
+        for (size_t j = 0; j < selection.size(); ++j) {
+          alignment->addSequence(*selection[j]);
+        }
+      }
+    }
+    alignments.push_back(alignment);
+  }
+  return alignments;
 }
 
 vector<string> SiteFrequencySpectrumMafStatistics::getSupportedTags() const
@@ -134,12 +163,12 @@ void SiteFrequencySpectrumMafStatistics::compute(const MafBlock& block)
     if (isAnalyzable) {
       //We need to extract the outgroup sequence:
       outgroupSeq = &block.getSequenceForSpecies(outgroup_); //Here we assume there is only one! Otherwise we take the first one...
-      alignment.reset(getSiteContainer(block));
+      alignment.reset(getSiteContainer_(block));
     }
   } else {
     isAnalyzable = (block.getNumberOfSequences() > 0);
     if (isAnalyzable)
-      alignment.reset(getSiteContainer(block));
+      alignment.reset(getSiteContainer_(block));
   }
   if (isAnalyzable) {
     for (size_t i = 0; i < block.getNumberOfSites(); ++i) {
@@ -228,12 +257,12 @@ vector<string> SiteMafStatistics::getSupportedTags() const
 
 void SiteMafStatistics::compute(const MafBlock& block)
 {
-  auto_ptr<SiteContainer> alignment(getSiteContainer(block));
+  auto_ptr<SiteContainer> alignment(getSiteContainer_(block));
   unsigned int nbNg = 0;
   unsigned int nbCo = 0;
   unsigned int nbPi = 0;
   if (alignment->getNumberOfSequences() > 0) {
-    for (unsigned int i = 0; i < alignment->getNumberOfSites(); ++i) {
+    for (size_t i = 0; i < alignment->getNumberOfSites(); ++i) {
       if (!SiteTools::hasGap(alignment->getSite(i)))
         nbNg++;
       if (SiteTools::isComplete(alignment->getSite(i)))
@@ -245,5 +274,122 @@ void SiteMafStatistics::compute(const MafBlock& block)
   result_.setValue("NbWithoutGap", nbNg);
   result_.setValue("NbComplete", nbCo);
   result_.setValue("NbParsimonyInformative", nbPi);
+}
+
+vector<string> PolymorphismMafStatistics::getSupportedTags() const
+{
+  vector<string> tags;
+  tags.push_back("F");
+  tags.push_back("P");
+  tags.push_back("FP");
+  tags.push_back("PF");
+  tags.push_back("FF");
+  tags.push_back("X");
+  tags.push_back("FX");
+  tags.push_back("PX");
+  tags.push_back("XF");
+  tags.push_back("XP");
+  return tags;
+}
+
+vector<int> PolymorphismMafStatistics::getPatterns_(const SiteContainer& sites)
+{
+  vector<int> patterns(sites.getNumberOfSites());
+  for (size_t i = 0; i < sites.getNumberOfSites(); ++i) {
+    const Site& site = sites.getSite(i);
+    int s = -1; //Unresolved
+    if (SiteTools::isComplete(site)) {
+      if (SiteTools::isConstant(site)) {
+        s = site[0]; //The fixed state
+      } else {
+        s = -10; //Polymorphic.
+      }
+    }
+    patterns[i] = s;
+  }
+  return patterns;
+}
+
+void PolymorphismMafStatistics::compute(const MafBlock& block)
+{
+  vector<SiteContainer*> alignments(getSiteContainers_(block));
+  unsigned int nbF = 0;
+  unsigned int nbP = 0;
+  unsigned int nbFF = 0;
+  unsigned int nbFP = 0;
+  unsigned int nbPF = 0;
+  unsigned int nbX = 0;
+  unsigned int nbFX = 0;
+  unsigned int nbPX = 0;
+  unsigned int nbXF = 0;
+  unsigned int nbXP = 0;
+  //Get all patterns:
+  vector<int> patterns1(block.getNumberOfSites(), -1);
+  vector<int> patterns2(block.getNumberOfSites(), -1); 
+  if (alignments[0]->getNumberOfSequences() > 0) {
+    patterns1 = getPatterns_(*alignments[0]);
+  }
+  if (alignments[1]->getNumberOfSequences() > 0) {
+    patterns2 = getPatterns_(*alignments[1]);
+  }
+  //Compare patterns:
+  for (size_t i = 0; i < block.getNumberOfSites(); ++i) {
+    int p1 = patterns1[i];  
+    int p2 = patterns2[i];
+    switch (p1) {
+      case -1 :
+        switch (p2) {
+          case -1 :
+            nbX++;
+            break;
+          case -10 :
+            nbXP++;
+            break;
+          default :
+            nbXF++;
+        }
+        break;            
+      
+      case -10 :
+        switch (p2) {
+          case -1 :
+            nbPX++;
+            break;
+          case -10 :
+            nbP++;
+            break;
+          default :
+            nbPF++;
+        }
+        break;            
+
+      default :
+        switch (p2) {
+          case -1 :
+            nbFX++;
+            break;
+          case -10 :
+            nbFP++;
+            break;
+          default :
+            if (p1 == p2)
+              nbF++;
+            else
+              nbFF++;
+        }
+    }
+  }
+
+  //Set results:
+  result_.setValue("F", nbF);
+  result_.setValue("P", nbP);
+  result_.setValue("FF", nbFF);
+  result_.setValue("FP", nbFP);
+  result_.setValue("PF", nbPF);
+  result_.setValue("X", nbX);
+  result_.setValue("FX", nbFX);
+  result_.setValue("PX", nbPX);
+  result_.setValue("XF", nbXF);
+  result_.setValue("XP", nbXP);
 }
 

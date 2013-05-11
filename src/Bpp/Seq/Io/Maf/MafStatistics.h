@@ -342,7 +342,7 @@ class CharacterCountsMafStatistics:
 /**
  * @brief Partial implementation of MafStatistics for method working on a subset of species, in a site-wise manner.
  *
- * This class stores a seleciton of species and create for each block the corresponding SiteContainer.
+ * This class stores a selection of species and create for each block the corresponding SiteContainer instance.
  */
 class AbstractSpeciesSelectionMafStatistics:
   public virtual MafStatistics
@@ -355,7 +355,27 @@ class AbstractSpeciesSelectionMafStatistics:
       species_(species) {}
 
   protected:
-    SiteContainer* getSiteContainer(const MafBlock& block);
+    SiteContainer* getSiteContainer_(const MafBlock& block);
+
+};
+
+
+/**
+ * @brief Partial implementation of MafStatistics for method working on multiple distinct subsets of species, in a site-wise manner.
+ *
+ * This class stores two non-overlapping selections of species and create for each block the corresponding SiteContainer instances.
+ */
+class AbstractSpeciesMultipleSelectionMafStatistics:
+  public virtual MafStatistics
+{
+  private:
+    std::vector< std::vector<std::string> > species_;
+
+  public:
+    AbstractSpeciesMultipleSelectionMafStatistics(const std::vector< std::vector<std::string> >& species);
+
+  protected:
+    std::vector<SiteContainer*> getSiteContainers_(const MafBlock& block);
 
 };
 
@@ -439,6 +459,7 @@ class SiteFrequencySpectrumMafStatistics:
     std::vector<std::string> getSupportedTags() const;
 };
 
+
 /**
  * @brief Compute a few site statistics in a maf block.
  *
@@ -465,6 +486,45 @@ class SiteMafStatistics:
     void compute(const MafBlock& block);
     std::vector<std::string> getSupportedTags() const;
 };
+
+
+/**
+ * @brief Counts number of polymorphic / fixed sites in two populations.
+ *
+ * The two populations are defined as two distinct sets of species.
+ * The following counts are computed and returned:
+ * - P: number of sites polymorphic in both populations
+ * - F: number of sites fixed in both populations
+ * - FF: number of sites fixed in both populations, but with distinct states
+ * - PF / FP: number of sites polymorphic in one species and fixed in the other.
+ * - X: unresolved (because of gap or generic character)
+ * - FX / PX / XF / XP: unresolved in one population
+ */
+class PolymorphismMafStatistics:
+  public AbstractMafStatistics,
+  public AbstractSpeciesMultipleSelectionMafStatistics
+{
+  public:
+    PolymorphismMafStatistics(const std::vector< std::vector<std::string> >& species):
+      AbstractMafStatistics(),
+      AbstractSpeciesMultipleSelectionMafStatistics(species)
+    {
+      if (species.size() != 2)
+        throw Exception("PolymorphismStatistics: exactly two species selection should be provided.");
+    }
+
+    virtual ~PolymorphismMafStatistics() {}
+
+  public:
+    std::string getShortName() const { return "PolymorphismStatistics"; }
+    std::string getFullName() const { return "Polymorphism statistics."; }
+    void compute(const MafBlock& block);
+    std::vector<std::string> getSupportedTags() const;
+
+  private:
+    static std::vector<int> getPatterns_(const SiteContainer& sites); 
+};
+
 
 } // end of namespace bpp
 
