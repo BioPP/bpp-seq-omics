@@ -109,7 +109,7 @@ class MafSequence:
     }
 
     size_t stop() const { 
-      if (hasCoordinates_) return begin_ + size_ - 1;
+      if (hasCoordinates_) return begin_ + size_;
       else throw Exception("MafSequence::stop(). Sequence " + getName() + " does not have coordinates.");
     }
 

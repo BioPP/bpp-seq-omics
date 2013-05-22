@@ -102,6 +102,7 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_() throw (Exception)
 
       int gap = refSeq.getAlphabet()->getGapCharacterCode();
       long int refPos = static_cast<long int>(refSeq.start()) - 1;
+      //long int refPos = refSeq.getStrand() == '-' ? static_cast<long int>(refSeq.getSrcSize() - refSeq.start()) - 1 : static_cast<long int>(refSeq.start()) - 1;
       std::vector<size_t> pos;
       if (verbose_) {
         ApplicationTools::message->endLine();
@@ -123,14 +124,14 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_() throw (Exception)
         ApplicationTools::displayTaskDone();
 
       //Check if the last bound matches the end of the alignment:
-      if (refBounds.size() > 0 && refBounds.front() == refSeq.stop() + 1) {
+      if (refBounds.size() > 0 && refBounds.front() == refSeq.stop()) {
         pos.push_back(refSeq.size());
         refBounds.pop_front();
       }
 
       if (refBounds.size() > 0) {
         VectorTools::print(vector<size_t>(refBounds.begin(), refBounds.end()));
-        throw Exception("FeatureFilterMafIterator::nextBlock(). An error occurred here, " + TextTools::toString(refBounds.size()) + " coordinates are left... this is most likely a bug, please report!");
+        throw Exception("FeatureFilterMafIterator::nextBlock(). An error occurred here, " + TextTools::toString(refBounds.size()) + " coordinates are left, in sequence " + refSeq.getDescription() + "... this is most likely a bug, please report!");
       }
 
       //Next step is simply to split the black according to the translated coordinates:
