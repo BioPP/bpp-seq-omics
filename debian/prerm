@@ -24,4 +24,6 @@ if [ "$1" = "remove" ]; then
   removeGeneric /usr/include/Bpp
 fi
 
+#DEBHELPER#
+
 exit 0

@@ -35,11 +35,19 @@ createGeneric() {
   done;
 }
 
-if [ "$1" = "remove" ]; then
-  # Automatically added by dh_makeshlibs
-  ldconfig
-  # Actualize .all files
-  createGeneric /usr/include/Bpp
-fi
+case "$1" in
+  remove)
+    # Automatically added by dh_makeshlibs
+    ldconfig
+    # Actualize .all files
+    createGeneric /usr/include/Bpp
+  ;;
+  *)
+    echo "postinst called with unknown argument \`\$1'" >&2
+    exit 0
+  ;;
+esac
+
+#DEBHELPER#
 
 exit 0
