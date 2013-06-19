@@ -44,6 +44,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 //From bpp-seq:
 #include <Bpp/Seq/Sequence.h>
+#include <Bpp/Seq/GeneticCode/GeneticCode.h>
 
 namespace bpp {
 
@@ -69,10 +70,11 @@ class SequenceFeatureTools
      *
      * @param seq The Sequence where to find ORF. Must be a nucleic sequence.
      * @param featSet A SequenceFeatureSet to fill with the annotations.
+     * @param gcode The genetic code to use.
      * @return The number of ORF found.
      * @author Sylvain Gaillard
      */
-    static unsigned int getOrfs(const Sequence& seq, SequenceFeatureSet& featSet);
+    static unsigned int getOrfs(const Sequence& seq, SequenceFeatureSet& featSet, const GeneticCode& gCode);
 
 };
 

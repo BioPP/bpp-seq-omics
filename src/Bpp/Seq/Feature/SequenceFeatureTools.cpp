@@ -65,20 +65,21 @@ Sequence* SequenceFeatureTools::extract(const Sequence& seq, const SeqRange& ran
 
 /******************************************************************************/
 
-unsigned int SequenceFeatureTools::getOrfs(const Sequence& seq, SequenceFeatureSet& featSet) {
+unsigned int SequenceFeatureTools::getOrfs(const Sequence& seq, SequenceFeatureSet& featSet, const GeneticCode& gCode)
+{
   if (! AlphabetTools::isNucleicAlphabet(seq.getAlphabet())) {
     throw AlphabetException("SequenceFeatureTools::getOrfs: Sequence alphabet must be nucleic!", seq.getAlphabet());
   }
   unsigned int orfCpt = 0;
-  StandardCodonAlphabet codonAlpha(dynamic_cast<const NucleicAlphabet*>(seq.getAlphabet()));
+  const CodonAlphabet* codonAlpha = gCode.getSourceAlphabet();
   std::vector< std::vector<size_t> > starts(3), stops(3);
   size_t phase = 0;
   for (size_t p = 0 ; p < seq.size() - 2 ; p++) {
     phase = p % 3;
-    if (codonAlpha.isInit(codonAlpha.getCodon(seq.getValue(p), seq.getValue(p + 1), seq.getValue(p + 2)))) {
+    if (gCode.isStart(codonAlpha->getCodon(seq.getValue(p), seq.getValue(p + 1), seq.getValue(p + 2)))) {
       starts[phase].push_back(p);
       //std::cerr << "Start: " << p << " (" << phase << ")" << std::endl;
-    } else if (codonAlpha.isStop(codonAlpha.getCodon(seq.getValue(p), seq.getValue(p + 1), seq.getValue(p + 2)))) {
+    } else if (gCode.isStop(codonAlpha->getCodon(seq.getValue(p), seq.getValue(p + 1), seq.getValue(p + 2)))) {
       stops[phase].push_back(p);
       //std::cerr << "Stop:  " << p << " (" << phase << ")" << std::endl;
     }
