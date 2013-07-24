@@ -44,6 +44,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <Bpp/Seq/SequenceWithQuality.h>
 #include <Bpp/Seq/Container/VectorSiteContainer.h>
 #include <Bpp/Seq/SiteTools.h>
+#include <Bpp/Seq/SequenceWalker.h>
 
 using namespace bpp;
 
@@ -81,6 +82,7 @@ void VcfOutputMafIterator::writeBlock(std::ostream& out, const MafBlock& block) 
 {
   const MafSequence& refSeq = block.getSequenceForSpecies(refSpecies_);
   string chr = refSeq.getChromosome();
+  SequenceWalker walker(refSeq);
   size_t offset = refSeq.start();
   int gap = refSeq.getAlphabet()->getGapCharacterCode();
   string chars = "";
@@ -130,7 +132,7 @@ void VcfOutputMafIterator::writeBlock(std::ostream& out, const MafBlock& block) 
       }
     }
     if (ac != "") {
-      out << chr << "\t" << (offset + i + 1) << "\t.\t" << chars[refSeq[i]] << "\t" << alt << "\t.\t" << filter << "\tAC=" << ac;
+      out << chr << "\t" << (offset + walker.getSequencePosition(i) + 1) << "\t.\t" << chars[refSeq[i]] << "\t" << alt << "\t.\t" << filter << "\tAC=" << ac;
       //Write genotpyes:
       if (genotypes_.size() > 0) {
         out << "\tGT";
