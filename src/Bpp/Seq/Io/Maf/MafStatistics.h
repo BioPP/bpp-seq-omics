@@ -44,6 +44,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 //From bpp-core:
 #include <Bpp/Utils/MapTools.h>
+#include <Bpp/Numeric/VectorTools.h>
 
 //From the STL:
 #include <map>
@@ -383,7 +384,8 @@ class AbstractSpeciesMultipleSelectionMafStatistics:
 /**
  * @brief Compute the Site Frequency Spectrum of a maf block.
  *
- * The ancestral states are considered as unknown, so that 10000 and 11110 sites are treated equally.
+ * If no outgroup is provided, the ancestral states are considered as unknown
+ * and the unfolded spectrum is computed, so that 10000 and 11110 sites are treated equally.
  */
 class SiteFrequencySpectrumMafStatistics:
   public AbstractMafStatistics,
@@ -458,6 +460,65 @@ class SiteFrequencySpectrumMafStatistics:
     void compute(const MafBlock& block);
     std::vector<std::string> getSupportedTags() const;
 };
+
+
+/**
+ * @brief Compute the frequency of site patterns for a quadruplet of species.
+ *
+ * Only parsimony informative sites are categorized.
+ * Species: A B C D
+ * P1       1 1 0 0
+ * P2       0 1 1 0
+ * P3       1 0 1 0
+ * Sites with more than two states are ignored, as well as sites containing gaps or unresolved characters.
+ */
+class FourSpeciesPatternCountsMafStatistics:
+  public AbstractMafStatistics,
+  public AbstractSpeciesSelectionMafStatistics
+{
+  private:
+    const Alphabet* alphabet_;
+    std::vector<unsigned int> counts_;
+
+  public:
+    FourSpeciesPatternCountsMafStatistics(
+        const Alphabet* alphabet,
+        const std::vector<std::string>& species):
+      AbstractMafStatistics(),
+      AbstractSpeciesSelectionMafStatistics(species),
+      alphabet_(alphabet),
+      counts_(6)
+    {
+      if (species.size() != 4)
+        throw Exception("FourSpeciesPatternCountsMafStatistics, constructor: 4 species should be provided.");
+      if (VectorTools::unique(species).size() != 4)
+        throw Exception("FourSpeciesPatternCountsMafStatistics, constructor: duplicated species name!");
+    }
+
+    FourSpeciesPatternCountsMafStatistics(const FourSpeciesPatternCountsMafStatistics& stats):
+      AbstractMafStatistics(),
+      AbstractSpeciesSelectionMafStatistics(stats),
+      alphabet_(stats.alphabet_),
+      counts_(stats.counts_)
+    {}
+
+    FourSpeciesPatternCountsMafStatistics& operator=(const FourSpeciesPatternCountsMafStatistics& stats) {
+      AbstractMafStatistics::operator=(stats);
+      AbstractSpeciesSelectionMafStatistics::operator=(stats);
+      alphabet_    = stats.alphabet_;
+      counts_      = stats.counts_;
+      return *this;
+    }
+
+    virtual ~FourSpeciesPatternCountsMafStatistics() {}
+
+  public:
+    std::string getShortName() const { return "FourSpeciesPatternCounts"; }
+    std::string getFullName() const { return "FourSpecies pattern counts."; }
+    void compute(const MafBlock& block);
+    std::vector<std::string> getSupportedTags() const;
+};
+
 
 
 /**

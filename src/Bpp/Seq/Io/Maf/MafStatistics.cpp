@@ -246,6 +246,55 @@ void SiteFrequencySpectrumMafStatistics::compute(const MafBlock& block)
   }
 }
 
+vector<string> FourSpeciesPatternCountsMafStatistics::getSupportedTags() const
+{
+  vector<string> tags;
+  tags.push_back("f1100");
+  tags.push_back("f0110");
+  tags.push_back("f1010");
+  tags.push_back("Ignored");
+  return tags;
+}
+
+void FourSpeciesPatternCountsMafStatistics::compute(const MafBlock& block)
+{
+  counts_.assign(6, 0);
+  auto_ptr<SiteContainer> alignment(getSiteContainer_(block));
+  if (alignment->getNumberOfSequences() == 4) {
+    unsigned int nbIgnored = 0;
+    for (size_t i = 0; i < block.getNumberOfSites(); ++i) {
+      const Site& site = alignment->getSite(i);
+      if (SiteTools::isComplete(site)) {
+        if (site[0] == site[1] &&
+            site[2] != site[1] &&
+            site[3] == site[2])
+          counts_[0]++;
+        else if (site[1] == site[2] &&
+            site[1] != site[0] &&
+            site[3] == site[0])
+          counts_[1]++;
+        else if (site[0] == site[2] &&
+            site[1] != site[0] &&
+            site[3] == site[1])
+          counts_[2]++;
+      } else {
+        nbIgnored++;
+      }
+    }
+    result_.setValue("f1100", counts_[0]);
+    result_.setValue("f0110", counts_[1]);
+    result_.setValue("f1010", counts_[2]);
+    result_.setValue("Ignored", nbIgnored);
+  } else {
+    result_.setValue("f1100", 0);
+    result_.setValue("f0110", 0);
+    result_.setValue("f1010", 0);
+    result_.setValue("Ignored", static_cast<double>(block.getNumberOfSites()));
+  }
+}
+
+
+
 vector<string> SiteMafStatistics::getSupportedTags() const
 {
   vector<string> tags;
