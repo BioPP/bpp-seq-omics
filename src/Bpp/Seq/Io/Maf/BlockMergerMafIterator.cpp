@@ -63,7 +63,7 @@ MafBlock* BlockMergerMafIterator::analyseCurrentBlock_() throw (Exception)
 
         if (seq1->stop() > seq2->start())
           return currentBlock_;
-        size_t space = seq2->start() - seq1->stop() - 1;
+        size_t space = seq2->start() - seq1->stop();
         if (space > maxDist_)
           return currentBlock_;
         if (i == 0)
