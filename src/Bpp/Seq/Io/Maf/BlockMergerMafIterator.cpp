@@ -61,7 +61,7 @@ MafBlock* BlockMergerMafIterator::analyseCurrentBlock_() throw (Exception)
         if (!seq1->hasCoordinates() || !seq2->hasCoordinates())
           throw Exception("BlockMergerMafIterator::nextBlock. Species '" + species_[i] + "' is missing coordinates in at least one block.");
 
-        if (seq1->stop() >= seq2->start())
+        if (seq1->stop() > seq2->start())
           return currentBlock_;
         size_t space = seq2->start() - seq1->stop() - 1;
         if (space > maxDist_)
