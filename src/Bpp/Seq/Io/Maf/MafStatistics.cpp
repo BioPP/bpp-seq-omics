@@ -293,8 +293,6 @@ void FourSpeciesPatternCountsMafStatistics::compute(const MafBlock& block)
   }
 }
 
-
-
 vector<string> SiteMafStatistics::getSupportedTags() const
 {
   vector<string> tags;
@@ -440,5 +438,36 @@ void PolymorphismMafStatistics::compute(const MafBlock& block)
   result_.setValue("PX", nbPX);
   result_.setValue("XF", nbXF);
   result_.setValue("XP", nbXP);
+}
+
+vector<string> SequenceDiversityMafStatistics::getSupportedTags() const
+{
+  vector<string> tags;
+  tags.push_back("NbSeggregating");
+  tags.push_back("WattersonTheta");
+  return tags;
+}
+
+void SequenceDiversityMafStatistics::compute(const MafBlock& block)
+{
+  auto_ptr<SiteContainer> alignment(getSiteContainer_(block));
+  unsigned int nbSeg = 0;
+  if (alignment->getNumberOfSequences() > 0) {
+    for (size_t i = 0; i < alignment->getNumberOfSites(); ++i) {
+      const Site& site = alignment->getSite(i);
+      if (SiteTools::isComplete(site) && !SiteTools::isConstant(site))
+        nbSeg++;
+    }
+  }
+  double wt = 0;
+  if (nbSeg > 0) {
+    size_t n = alignment->getNumberOfSequences();
+    double hf = 0;
+    for (double i = 1; i < n; ++i)
+      hf += 1. / i;
+    wt = static_cast<double>(nbSeg) / hf;
+  }
+  result_.setValue("NbSeggregating", nbSeg);
+  result_.setValue("WattersonTheta", wt);
 }
 

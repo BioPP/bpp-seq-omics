@@ -587,6 +587,38 @@ class PolymorphismMafStatistics:
 };
 
 
+
+/**
+ * @brief Provide estimates of sequence diversity.
+ *
+ * - Number of segregating sites
+ * - Watterson's theta
+ *
+ * Only fully resolved sites are analyzed (no gap, no generic character).
+ */
+class SequenceDiversityMafStatistics:
+  public AbstractMafStatistics,
+  public AbstractSpeciesSelectionMafStatistics
+{
+  public:
+    SequenceDiversityMafStatistics(const std::vector<std::string>& ingroup):
+      AbstractMafStatistics(),
+      AbstractSpeciesSelectionMafStatistics(ingroup)
+    {}
+
+    virtual ~SequenceDiversityMafStatistics() {}
+
+  public:
+    std::string getShortName() const { return "SequenceDiversityStatistics"; }
+    std::string getFullName() const { return "Sequence diversity statistics."; }
+    void compute(const MafBlock& block);
+    std::vector<std::string> getSupportedTags() const;
+
+  private:
+    static std::vector<int> getPatterns_(const SiteContainer& sites); 
+};
+
+
 } // end of namespace bpp
 
 #endif //_MAFSTATISTICS_H_
