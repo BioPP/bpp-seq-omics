@@ -592,7 +592,7 @@ class PolymorphismMafStatistics:
  * @brief Provide estimates of sequence diversity.
  *
  * - Number of segregating sites
- * - Watterson's theta
+ * - Watterson's theta (per site)
  *
  * Only fully resolved sites are analyzed (no gap, no generic character).
  */

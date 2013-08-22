@@ -452,11 +452,15 @@ void SequenceDiversityMafStatistics::compute(const MafBlock& block)
 {
   auto_ptr<SiteContainer> alignment(getSiteContainer_(block));
   unsigned int nbSeg = 0;
+  unsigned int nbTot = 0;
   if (alignment->getNumberOfSequences() > 0) {
     for (size_t i = 0; i < alignment->getNumberOfSites(); ++i) {
       const Site& site = alignment->getSite(i);
-      if (SiteTools::isComplete(site) && !SiteTools::isConstant(site))
-        nbSeg++;
+      if (SiteTools::isComplete(site)) {
+        nbTot++;
+        if (!SiteTools::isConstant(site))
+          nbSeg++;
+      }
     }
   }
   double wt = 0;
@@ -465,7 +469,7 @@ void SequenceDiversityMafStatistics::compute(const MafBlock& block)
     double hf = 0;
     for (double i = 1; i < n; ++i)
       hf += 1. / i;
-    wt = static_cast<double>(nbSeg) / hf;
+    wt = static_cast<double>(nbSeg) / (static_cast<double>(nbTot) * hf);
   }
   result_.setValue("NbSeggregating", nbSeg);
   result_.setValue("WattersonTheta", wt);
