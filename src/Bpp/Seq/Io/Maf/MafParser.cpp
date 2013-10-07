@@ -88,7 +88,8 @@ MafBlock* MafParser::analyseCurrentBlock_() throw (Exception)
         KeyvalTools::multipleKeyvals(line.substr(2), args, " ");
 
         if (args.find("score") != args.end())
-          block->setScore(TextTools::toDouble(args["score"]));
+          if (args["score"] != "NA")
+            block->setScore(TextTools::toDouble(args["score"]));
     
         if (args.find("pass") != args.end())
           block->setPass(TextTools::to<unsigned int>(args["pass"]));
