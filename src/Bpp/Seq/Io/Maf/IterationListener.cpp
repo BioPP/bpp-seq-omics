@@ -57,7 +57,7 @@ void CsvStatisticsOutputIterationListener::iterationStarts()
 
 void CsvStatisticsOutputIterationListener::iterationMoves(const MafBlock& currentBlock)
 {
-  const vector<double>& values = statsIterator_->getResults();
+  const vector<const BppNumberI*>& values = statsIterator_->getResults();
   if (currentBlock.hasSequenceForSpecies(refSpecies_)) {
     const MafSequence& refSeq = currentBlock.getSequenceForSpecies(refSpecies_);
     if (refSeq.hasCoordinates()) 
@@ -68,7 +68,7 @@ void CsvStatisticsOutputIterationListener::iterationMoves(const MafBlock& curren
     *output_ << "NA" << sep_ << "NA" << sep_ << "NA";
   }
   for (size_t i = 0; i < values.size(); ++i) {
-    *output_ << sep_ << values[i];
+    *output_ << sep_ << (values[i] ? values[i]->toString() : "NA");
   }
   output_->endLine();
 }

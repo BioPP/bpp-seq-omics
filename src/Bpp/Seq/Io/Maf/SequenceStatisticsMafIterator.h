@@ -67,7 +67,7 @@ class SequenceStatisticsMafIterator:
 {
   private:
     std::vector<MafStatistics*> statistics_;
-    std::vector<double> results_;
+    std::vector<const BppNumberI*> results_;
     std::vector<std::string> names_;
 
   public:
@@ -94,7 +94,7 @@ class SequenceStatisticsMafIterator:
     }
 
   public:
-    const std::vector<double>& getResults() const { return results_; }
+    const std::vector<const BppNumberI*>& getResults() const { return results_; }
     const std::vector<std::string>& getResultsColumnNames() const { return names_; }
 
   private:

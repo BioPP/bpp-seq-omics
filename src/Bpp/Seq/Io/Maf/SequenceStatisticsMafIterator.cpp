@@ -80,9 +80,9 @@ MafBlock* SequenceStatisticsMafIterator::analyseCurrentBlock_() throw (Exception
       tags = statistics_[i]->getSupportedTags();
       for (size_t j = 0; j < tags.size(); ++j) {
         if (result.hasValue(tags[j])) {
-          results_[k] = result.getValue(tags[j]);
+          results_[k] = result.getValue(tags[j]).clone();
         } else {
-          results_[k] = NumConstants::NaN();
+          results_[k] = 0;
         }
         k++;
       }

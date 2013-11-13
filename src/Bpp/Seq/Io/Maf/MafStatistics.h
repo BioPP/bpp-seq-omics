@@ -45,6 +45,7 @@ knowledge of the CeCILL license and that you accept its terms.
 //From bpp-core:
 #include <Bpp/Utils/MapTools.h>
 #include <Bpp/Numeric/VectorTools.h>
+#include <Bpp/Numeric/Number.h>
 
 //From the STL:
 #include <map>
@@ -63,27 +64,68 @@ namespace bpp {
 class MafStatisticsResult
 {
   protected:
-    mutable std::map<std::string, double> values_;
+    mutable std::map<std::string, BppNumberI*> values_;
 
   public:
     MafStatisticsResult(): values_() {}
     virtual ~MafStatisticsResult() {}
 
+    MafStatisticsResult(const MafStatisticsResult& msr): values_()
+    {
+      for (std::map<std::string, BppNumberI*>::const_iterator it = msr.values_.begin();
+          it != msr.values_.end();
+          ++it) {
+        values_[it->first] = it->second->clone();
+      }
+    }
+
   public:
-    virtual double getValue(const std::string& tag) const throw (Exception) {
-      std::map<std::string, double>::iterator it = values_.find(tag);
+    virtual const BppNumberI& getValue(const std::string& tag) const throw (Exception) {
+      std::map<std::string, BppNumberI*>::iterator it = values_.find(tag);
       if (it != values_.end())
-        return it->second;
+        return *it->second;
       else
         throw Exception("MafStatisticsResult::getValue(). No value found for tag: " + tag + ".");
     }
+
     /**
      * @brief Associate a value to a certain tag. Any existing tag will be overwritten
      *
      * @param tag The name of the value to associate.
      * @param value The value to associate to the tag.
      */
-    virtual void setValue(const std::string& tag, double value) throw (Exception) { values_[tag] = value; }
+    virtual void setValue(const std::string& tag, double value) throw (Exception) {
+      if (values_[tag]) {
+        delete values_[tag];
+      }
+      values_[tag] = new BppDouble(value);
+    }
+
+    /**
+     * @brief Associate a value to a certain tag. Any existing tag will be overwritten
+     *
+     * @param tag The name of the value to associate.
+     * @param value The value to associate to the tag.
+     */
+    virtual void setValue(const std::string& tag, int value) throw (Exception) {
+      if (values_[tag]) {
+        delete values_[tag];
+      }
+      values_[tag] = new BppInteger(value);
+    }
+
+    /**
+     * @brief Associate a value to a certain tag. Any existing tag will be overwritten
+     *
+     * @param tag The name of the value to associate.
+     * @param value The value to associate to the tag.
+     */
+    virtual void setValue(const std::string& tag, unsigned int value) throw (Exception) {
+      if (values_[tag]) {
+        delete values_[tag];
+      }
+      values_[tag] = new BppUnsignedInteger(value);
+    }
 
     /**
      * @return A boolean saying whether a value is available for the given tag.
@@ -115,22 +157,43 @@ class SimpleMafStatisticsResult:
     virtual ~SimpleMafStatisticsResult() {}
 
   public:
-    virtual double getValue() const { return values_[name_]; }
+    virtual const BppNumberI& getValue() const { return *values_[name_]; }
 
-    /**
-     * @brief Associate a value to a certain tag. Any existing tag will be overwritten
-     *
-     * @param tag The name of the value to associate.
-     * @param value The value to associate to the tag.
-     */
     virtual void setValue(const std::string& tag, double value) throw (Exception) {
       if (tag == name_)
-        values_[tag] = value;
+        setValue(value);
       else
         throw Exception("SimpleMafStatisticsResult::setValue(). Unvalid tag name: " + tag + ".");
     }
-    
-    virtual void setValue(double value) { values_[name_] = value; }
+ 
+    virtual void setValue(const std::string& tag, int value) throw (Exception) {
+      if (tag == name_)
+        setValue(value);
+      else
+        throw Exception("SimpleMafStatisticsResult::setValue(). Unvalid tag name: " + tag + ".");
+    }
+ 
+    virtual void setValue(const std::string& tag, unsigned int value) throw (Exception) {
+      if (tag == name_)
+        setValue(value);
+      else
+        throw Exception("SimpleMafStatisticsResult::setValue(). Unvalid tag name: " + tag + ".");
+    }
+   
+    virtual void setValue(double value) {
+      if (values_[name_]) delete values_[name_];
+      values_[name_] = new BppDouble(value);
+    }
+
+    virtual void setValue(int value) {
+      if (values_[name_]) delete values_[name_];
+      values_[name_] = new BppInteger(value);
+    }
+
+    virtual void setValue(unsigned int value) {
+      if (values_[name_]) delete values_[name_];
+      values_[name_] = new BppUnsignedInteger(value);
+    }
 
 };
 
