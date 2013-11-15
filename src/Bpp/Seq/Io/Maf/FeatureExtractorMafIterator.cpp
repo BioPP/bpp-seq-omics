@@ -54,9 +54,10 @@ MafBlock* FeatureExtractor::analyseCurrentBlock_() throw (Exception)
 {
   while (blockBuffer_.size() == 0) {
     //Unless there is no more block in the buffer, we need to parse more:
+    auto_ptr<MafBlock> block;
     START:
-    MafBlock* block = iterator_->nextBlock();
-    if (!block) return 0; //No more block.
+    block.reset(iterator_->nextBlock());
+    if (!block.get()) return 0; //No more block.
 
     //Check if the block contains the reference species:
     if (!block->hasSequenceForSpecies(refSpecies_))
@@ -130,7 +131,6 @@ MafBlock* FeatureExtractor::analyseCurrentBlock_() throw (Exception)
     if (verbose_)
       ApplicationTools::displayTaskDone();
 
-    delete block;
   }
 
   MafBlock* nxtBlock = blockBuffer_.front();
