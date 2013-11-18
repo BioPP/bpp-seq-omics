@@ -69,6 +69,8 @@ void CsvStatisticsOutputIterationListener::iterationMoves(const MafBlock& curren
   }
   for (size_t i = 0; i < values.size(); ++i) {
     *output_ << sep_ << (values[i] ? values[i]->toString() : "NA");
+    //Memory cleaning:
+    if (values[i]) delete values[i];
   }
   output_->endLine();
 }
