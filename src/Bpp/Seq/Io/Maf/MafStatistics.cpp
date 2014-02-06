@@ -171,7 +171,7 @@ void SiteFrequencySpectrumMafStatistics::compute(const MafBlock& block)
       alignment.reset(getSiteContainer_(block));
   }
   if (isAnalyzable) {
-    for (size_t i = 0; i < block.getNumberOfSites(); ++i) {
+    for (size_t i = 0; i < alignment->getNumberOfSites(); ++i) {
       //Note: we do not rely on SiteTool::getCounts as it would be unefficient to count everything.
       const Site& site = alignment->getSite(i);
       map<int, unsigned int> counts;
