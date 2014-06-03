@@ -56,8 +56,6 @@ namespace bpp {
 /**
  * @brief General interface for storing statistical results.
  *
- * This interface will most likely be extended in the future...
- *
  * @author Julien Dutheil
  * @see MafStatistics
  */

@@ -73,7 +73,7 @@ class SequenceStatisticsMafIterator:
   public:
     /**
      * @param iterator The input iterator.
-     * @param statistics A vector of pointers toward MafStatistics, tobe computed simultaneously for each maf block.
+     * @param statistics A vector of pointers toward MafStatistics, to be computed simultaneously for each maf block.
      */
     SequenceStatisticsMafIterator(MafIterator* iterator, const std::vector<MafStatistics*> statistics);
 

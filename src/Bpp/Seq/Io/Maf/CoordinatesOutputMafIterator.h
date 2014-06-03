@@ -1,11 +1,11 @@
 //
-// File: VcfOutputMafIterator.h
+// File: CoordinatesOutputMafIterator.h
 // Authors: Julien Dutheil
-// Created: Tue Jan 05 2013
+// Created: Mon Jun 02 2014
 //
 
 /*
-Copyright or © or Copr. Bio++ Development Team, (2010)
+Copyright or © or Copr. Bio++ Development Team, (2014)
 
 This software is a computer program whose purpose is to provide classes
 for sequences analysis.
@@ -37,77 +37,66 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 
-#ifndef _VCFOUTPUTMAFITERATOR_H_
-#define _VCFOUTPUTMAFITERATOR_H_
+#ifndef _COORDINATESOUTPUTMAFITERATOR_H_
+#define _COORDINATESOUTPUTMAFITERATOR_H_
 
 #include "MafIterator.h"
 
 //From the STL:
 #include <iostream>
 #include <string>
-#include <deque>
 
 namespace bpp {
 
 /**
- * @brief This iterator performs a simple SNP call from the MAF blocks, and outputs the results in the Variant Call Format (VCF).
+ * @brief Output each sequence coordinates for each block.
  *
- * Only substitutions are supported for now.
+ * The set of species for which coordinates are output is provided as argument.
+ * The current implementation outputs results as a table to a file. Later implementation
+ * may involve a dedicated data structure for other application usage (file indexing and so one).
  */
-class VcfOutputMafIterator:
+class CoordinatesOutputMafIterator:
   public AbstractFilterMafIterator
 {
   private:
     std::ostream* output_;
-    std::string refSpecies_;
-    std::vector<std::string> genotypes_;
+    std::vector<std::string> species_;
 
   public:
     /**
-     * @brief Build a new VcfOutputMafIterator object.
+     * @brief Creates a new CoordinatesOutputMafIterator object.
      *
      * @param iterator The input iterator.
-     * @param out The output stream where to write the VCF file.
-     * @param reference The species to use as a reference.
-     * @param genotypes A list of species for which genotype information should be written in the VCF file. There will be one extra column per genotype, +1 format column.
+     * @param out A pointer toward the output stream. The stream will not be own by this instance, and will not be copied neither destroyed.
+     * @param species A vector of species names for which coordinates should be output. In case of missing species for one block, NA will be produced.
      */
-    VcfOutputMafIterator(MafIterator* iterator, std::ostream* out, const std::string& reference, const std::vector<std::string>& genotypes) :
-      AbstractFilterMafIterator(iterator), output_(out), refSpecies_(reference), genotypes_(genotypes)
+    CoordinatesOutputMafIterator(MafIterator* iterator, std::ostream* out, const std::vector<std::string>& species):
+      AbstractFilterMafIterator(iterator), output_(out), species_(species)
     {
       if (output_)
         writeHeader_(*output_);
     }
 
   private:
-    VcfOutputMafIterator(const VcfOutputMafIterator& iterator) :
+    CoordinatesOutputMafIterator(const CoordinatesOutputMafIterator& iterator) :
       AbstractFilterMafIterator(0),
       output_(iterator.output_),
-      refSpecies_(iterator.refSpecies_),
-      genotypes_(iterator.genotypes_)
+      species_(iterator.species_)
     {}
     
-    VcfOutputMafIterator& operator=(const VcfOutputMafIterator& iterator)
+    CoordinatesOutputMafIterator& operator=(const CoordinatesOutputMafIterator& iterator)
     {
       output_ = iterator.output_;
-      refSpecies_ = iterator.refSpecies_;
-      genotypes_ = iterator.genotypes_;
+      species_ = iterator.species_;
       return *this;
-    }
-
-
-  public:
-    MafBlock* analyseCurrentBlock_() throw (Exception) {
-      currentBlock_ = iterator_->nextBlock();
-      if (output_ && currentBlock_)
-        writeBlock_(*output_, *currentBlock_);
-      return currentBlock_;
     }
 
   private:
     void writeHeader_(std::ostream& out) const;
-    void writeBlock_(std::ostream& out, const MafBlock& block) const;
+    MafBlock* analyseCurrentBlock_() throw (Exception);
+
 };
 
 } // end of namespace bpp.
 
-#endif //_VCFOUTPUTMAFITERATOR_H_
+#endif //_COORDINATESOUTPUTMAFITERATOR_H_
