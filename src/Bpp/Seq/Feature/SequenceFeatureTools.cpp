@@ -41,7 +41,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 //From bpp-seq:
 #include <Bpp/Seq/SequenceTools.h> 
-#include <Bpp/Seq/Alphabet/StandardCodonAlphabet.h>
+#include <Bpp/Seq/Alphabet/CodonAlphabet.h>
 #include <Bpp/Seq/Alphabet/AlphabetTools.h>
 #include <Bpp/Seq/Alphabet/AlphabetExceptions.h>
 
