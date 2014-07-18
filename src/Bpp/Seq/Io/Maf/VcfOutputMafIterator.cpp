@@ -55,7 +55,7 @@ using namespace bpp;
 
 using namespace std;
 
-void VcfOutputMafIterator::writeHeader(std::ostream& out) const
+void VcfOutputMafIterator::writeHeader_(std::ostream& out) const
 {
   time_t t = time(0); // get current time
   struct tm* ct = localtime(&t);
@@ -78,7 +78,7 @@ void VcfOutputMafIterator::writeHeader(std::ostream& out) const
   out << endl;
 }
 
-void VcfOutputMafIterator::writeBlock(std::ostream& out, const MafBlock& block) const
+void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block) const
 {
   const MafSequence& refSeq = block.getSequenceForSpecies(refSpecies_);
   string chr = refSeq.getChromosome();
