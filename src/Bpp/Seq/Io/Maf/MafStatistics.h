@@ -155,6 +155,8 @@ class SimpleMafStatisticsResult:
     virtual ~SimpleMafStatisticsResult() {}
 
   public:
+    virtual const BppNumberI& getValue(const std::string& tag) const throw (Exception) { return SimpleMafStatisticsResult::getValue(tag); }
+    
     virtual const BppNumberI& getValue() const { return *values_[name_]; }
 
     virtual void setValue(const std::string& tag, double value) throw (Exception) {

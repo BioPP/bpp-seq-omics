@@ -73,7 +73,7 @@ class WindowSplitMafIterator:
     {
       if (splitOption != RAGGED_LEFT && splitOption != RAGGED_RIGHT
           && splitOption != CENTER && splitOption != ADJUST)
-        throw Exception("WindowSplitMafIterator: unvalid split option: " + splitOption);
+        throw Exception("WindowSplitMafIterator: unvalid split option: " + TextTools::toString(splitOption));
     }
 
   private:
