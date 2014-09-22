@@ -85,9 +85,9 @@ void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
   SequenceWalker walker(refSeq);
   size_t offset = refSeq.start();
   int gap = refSeq.getAlphabet()->getGapCharacterCode();
-  string chars = "";
+  map<int, string> chars;
   for (int i = 0; i < static_cast<int>(AlphabetTools::DNA_ALPHABET.getNumberOfTypes()); ++i)
-    chars += AlphabetTools::DNA_ALPHABET.intToChar(i);
+    chars[i] = AlphabetTools::DNA_ALPHABET.intToChar(i);
   VectorSiteContainer sites(block.getAlignment());
   //Where to store genotype information, if any:
   vector<int> gt(genotypes_.size());
@@ -123,7 +123,7 @@ void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
             alt += ",";
             ac += ",";
           }
-          alt += TextTools::toString<char>(chars[x]);
+          alt += chars[x];
           ac += TextTools::toString(f);
           snps[x] = ++c;
         }

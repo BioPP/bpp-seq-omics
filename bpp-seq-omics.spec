@@ -1,5 +1,5 @@
 %define _basename bpp-seq-omics
-%define _version 2.1.0
+%define _version 2.2.0
 %define _release 1
 %define _prefix /usr
 
@@ -179,6 +179,9 @@ exit 0
 %{_prefix}/include/*
 
 %changelog
+* Mon Sep 22 2014 Julien Dutheil <julien.dutheil@univ-montp2.fr> 2.2.0-1
+- New statistics, including sequence diversity estimators
+- Several bugs and memory leaks fixed.
 * Wed Mar 06 2013 Julien Dutheil <julien.dutheil@univ-montp2.fr> 2.1.0-1
 - Maf to VCF tool added as a MafIterator.
 * Tue Nov 06 2012 Julien Dutheil <julien.dutheil@univ-montp2.fr> 2.0.3-1

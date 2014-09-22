@@ -107,7 +107,7 @@ MafBlock* EntropyFilterMafIterator::analyseCurrentBlock_() throw (Exception)
         if (verbose_)
           ApplicationTools::displayGauge(i - windowSize_, nc - windowSize_ - 1, '>');
         //Evaluate current window:
-        unsigned int count = std::accumulate(window_.begin(), window_.end(), 0);
+        unsigned int count = std::accumulate(window_.begin(), window_.end(), 0u);
         if (count > maxPos_) {
           if (pos.size() == 0) {
             pos.push_back(i - windowSize_);
@@ -138,7 +138,7 @@ MafBlock* EntropyFilterMafIterator::analyseCurrentBlock_() throw (Exception)
       }
 
       //Evaluate last window:
-      unsigned int count = std::accumulate(window_.begin(), window_.end(), 0);
+      unsigned int count = std::accumulate(window_.begin(), window_.end(), 0u);
       if (count > maxPos_) {
         if (pos.size() == 0) {
           pos.push_back(i - windowSize_);
