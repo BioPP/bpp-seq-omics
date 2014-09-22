@@ -66,10 +66,15 @@ class OrphanSequenceFilterMafIterator:
     /**
      * @param iterator The input iterator.
      * @param species The list of species names to be retained.
-     * @param strict If true, then block that do not contain all  of the specified species will be discarded.
+     * @param strict If true, then block that do not contain all of the specified species will be discarded.
+     * @param keep If true, then additional species sequences will be kept.
      * @param rmDuplicates If true, block that contain more than one instance for at least one species will be discarded.
      */
-    OrphanSequenceFilterMafIterator(MafIterator* iterator, const std::vector<std::string>& species, bool strict = false, bool keep = false, bool rmDuplicates = false) :
+    OrphanSequenceFilterMafIterator(MafIterator* iterator,
+        const std::vector<std::string>& species,
+        bool strict = false,
+        bool keep = false,
+        bool rmDuplicates = false) :
       AbstractFilterMafIterator(iterator),
       species_(species),
       strict_(strict),
