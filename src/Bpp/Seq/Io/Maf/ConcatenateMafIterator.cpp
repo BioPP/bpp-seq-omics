@@ -74,13 +74,13 @@ MafBlock* ConcatenateMafIterator::analyseCurrentBlock_() throw (Exception)
 
     //Now fill the new block:
     for (size_t i = 0; i < allSp.size(); ++i) {
-      auto_ptr<MafSequence> seq;
+      unique_ptr<MafSequence> seq;
       try {
         seq.reset(new MafSequence(currentBlock_->getSequenceForSpecies(allSp[i])));
 
         //Check is there is a second sequence:
         try {
-          auto_ptr<MafSequence> tmp(new MafSequence(incomingBlock_->getSequenceForSpecies(allSp[i])));
+          unique_ptr<MafSequence> tmp(new MafSequence(incomingBlock_->getSequenceForSpecies(allSp[i])));
           string ref1 = seq->getDescription(), ref2 = tmp->getDescription();
           if (seq->getChromosome() != tmp->getChromosome()) {
             seq->setChromosome("fus");
