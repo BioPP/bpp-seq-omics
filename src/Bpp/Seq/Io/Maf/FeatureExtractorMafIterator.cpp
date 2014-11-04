@@ -82,10 +82,10 @@ MafBlock* FeatureExtractor::analyseCurrentBlock_() throw (Exception)
     if (refSeq.getStrand() == '-') {
       RangeSet<size_t> cRanges;
       for (set<Range<size_t>*>::iterator it = ranges.getSet().begin();
-          it !=  ranges.getSet().end();
+          it != ranges.getSet().end();
           ++it)
       {
-        cRanges.addRange(Range<size_t>(refSeq.getSrcSize() - (**it).end(), refSeq.getSrcSize() - (**it).begin()));
+        cRanges.addRange(SeqRange(refSeq.getSrcSize() - (**it).end(), refSeq.getSrcSize() - (**it).begin(), dynamic_cast<SeqRange*>(*it)->getStrand()));
       }
       ranges = cRanges;
     }
