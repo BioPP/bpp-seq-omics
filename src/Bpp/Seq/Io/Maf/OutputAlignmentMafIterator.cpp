@@ -57,8 +57,20 @@ MafBlock* OutputAlignmentMafIterator::analyseCurrentBlock_() throw (Exception)
     if (output_) {
       writeBlock(*output_, *block);
     } else {
+      string chr   = "ChrNA";
+      string start = "StartNA";
+      string stop  = "StopNA";
+      if (block->hasSequenceForSpecies(refSpecies_)) {
+        const MafSequence& refseq = block->getSequenceForSpecies(refSpecies_);
+        chr   = refseq.getChromosome();
+        start = TextTools::toString(refseq.start());
+        stop  = TextTools::toString(refseq.stop());
+      }
       string file = file_;
       TextTools::replaceAll(file, "%i", TextTools::toString(++currentBlockIndex_));
+      TextTools::replaceAll(file, "%c", chr);
+      TextTools::replaceAll(file, "%b", start);
+      TextTools::replaceAll(file, "%e", stop);
       std::ofstream output(file.c_str(), ios::out);
       writeBlock(output, *block);
     }
@@ -69,7 +81,7 @@ MafBlock* OutputAlignmentMafIterator::analyseCurrentBlock_() throw (Exception)
 void OutputAlignmentMafIterator::writeBlock(std::ostream& out, const MafBlock& block) const {
   //First get alignment:
   AlignedSequenceContainer aln(&AlphabetTools::DNA_ALPHABET);
-  //We cannot copy directly the container because we want to convert from MafSequence to BasicSequence (needed for renaiming):
+  //We cannot copy directly the container because we want to convert from MafSequence to BasicSequence (needed for renaming):
   SequenceContainerTools::convertContainer<AlignedSequenceContainer, AlignedSequenceContainer, BasicSequence>(block.getAlignment(), aln);
   //Format sequence names:
   vector<string> names(aln.getNumberOfSequences());

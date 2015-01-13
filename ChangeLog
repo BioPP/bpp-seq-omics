@@ -1,3 +1,6 @@
+13/01/15 Julien Dutheil
+* OutputAlignments can now use coordinates of ref species infile names.
+
 07/01/15 Julien Dutheil
 * Added export filter for MSMC.
 

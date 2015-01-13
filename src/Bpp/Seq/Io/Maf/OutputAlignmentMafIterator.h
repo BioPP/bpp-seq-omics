@@ -65,6 +65,7 @@ class OutputAlignmentMafIterator:
     bool mask_;
     std::auto_ptr<OAlignment> writer_;
     unsigned int currentBlockIndex_;
+    std::string refSpecies_;
 
   public:
     /**
@@ -77,9 +78,11 @@ class OutputAlignmentMafIterator:
      * @param writer A pointer toward an alignment writer object which specifies the format to use when writing sequences.
      * The underlying object will be own by this instance, and destroyed when this object is deleted.
      * @param mask Tell if sequences should be printed masked (if applicable).
+     * @param reference [optional] specify a reference species which can be used to configure file names
+     * (for instance using coordinates information).
      */
-    OutputAlignmentMafIterator(MafIterator* iterator, std::ostream* out, OAlignment* writer, bool mask = true) :
-      AbstractFilterMafIterator(iterator), output_(out), file_(), mask_(mask), writer_(writer), currentBlockIndex_(0)
+    OutputAlignmentMafIterator(MafIterator* iterator, std::ostream* out, OAlignment* writer, bool mask = true, const std::string& reference = "") :
+      AbstractFilterMafIterator(iterator), output_(out), file_(), mask_(mask), writer_(writer), currentBlockIndex_(0), refSpecies_(reference)
     {
       if (!writer)
         throw Exception("OutputAlignmentMafIterator (constructor 1): sequence writer should not be a NULL pointer!");
@@ -96,9 +99,11 @@ class OutputAlignmentMafIterator:
      * @param writer A pointer toward an alignment writer object which specifies the format to use when writing sequences.
      * The underlying object will be own by this instance, and destroyed when this object is deleted.
      * @param mask Tell if sequences should be printed masked (if applicable).
+     * @param reference [optional] specify a reference species which can be used to configure file names
+     * (for instance using coordinates information).
      */
-    OutputAlignmentMafIterator(MafIterator* iterator, const std::string& file, OAlignment* writer, bool mask = true) :
-      AbstractFilterMafIterator(iterator), output_(0), file_(file), mask_(mask), writer_(writer), currentBlockIndex_(0)
+    OutputAlignmentMafIterator(MafIterator* iterator, const std::string& file, OAlignment* writer, bool mask = true, const std::string& reference = "") :
+      AbstractFilterMafIterator(iterator), output_(0), file_(file), mask_(mask), writer_(writer), currentBlockIndex_(0), refSpecies_(reference)
     {
       if (!writer)
         throw Exception("OutputAlignmentMafIterator (constructor 2): sequence writer should not be a NULL pointer!");
@@ -113,7 +118,8 @@ class OutputAlignmentMafIterator:
       file_(iterator.file_),
       mask_(iterator.mask_),
       writer_(),
-      currentBlockIndex_(iterator.currentBlockIndex_)
+      currentBlockIndex_(iterator.currentBlockIndex_),
+      refSpecies_(iterator.refSpecies_)
     {}
     
     OutputAlignmentMafIterator& operator=(const OutputAlignmentMafIterator& iterator)
@@ -123,6 +129,7 @@ class OutputAlignmentMafIterator:
       mask_   = iterator.mask_;
       writer_.release();
       currentBlockIndex_ = iterator.currentBlockIndex_;
+      refSpecies_ = iterator.refSpecies_;
       return *this;
     }
 
