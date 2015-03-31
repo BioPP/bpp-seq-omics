@@ -63,6 +63,7 @@ class OutputAlignmentMafIterator:
     std::ostream* output_;
     std::string file_;
     bool mask_;
+    bool outputCoordinates_;
     std::auto_ptr<OAlignment> writer_;
     unsigned int currentBlockIndex_;
     std::string refSpecies_;
@@ -78,11 +79,12 @@ class OutputAlignmentMafIterator:
      * @param writer A pointer toward an alignment writer object which specifies the format to use when writing sequences.
      * The underlying object will be own by this instance, and destroyed when this object is deleted.
      * @param mask Tell if sequences should be printed masked (if applicable).
+     * @param outputCoordinates Tell if coordinates should be written in sequence headers, if any.
      * @param reference [optional] specify a reference species which can be used to configure file names
      * (for instance using coordinates information).
      */
-    OutputAlignmentMafIterator(MafIterator* iterator, std::ostream* out, OAlignment* writer, bool mask = true, const std::string& reference = "") :
-      AbstractFilterMafIterator(iterator), output_(out), file_(), mask_(mask), writer_(writer), currentBlockIndex_(0), refSpecies_(reference)
+    OutputAlignmentMafIterator(MafIterator* iterator, std::ostream* out, OAlignment* writer, bool mask = true, bool outputCoordinates = true, const std::string& reference = "") :
+      AbstractFilterMafIterator(iterator), output_(out), file_(), mask_(mask), outputCoordinates_(outputCoordinates), writer_(writer), currentBlockIndex_(0), refSpecies_(reference)
     {
       if (!writer)
         throw Exception("OutputAlignmentMafIterator (constructor 1): sequence writer should not be a NULL pointer!");
@@ -99,11 +101,12 @@ class OutputAlignmentMafIterator:
      * @param writer A pointer toward an alignment writer object which specifies the format to use when writing sequences.
      * The underlying object will be own by this instance, and destroyed when this object is deleted.
      * @param mask Tell if sequences should be printed masked (if applicable).
+     * @param outputCoordinates Tell if coordinates should be written in sequence headers, if any.
      * @param reference [optional] specify a reference species which can be used to configure file names
      * (for instance using coordinates information).
      */
-    OutputAlignmentMafIterator(MafIterator* iterator, const std::string& file, OAlignment* writer, bool mask = true, const std::string& reference = "") :
-      AbstractFilterMafIterator(iterator), output_(0), file_(file), mask_(mask), writer_(writer), currentBlockIndex_(0), refSpecies_(reference)
+    OutputAlignmentMafIterator(MafIterator* iterator, const std::string& file, OAlignment* writer, bool mask = true, bool outputCoordinates = true, const std::string& reference = "") :
+      AbstractFilterMafIterator(iterator), output_(0), file_(file), mask_(mask), outputCoordinates_(outputCoordinates), writer_(writer), currentBlockIndex_(0), refSpecies_(reference)
     {
       if (!writer)
         throw Exception("OutputAlignmentMafIterator (constructor 2): sequence writer should not be a NULL pointer!");
@@ -117,6 +120,7 @@ class OutputAlignmentMafIterator:
       output_(iterator.output_),
       file_(iterator.file_),
       mask_(iterator.mask_),
+      outputCoordinates_(iterator.outputCoordinates_),
       writer_(),
       currentBlockIndex_(iterator.currentBlockIndex_),
       refSpecies_(iterator.refSpecies_)
@@ -127,6 +131,7 @@ class OutputAlignmentMafIterator:
       output_ = iterator.output_;
       file_   = iterator.file_;
       mask_   = iterator.mask_;
+      outputCoordinates_ = iterator.outputCoordinates_;
       writer_.release();
       currentBlockIndex_ = iterator.currentBlockIndex_;
       refSpecies_ = iterator.refSpecies_;

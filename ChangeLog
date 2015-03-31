@@ -1,3 +1,6 @@
+31/03/15 Julien Dutheil
+* OutputAlignments now allows to discard coordinates in output.
+
 13/01/15 Julien Dutheil
 * OutputAlignments can now use coordinates of ref species infile names.
 
