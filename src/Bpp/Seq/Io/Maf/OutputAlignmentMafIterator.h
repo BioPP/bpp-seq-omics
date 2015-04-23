@@ -64,6 +64,7 @@ class OutputAlignmentMafIterator:
     std::string file_;
     bool mask_;
     bool outputCoordinates_;
+    bool addLDHatHeader_;
     std::auto_ptr<OAlignment> writer_;
     unsigned int currentBlockIndex_;
     std::string refSpecies_;
@@ -80,11 +81,27 @@ class OutputAlignmentMafIterator:
      * The underlying object will be own by this instance, and destroyed when this object is deleted.
      * @param mask Tell if sequences should be printed masked (if applicable).
      * @param outputCoordinates Tell if coordinates should be written in sequence headers, if any.
+     * @param addLDHatHeader Tell if first line of file should contain number and lenght of sequences (for instance for use with LDhat/convert).
      * @param reference [optional] specify a reference species which can be used to configure file names
      * (for instance using coordinates information).
      */
-    OutputAlignmentMafIterator(MafIterator* iterator, std::ostream* out, OAlignment* writer, bool mask = true, bool outputCoordinates = true, const std::string& reference = "") :
-      AbstractFilterMafIterator(iterator), output_(out), file_(), mask_(mask), outputCoordinates_(outputCoordinates), writer_(writer), currentBlockIndex_(0), refSpecies_(reference)
+    OutputAlignmentMafIterator(
+        MafIterator* iterator,
+        std::ostream* out,
+        OAlignment* writer,
+        bool mask = true,
+        bool outputCoordinates = true,
+        bool addLDHatHeader = false,
+        const std::string& reference = "") :
+      AbstractFilterMafIterator(iterator),
+      output_(out),
+      file_(),
+      mask_(mask),
+      outputCoordinates_(outputCoordinates),
+      addLDHatHeader_(addLDHatHeader),
+      writer_(writer),
+      currentBlockIndex_(0),
+      refSpecies_(reference)
     {
       if (!writer)
         throw Exception("OutputAlignmentMafIterator (constructor 1): sequence writer should not be a NULL pointer!");
@@ -102,11 +119,27 @@ class OutputAlignmentMafIterator:
      * The underlying object will be own by this instance, and destroyed when this object is deleted.
      * @param mask Tell if sequences should be printed masked (if applicable).
      * @param outputCoordinates Tell if coordinates should be written in sequence headers, if any.
+     * @param addLDHatHeader Tell if first line of file should contain number and lenght of sequences (for instance for use with LDhat/convert).
      * @param reference [optional] specify a reference species which can be used to configure file names
      * (for instance using coordinates information).
      */
-    OutputAlignmentMafIterator(MafIterator* iterator, const std::string& file, OAlignment* writer, bool mask = true, bool outputCoordinates = true, const std::string& reference = "") :
-      AbstractFilterMafIterator(iterator), output_(0), file_(file), mask_(mask), outputCoordinates_(outputCoordinates), writer_(writer), currentBlockIndex_(0), refSpecies_(reference)
+    OutputAlignmentMafIterator(
+        MafIterator* iterator,
+        const std::string& file,
+        OAlignment* writer,
+        bool mask = true,
+        bool outputCoordinates = true,
+        bool addLDHatHeader = false,
+        const std::string& reference = "") :
+      AbstractFilterMafIterator(iterator),
+      output_(0),
+      file_(file),
+      mask_(mask),
+      outputCoordinates_(outputCoordinates),
+      addLDHatHeader_(addLDHatHeader),
+      writer_(writer),
+      currentBlockIndex_(0),
+      refSpecies_(reference)
     {
       if (!writer)
         throw Exception("OutputAlignmentMafIterator (constructor 2): sequence writer should not be a NULL pointer!");
@@ -121,6 +154,7 @@ class OutputAlignmentMafIterator:
       file_(iterator.file_),
       mask_(iterator.mask_),
       outputCoordinates_(iterator.outputCoordinates_),
+      addLDHatHeader_(iterator.addLDHatHeader_),
       writer_(),
       currentBlockIndex_(iterator.currentBlockIndex_),
       refSpecies_(iterator.refSpecies_)
@@ -132,6 +166,7 @@ class OutputAlignmentMafIterator:
       file_   = iterator.file_;
       mask_   = iterator.mask_;
       outputCoordinates_ = iterator.outputCoordinates_;
+      addLDHatHeader_ = iterator.addLDHatHeader_;
       writer_.release();
       currentBlockIndex_ = iterator.currentBlockIndex_;
       refSpecies_ = iterator.refSpecies_;

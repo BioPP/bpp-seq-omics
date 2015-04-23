@@ -1,3 +1,6 @@
+23/04/15 Julien Dutheil
+* Fix another bug in feature extraction on negative strands.
+
 31/03/15 Julien Dutheil
 * OutputAlignments now allows to discard coordinates in output.
 

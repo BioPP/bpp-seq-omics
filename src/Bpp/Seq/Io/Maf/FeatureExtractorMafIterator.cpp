@@ -119,7 +119,9 @@ MafBlock* FeatureExtractor::analyseCurrentBlock_() throw (Exception)
         size_t b = walker.getAlignmentPosition((**it).end() - refSeq.start() - 1);
         subseq.reset(block->getSequence(j).subSequence(a, b - a + 1));
         if (!ignoreStrand_) {
-          if (dynamic_cast<SeqRange*>(*it)->isNegativeStrand()) {
+          if ((dynamic_cast<SeqRange*>(*it)->isNegativeStrand() && refSeq.getStrand() == '+') ||
+             (!dynamic_cast<SeqRange*>(*it)->isNegativeStrand() && refSeq.getStrand() == '-'))
+          {
             SequenceTools::invertComplement(*subseq);
           }
         }
