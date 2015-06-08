@@ -48,6 +48,8 @@ void CoordinatesOutputMafIterator::writeHeader_(ostream& out) const
     if (i > 0) out << "\t";
     string sp = species_[i];
     out << sp << ".chr\t" << sp << ".strand\t" << sp << ".start\t" << sp << ".stop";
+    if (includeSrcSize_)
+      out << "\t" << sp << ".src";
   }
   out << endl;
 }
@@ -63,8 +65,12 @@ MafBlock* CoordinatesOutputMafIterator::analyseCurrentBlock_() throw (Exception)
         throw Exception("CoordinatesOutputMafIterator::analyseCurrentBlock_(). There is more than one sequence for species '" + species_[i] + "' in current block.");
       else if (seqs.size() == 0) {
         *output_ << "NA\tNA\tNA\tNA";
+        if (includeSrcSize_)
+          *output_ << "\tNA";
       } else {
         *output_ << seqs[0]->getChromosome() << "\t" << seqs[0]->getStrand() << "\t" << seqs[0]->start() << "\t" << seqs[0]->stop();
+        if (includeSrcSize_)
+          *output_ << "\t" << seqs[0]->getSrcSize();
       }
     }
     *output_ << endl;

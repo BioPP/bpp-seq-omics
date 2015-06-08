@@ -61,6 +61,7 @@ class CoordinatesOutputMafIterator:
   private:
     std::ostream* output_;
     std::vector<std::string> species_;
+    bool includeSrcSize_;
 
   public:
     /**
@@ -69,9 +70,10 @@ class CoordinatesOutputMafIterator:
      * @param iterator The input iterator.
      * @param out A pointer toward the output stream. The stream will not be own by this instance, and will not be copied neither destroyed.
      * @param species A vector of species names for which coordinates should be output. In case of missing species for one block, NA will be produced.
+     * @param includeSrcSize Tell if source size should also be written (useful to convert coordinates on the negative strand).
      */
-    CoordinatesOutputMafIterator(MafIterator* iterator, std::ostream* out, const std::vector<std::string>& species):
-      AbstractFilterMafIterator(iterator), output_(out), species_(species)
+    CoordinatesOutputMafIterator(MafIterator* iterator, std::ostream* out, const std::vector<std::string>& species, bool includeSrcSize = false):
+      AbstractFilterMafIterator(iterator), output_(out), species_(species), includeSrcSize_(includeSrcSize)
     {
       if (output_)
         writeHeader_(*output_);
@@ -81,13 +83,15 @@ class CoordinatesOutputMafIterator:
     CoordinatesOutputMafIterator(const CoordinatesOutputMafIterator& iterator) :
       AbstractFilterMafIterator(0),
       output_(iterator.output_),
-      species_(iterator.species_)
+      species_(iterator.species_),
+      includeSrcSize_(iterator.includeSrcSize_)
     {}
     
     CoordinatesOutputMafIterator& operator=(const CoordinatesOutputMafIterator& iterator)
     {
       output_ = iterator.output_;
       species_ = iterator.species_;
+      includeSrcSize_ = iterator.includeSrcSize_;
       return *this;
     }
 
