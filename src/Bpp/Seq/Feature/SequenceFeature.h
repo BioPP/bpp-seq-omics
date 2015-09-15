@@ -264,6 +264,8 @@ class BasicSequenceFeature:
     //SequenceFeatureSet subFeatures_;
 
   public:
+    BasicSequenceFeature(): id_(""), sequenceId_(""), source_(""), type_(""), range_(0, 0, '.'), score_(-1), attributes_() {}
+
     BasicSequenceFeature(
         const std::string& id,
         const std::string& seqId,
