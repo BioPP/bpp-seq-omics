@@ -64,6 +64,20 @@ class SequenceFeatureTools
      * @author Sylvain Gaillard
      */
     static Sequence* extract(const Sequence& seq, const SeqRange& range);
+    
+    /**
+     * @brief Extract a sub-sequence given a SeqRange.
+     *
+     * The sub-sequence is revese-complemented if SeqRange is in negative
+     * strand.
+     *
+     * @param seq The Sequence to trunc.
+     * @param range The SeqRange to extract.
+     * @param output The Sequence object to be filled with the given subsequence 
+     * oriented according to the SeqRange.
+     * @author Sylvain Gaillard
+     */
+    static void extract(const Sequence& seq, const SeqRange& range, Sequence& output);
 
     /**
      * @brief Get ORF features for a Sequence.

@@ -65,6 +65,17 @@ Sequence* SequenceFeatureTools::extract(const Sequence& seq, const SeqRange& ran
 
 /******************************************************************************/
 
+void SequenceFeatureTools::extract(const Sequence& seq, const SeqRange& range, Sequence& output) {
+  if (range.end() > seq.size())
+    throw IndexOutOfBoundsException ("SequenceTools::extract: Invalid upper bound", range.end(), 0, seq.size());
+  SequenceTools::subseq(seq, range.begin(), range.end() - 1, output);
+  if (range.isNegativeStrand()) {
+    SequenceTools::invertComplement(output);
+  }
+}
+
+/******************************************************************************/
+
 unsigned int SequenceFeatureTools::getOrfs(const Sequence& seq, SequenceFeatureSet& featSet, const GeneticCode& gCode)
 {
   if (! AlphabetTools::isNucleicAlphabet(seq.getAlphabet())) {
