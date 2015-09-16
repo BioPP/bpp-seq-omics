@@ -180,6 +180,13 @@ class SequenceFeature:
     virtual const size_t getEnd() const = 0;
 
     /**
+     * @return The size of the feature.
+     */
+    virtual const size_t size() const {
+      return getEnd() - getStart();
+    };
+
+    /**
      * @return True if the feature is stranded.
      */
     virtual bool isStranded() const = 0;
