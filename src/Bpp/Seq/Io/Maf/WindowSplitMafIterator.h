@@ -56,9 +56,10 @@ class WindowSplitMafIterator:
   public AbstractFilterMafIterator
 {
   private:
-    unsigned int windowSize_;
+    size_t windowSize_;
     short align_;
     std::deque<MafBlock*> blockBuffer_;
+    bool keepSmallBlocks_;
 
   public:
     static const short RAGGED_LEFT;
@@ -67,9 +68,9 @@ class WindowSplitMafIterator:
     static const short ADJUST;
 
   public:
-    WindowSplitMafIterator(MafIterator* iterator, unsigned int windowSize, short splitOption = CENTER) throw (Exception):
+    WindowSplitMafIterator(MafIterator* iterator, size_t windowSize, short splitOption = CENTER, bool keepSmallBlocks = false) throw (Exception):
       AbstractFilterMafIterator(iterator),
-      windowSize_(windowSize), align_(splitOption), blockBuffer_()
+      windowSize_(windowSize), align_(splitOption), blockBuffer_(), keepSmallBlocks_(keepSmallBlocks)
     {
       if (splitOption != RAGGED_LEFT && splitOption != RAGGED_RIGHT
           && splitOption != CENTER && splitOption != ADJUST)

@@ -87,13 +87,18 @@ MafBlock* WindowSplitMafIterator::analyseCurrentBlock_() throw (Exception)
           //cout << " => new size: " << size << endl;
         }
       }
-      for (unsigned int j = 0; j < block->getNumberOfSequences(); ++j) {
+      for (size_t j = 0; j < block->getNumberOfSequences(); ++j) {
         auto_ptr<MafSequence> subseq(block->getSequence(j).subSequence(i, size));
         newBlock->addSequence(*subseq);
       }
       blockBuffer_.push_back(newBlock);
     }
-    delete block;
+    
+    if (align_ == ADJUST && keepSmallBlocks_ && bSize < windowSize_) {
+      blockBuffer_.push_back(block);
+    } else {
+      delete block;
+    }
   }
  
   MafBlock* nxtBlock = blockBuffer_.front();
