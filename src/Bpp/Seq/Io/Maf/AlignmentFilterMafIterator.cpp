@@ -126,7 +126,7 @@ MafBlock* AlignmentFilterMafIterator::analyseCurrentBlock_() throw (Exception)
             pos.push_back(i - windowSize_);
             pos.push_back(i);
           } else {
-            if (i - windowSize_ < pos[pos.size() - 1]) {
+            if (i - windowSize_ <= pos[pos.size() - 1]) {
               pos[pos.size() - 1] = i; //Windows are overlapping and we extend previous region
             } else { //This is a new region
               pos.push_back(i - windowSize_);
@@ -331,7 +331,7 @@ MafBlock* AlignmentFilter2MafIterator::analyseCurrentBlock_() throw (Exception)
             pos.push_back(i - windowSize_);
             pos.push_back(i);
           } else {
-            if (i - windowSize_ < pos[pos.size() - 1]) {
+            if (i - windowSize_ <= pos[pos.size() - 1]) {
               pos[pos.size() - 1] = i; //Windows are overlapping and we extend previous region
             } else { //This is a new region
               pos.push_back(i - windowSize_);

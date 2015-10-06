@@ -94,8 +94,14 @@ class MafSequence:
         splitNameIntoSpeciesAndChromosome(name, species_, chromosome_);
     }
 
-    MafSequence* clone() const { return new MafSequence(*this); }
-
+    MafSequence* clone() const { 
+      return new MafSequence(*this);
+    }
+ 
+    MafSequence* cloneMeta() const { 
+      return new MafSequence(getName(), std::string(), begin_, strand_, srcSize_, true);
+    }
+    
     ~MafSequence() {}
 
   public:
