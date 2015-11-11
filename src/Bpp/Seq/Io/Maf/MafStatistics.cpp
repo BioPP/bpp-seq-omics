@@ -40,6 +40,7 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "MafStatistics.h"
 #include <Bpp/Seq/Container/SequenceContainerTools.h>
 #include <Bpp/Seq/Container/VectorSiteContainer.h>
+#include <Bpp/Seq/Container/SiteContainerTools.h>
 #include <Bpp/Seq/SiteTools.h>
 
 //From bpp-core:
@@ -445,33 +446,48 @@ vector<string> SequenceDiversityMafStatistics::getSupportedTags() const
   vector<string> tags;
   tags.push_back("NbSeggregating");
   tags.push_back("WattersonTheta");
+  tags.push_back("TajimaPi");
   return tags;
 }
 
 void SequenceDiversityMafStatistics::compute(const MafBlock& block)
 {
   auto_ptr<SiteContainer> alignment(getSiteContainer_(block));
+  //Get only complete sites:
+  auto_ptr<SiteContainer> alignment2(SiteContainerTools::getCompleteSites(*alignment));
   unsigned int nbSeg = 0;
-  unsigned int nbTot = 0;
-  if (alignment->getNumberOfSequences() > 0) {
-    for (size_t i = 0; i < alignment->getNumberOfSites(); ++i) {
-      const Site& site = alignment->getSite(i);
-      if (SiteTools::isComplete(site)) {
-        nbTot++;
-        if (!SiteTools::isConstant(site))
-          nbSeg++;
-      }
+  size_t nbTot = alignment2->getNumberOfSites();
+  size_t n = alignment2->getNumberOfSequences();
+  if (n > 0) {
+    for (size_t i = 0; i < alignment2->getNumberOfSites(); ++i) {
+      const Site& site = alignment2->getSite(i);
+      if (!SiteTools::isConstant(site))
+        nbSeg++;
     }
   }
   double wt = 0;
   if (nbSeg > 0) {
-    size_t n = alignment->getNumberOfSequences();
     double hf = 0;
     for (double i = 1; i < n; ++i)
       hf += 1. / i;
     wt = static_cast<double>(nbSeg) / (static_cast<double>(nbTot) * hf);
   }
+  //Compute pairwise heterozigocity:
+  double pi = 0;
+  for (size_t i = 0; i < n - 1; ++i) {
+    for (size_t j = i + 1; j < n; ++j) {
+      pi += SiteContainerTools::computeSimilarity(
+          alignment2->getSequence(i),
+          alignment2->getSequence(j),
+          true,
+          SiteContainerTools::SIMILARITY_ALL,
+          false);
+    }
+  }
+  pi /= static_cast<double>((n - 1) * n / 2);
+
   result_.setValue("NbSeggregating", nbSeg);
   result_.setValue("WattersonTheta", wt);
+  result_.setValue("TajimaPi", pi);
 }
 

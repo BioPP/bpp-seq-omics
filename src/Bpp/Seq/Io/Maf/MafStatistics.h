@@ -656,6 +656,7 @@ class PolymorphismMafStatistics:
  *
  * - Number of segregating sites
  * - Watterson's theta (per site)
+ * - Tajima's pi (average pairiwse differences)
  *
  * Only fully resolved sites are analyzed (no gap, no generic character).
  */

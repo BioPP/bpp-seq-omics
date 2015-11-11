@@ -59,7 +59,7 @@ MafBlock* FullGapFilterMafIterator::analyseCurrentBlock_() throw (Exception)
   //We create a copy of the ingroup alignement for better efficiency:
   VectorSiteContainer vsc(&AlphabetTools::DNA_ALPHABET);
   for (size_t i = 0; i < species_.size(); ++i) {
-    vsc.addSequence(block->getSequence(i));
+    vsc.addSequence(block->getSequenceForSpecies(species_[i]));
   }
   //Now check the positions that are only made of gaps:
   if (verbose_) {
