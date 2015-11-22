@@ -114,7 +114,7 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_() throw (Exception)
         if (refSeq[alnPos] != gap) {
           refPos++;
           //check if this position is a bound:
-          if (refBounds.front() == static_cast<size_t>(refPos)) {
+          while (refBounds.front() == static_cast<size_t>(refPos)) {
             pos.push_back(alnPos);
             refBounds.pop_front();
           }
@@ -134,7 +134,7 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_() throw (Exception)
         throw Exception("FeatureFilterMafIterator::nextBlock(). An error occurred here, " + TextTools::toString(refBounds.size()) + " coordinates are left, in sequence " + refSeq.getDescription() + "... this is most likely a bug, please report!");
       }
 
-      //Next step is simply to split the black according to the translated coordinates:
+      //Next step is simply to split the block according to the translated coordinates:
       if (pos.size() == 2 && pos.front() == 0 && pos.back() == block->getNumberOfSites()) {
         //Everything is removed:
         if (logstream_) {

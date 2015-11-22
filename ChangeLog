@@ -1,3 +1,6 @@
+22/11/15 Julien Dutheil
+* Fix bug in FeatureFilter when two feature are exactly following each other.
+
 23/04/15 Julien Dutheil
 * Fix another bug in feature extraction on negative strands.
 
