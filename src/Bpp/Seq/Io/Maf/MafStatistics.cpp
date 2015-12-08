@@ -447,6 +447,7 @@ vector<string> SequenceDiversityMafStatistics::getSupportedTags() const
   tags.push_back("NbSeggregating");
   tags.push_back("WattersonTheta");
   tags.push_back("TajimaPi");
+  tags.push_back("TajimaD");
   return tags;
 }
 
@@ -455,23 +456,31 @@ void SequenceDiversityMafStatistics::compute(const MafBlock& block)
   auto_ptr<SiteContainer> alignment(getSiteContainer_(block));
   //Get only complete sites:
   auto_ptr<SiteContainer> alignment2(SiteContainerTools::getCompleteSites(*alignment));
-  unsigned int nbSeg = 0;
+  double S = 0;
   size_t nbTot = alignment2->getNumberOfSites();
   size_t n = alignment2->getNumberOfSequences();
   if (n > 0) {
     for (size_t i = 0; i < alignment2->getNumberOfSites(); ++i) {
       const Site& site = alignment2->getSite(i);
       if (!SiteTools::isConstant(site))
-        nbSeg++;
+        S++;
     }
   }
-  double wt = 0;
-  if (nbSeg > 0) {
-    double hf = 0;
-    for (double i = 1; i < n; ++i)
-      hf += 1. / i;
-    wt = static_cast<double>(nbSeg) / (static_cast<double>(nbTot) * hf);
+
+  double a1 = 0;
+  double a2 = 0;
+  for (double i = 1; i < n; ++i) {
+    a1 += 1. / i;
+    a2 += 1. / (i * i);
   }
+  double wt = S / (static_cast<double>(nbTot) * a1);
+  double b1 = (n + 1) / (3 * (n - 1));
+  double b2 = 2 * (n * n + n + 3) / (9 * n * (n - 1));
+  double c1 = b1 - 1. / a1;
+  double c2 = b2 - (n + 2) / (a1 * n) + a2 / (a1 * a1);
+  double e1 = c1 / a1;
+  double e2 = c2 / (a1 * a1 + a2);
+  
   //Compute pairwise heterozigocity:
   double pi = 0;
   for (size_t i = 0; i < n - 1; ++i) {
@@ -486,8 +495,12 @@ void SequenceDiversityMafStatistics::compute(const MafBlock& block)
   }
   pi /= static_cast<double>((n - 1) * n / 2);
 
-  result_.setValue("NbSeggregating", nbSeg);
+  //Compute Tajima's D:
+  double tajd = (pi - wt) / sqrt(e1 * S + e2 * S * (S - 1));
+
+  result_.setValue("NbSeggregating", S);
   result_.setValue("WattersonTheta", wt);
   result_.setValue("TajimaPi", pi);
+  result_.setValue("TajimaD", tajd);
 }
 

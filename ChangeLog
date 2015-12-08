@@ -1,3 +1,6 @@
+08/12/15 Julien Dutheil
+* Added Tajima's D computation.
+
 22/11/15 Julien Dutheil
 * Fix bug in FeatureFilter when two feature are exactly following each other.
 
