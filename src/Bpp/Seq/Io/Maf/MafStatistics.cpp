@@ -474,10 +474,11 @@ void SequenceDiversityMafStatistics::compute(const MafBlock& block)
     a2 += 1. / (i * i);
   }
   double wt = S / (static_cast<double>(nbTot) * a1);
-  double b1 = (n + 1) / (3 * (n - 1));
-  double b2 = 2 * (n * n + n + 3) / (9 * n * (n - 1));
+  double dn = static_cast<double>(n);
+  double b1 = (dn + 1) / (3 * (dn - 1));
+  double b2 = 2 * (dn * dn + dn + 3) / (9 * dn * (dn - 1));
   double c1 = b1 - 1. / a1;
-  double c2 = b2 - (n + 2) / (a1 * n) + a2 / (a1 * a1);
+  double c2 = b2 - (dn + 2) / (a1 * dn) + a2 / (a1 * a1);
   double e1 = c1 / a1;
   double e2 = c2 / (a1 * a1 + a2);
   
