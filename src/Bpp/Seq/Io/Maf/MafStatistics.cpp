@@ -469,12 +469,12 @@ void SequenceDiversityMafStatistics::compute(const MafBlock& block)
 
   double a1 = 0;
   double a2 = 0;
-  for (double i = 1; i < n; ++i) {
+  double dn = static_cast<double>(n);
+  for (double i = 1; i < dn; ++i) {
     a1 += 1. / i;
     a2 += 1. / (i * i);
   }
   double wt = S / (static_cast<double>(nbTot) * a1);
-  double dn = static_cast<double>(n);
   double b1 = (dn + 1) / (3 * (dn - 1));
   double b2 = 2 * (dn * dn + dn + 3) / (9 * dn * (dn - 1));
   double c1 = b1 - 1. / a1;
@@ -497,7 +497,7 @@ void SequenceDiversityMafStatistics::compute(const MafBlock& block)
   pi /= static_cast<double>((n - 1) * n / 2);
 
   //Compute Tajima's D:
-  double tajd = (pi - wt) / sqrt(e1 * S + e2 * S * (S - 1));
+  double tajd = static_cast<double>(nbTot) * (pi - wt) / sqrt(e1 * S + e2 * S * (S - 1));
 
   result_.setValue("NbSeggregating", S);
   result_.setValue("WattersonTheta", wt);
