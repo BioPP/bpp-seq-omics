@@ -68,11 +68,11 @@ const std::string GffFeatureReader::GFF_IS_CIRCULAR = "Is_circular";
 void GffFeatureReader::getNextLine_() {
   nextLine_ = "";
   while (TextTools::isEmpty(nextLine_) || nextLine_.size() < 2 || nextLine_[0] == '#') {
-    if (input_->eof()) {
+    if (input_.eof()) {
       nextLine_ = "";
       return;
     }
-    getline(*input_, nextLine_);
+    getline(input_, nextLine_);
   }
 }
 

@@ -120,11 +120,11 @@ class MafSequence:
     }
 
     /**
-     * @return A range with cooridinates from this sequence.
-     * @param origin Tell if coorinates according to original sequence should be used.
-     * If 'yes' and the sequence is on the negative strand, the returned rang will be computed as [SrcSize-Stop, SrcSize-Start[
+     * @return A range with coordinates from this sequence.
+     * @param origin Tell if coordinates according to original sequence should be used.
+     * If 'yes' and the sequence is on the negative strand, the returned range will be computed as [SrcSize-Stop, SrcSize-Start[
      */
-    Range<size_t> getRange(bool origin=true) const {
+    Range<size_t> getRange(bool origin = true) const {
       if (hasCoordinates_) {
         if (origin && strand_ == '-') {
           return Range<size_t>(srcSize_ - stop(), srcSize_ - start());

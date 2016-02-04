@@ -1,11 +1,11 @@
 //
-// File: GtfFeatureReader.h
-// Created by: Sylvain Gaillard
-// Created on: Fry Jan 27 2012
+// File: BedGraphFeatureReader.h
+// Created by: Julien Dutheil
+// Created on: Tue Feb 2 2016
 //
 
 /*
-Copyright or © or Copr. Bio++ Development Team, (January 27, 2012)
+Copyright or © or Copr. Bio++ Development Team, (November 17, 2004)
 
 This software is a computer program whose purpose is to provide classes
 for sequences analysis.
@@ -37,8 +37,8 @@ The fact that you are presently reading this means that you have had
 knowledge of the CeCILL license and that you accept its terms.
 */
 
-#ifndef _GTFFEATUREREADER_H_
-#define _GTFFEATUREREADER_H_
+#ifndef _BEDGRAPHFEATUREREADER_H_
+#define _BEDGRAPHFEATUREREADER_H_
 
 #include "../SequenceFeature.h"
 #include "../FeatureReader.h"
@@ -53,32 +53,40 @@ knowledge of the CeCILL license and that you accept its terms.
 namespace bpp {
 
 /**
- * @brief A simple reader implementing the Gene Transfer Format.
+ * @brief A simple reader for features in the BedGraph format.
  *
- * The reference norm in use is the one of GTF2.2 http://mblab.wustl.edu/GTF22.html .
- * This class is a "beta" class, and may undeavour interface changes in the future.
+ * Format desciption at UCSC: https://genome.ucsc.edu/goldenpath/help/bedgraph.html
  *
- * Note that in GTF, coordinates are [a, b] 1-based. They will therefore be converted to [a, b[ 0-based,
- * as specified for the SequenceFeature object.
+ * Note: The value associated to each feature is stored as a string attribute, using
+ * tag BegGraphFeatureReader::BED_VALUE. No check is performed regarding its value.
+ * An automatic id is generated, and the source tag is set to "beg_graph".
  *
- * @author Sylvain Gaillard
+ * @author Julien Dutheil
  */
-class GtfFeatureReader:
+class BedGraphFeatureReader:
   public virtual FeatureReader
 {
   public:
-    static const std::string GTF_PHASE;
-    static const std::string GTF_GENE_ID;
-    static const std::string GTF_TRANSCRIPT_ID;
+    static const std::string BED_VALUE;
 
   private:
     std::istream& input_;
     std::string nextLine_;
+    unsigned int id_;
 
   public:
-    GtfFeatureReader(std::istream& input):
-      input_(input), nextLine_()
+    BedGraphFeatureReader(std::istream& input):
+      input_(input), nextLine_(), id_(0)
     {
+      bool start = false;
+      do {
+        getNextLine_();
+        if (nextLine_.size() >= 5 && nextLine_.substr(0, 5) == "track") {
+          start = true;
+        }
+      } while(!start && !input_.eof());
+      if (input_.eof())
+        throw Exception("BedGraphFeatureReader::constructor: Invalid BedGraph file, missing proper header.");
       getNextLine_();
     }
 
@@ -106,6 +114,30 @@ class GtfFeatureReader:
       }
     }
 
+    /**
+     * @param f A sequence feature.
+     * @return A string describing the feature, in GFF format.
+     */
+    static std::string toString(const bpp::SequenceFeature& f);
+    
+    /**
+     * @brief Out put a string description of a feature to a stream.
+     *
+     * A end of line character will be appended after the description.
+     *
+     * @param f A sequence feature.
+     * @param out An output stream.
+     */
+    static void toString(const bpp::SequenceFeature& f, std::ostream& out) {
+      out << toString(f) << std::endl;
+    }
+
+    static void toString(const bpp::SequenceFeatureSet& fs, std::ostream& out) {
+      for (unsigned int i = 0; i < fs.getNumberOfFeatures(); ++i) {
+        toString(fs[i], out);
+      }
+    }
+
   private:
     void getNextLine_();
 
@@ -113,5 +145,5 @@ class GtfFeatureReader:
 
 } //end of namespace bpp
 
-#endif //_GTFFEATUREREADER_H_
+#endif //_BEDGRAPHFEATUREREADER_H_
 

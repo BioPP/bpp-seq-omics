@@ -21,6 +21,7 @@ SET(CPP_FILES
   Bpp/Seq/Io/Maf/QualityFilterMafIterator.cpp
   Bpp/Seq/Io/Maf/FeatureFilterMafIterator.cpp
   Bpp/Seq/Io/Maf/FeatureExtractorMafIterator.cpp
+  Bpp/Seq/Io/Maf/CoordinateTranslatorMafIterator.cpp
   Bpp/Seq/Io/Maf/OutputMafIterator.cpp
   Bpp/Seq/Io/Maf/OutputAlignmentMafIterator.cpp
   Bpp/Seq/Io/Maf/VcfOutputMafIterator.cpp
@@ -36,6 +37,7 @@ SET(CPP_FILES
   Bpp/Seq/Feature/SequenceFeatureTools.cpp
   Bpp/Seq/Feature/Gff/GffFeatureReader.cpp
   Bpp/Seq/Feature/Gtf/GtfFeatureReader.cpp
+  Bpp/Seq/Feature/Bed/BedGraphFeatureReader.cpp
   )
 
 SET(H_FILES
@@ -59,6 +61,7 @@ SET(H_FILES
   Bpp/Seq/Io/Maf/QualityFilterMafIterator.h
   Bpp/Seq/Io/Maf/FeatureFilterMafIterator.h
   Bpp/Seq/Io/Maf/FeatureExtractorMafIterator.h
+  Bpp/Seq/Io/Maf/CoordinateTranslatorMafIterator.h
   Bpp/Seq/Io/Maf/OutputMafIterator.h
   Bpp/Seq/Io/Maf/OutputAlignmentMafIterator.h
   Bpp/Seq/Io/Maf/VcfOutputMafIterator.h
@@ -74,6 +77,7 @@ SET(H_FILES
   Bpp/Seq/Feature/FeatureReader.h
   Bpp/Seq/Feature/Gff/GffFeatureReader.h
   Bpp/Seq/Feature/Gtf/GtfFeatureReader.h
+  Bpp/Seq/Feature/Bed/BedGraphFeatureReader.h
   )
 
 # Build the static lib

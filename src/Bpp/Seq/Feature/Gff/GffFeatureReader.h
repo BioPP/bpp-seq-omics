@@ -81,19 +81,15 @@ class GffFeatureReader:
     static const std::string GFF_IS_CIRCULAR;
 
   private:
-    std::istream* input_;
+    std::istream& input_;
     std::string nextLine_;
 
   public:
     GffFeatureReader(std::istream& input):
-      input_(&input), nextLine_()
+      input_(input), nextLine_()
     {
       getNextLine_();
     }
-
-  private:
-    GffFeatureReader(const GffFeatureReader& reader): input_(0), nextLine_() {}
-    GffFeatureReader& operator=(const GffFeatureReader& reader) { return *this; }
 
   public:
     bool hasMoreFeature() const { return nextLine_ != ""; }

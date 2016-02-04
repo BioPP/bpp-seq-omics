@@ -90,6 +90,16 @@ class SeqRange:
           strand_ = '.';
     }
 
+    /**
+     * @param range A range object
+     * @param strand The strand information. Can take one of the four values: '+' for positive strand, '-' for negative, '.' if not stranded or '?' if strandedness is relevant but unknown.
+     */
+    SeqRange(const Range<size_t> range, char strand = '.'):
+      Range<size_t>(range), strand_(strand) {
+        if (strand != '+' && strand != '-' && strand != '?' && strand != '.')
+          strand_ = '.';
+    }
+
     SeqRange* clone() const { return new SeqRange(*this); }
 
   public:
@@ -207,10 +217,35 @@ class SequenceFeature:
     virtual SeqRange getRange() const = 0;
 
     /**
+     * @return Check if the feature is empty (start == end)
+     */
+    virtual bool isEmpty() const { return size() == 0; }
+
+    /**
+     * @return Check if the feature is a point annotation (start + 1 == end)
+     */
+    virtual bool isPoint() const { return size() == 1; }
+
+    /**
      * @return True if the features overlap.
      */
     virtual bool overlap(const SequenceFeature& feat) const = 0;
     
+    /**
+     * @return True if the feature overlap with the given range (non-null intersection).
+     */
+    virtual bool overlap(const SeqRange& range) const = 0;
+ 
+    /**
+     * @return True if the feature fully contains the given range.
+     */
+    virtual bool includes(const SeqRange& range) const = 0;
+ 
+    /**
+     * @return True if the feature is fully contained in the given range.
+     */
+    virtual bool isIncludedIn(const SeqRange& range) const = 0;
+ 
     /**
      * @return The score associated to the feature (eg, an E-value or a P-value).
      */
@@ -351,7 +386,19 @@ class BasicSequenceFeature:
       return false;
     }
 
-    //const SequenceFeatureSet& getSubFeatures() const { return subFeatures; }
+    bool overlap(const SeqRange& range) const {
+      return range_.overlap(range);
+    }
+
+    virtual bool includes(const SeqRange& range) const {
+      return range_.contains(range);
+    }
+ 
+    virtual bool isIncludedIn(const SeqRange& range) const {
+      return range.contains(range_);
+    }
+
+     //const SequenceFeatureSet& getSubFeatures() const { return subFeatures; }
     //SequenceFeatureSet& getSubFeatures() { return subFeatures; }
 
 };
@@ -434,6 +481,11 @@ class SequenceFeatureSet
     size_t getNumberOfFeatures() const { return features_.size(); }
 
     /**
+     * @return True if the set contains no feature.
+     */
+    bool isEmpty() const { return features_.size() == 0; }
+
+    /**
      * @brief Add a feature to the container. The feature will be copied and the copy owned by the container.
      *
      * @param feature The feature to add to the container.
@@ -469,6 +521,19 @@ class SequenceFeatureSet
     }
 
     /**
+     * @brief Get all coordinates of features.
+     * All ranges are added to a RangeCollection container, as SeqRange objects.
+     * @param coords [out] a container where to add the coordinates of each feature.
+     */
+    void fillRangeCollection(RangeCollection<size_t>& coords) const {
+      for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
+          it != features_.end();
+          ++it) {
+        coords.addRange((**it).getRange());
+      }
+    }
+
+    /**
      * @brief Get all coordinates of features for a given source.
      * All ranges are added to a RangeCollection container, as SeqRange objects.
      * @param seqId The name of the sequence id to consider.
@@ -485,16 +550,86 @@ class SequenceFeatureSet
     }
 
     /**
-     * @param types The feature type.
+     * @param type The feature type.
      * @return A new set with all features of a given type.
      */
-    SequenceFeatureSet* getSubsetForType(const std::vector<std::string>& types) const {
+    SequenceFeatureSet* getSubsetForType(const std::string& type) const {
+      SequenceFeatureSet* subset = new SequenceFeatureSet();
+      for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
+          it != features_.end();
+          ++it) {
+        if ((**it).getType() == type) {
+          subset->addFeature(**it);
+        }
+      }
+      return subset;
+    }
+
+    /**
+     * @param types The feature types.
+     * @return A new set with all features of given types.
+     */
+    SequenceFeatureSet* getSubsetForTypes(const std::vector<std::string>& types) const {
       SequenceFeatureSet* subset = new SequenceFeatureSet();
       for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
           it != features_.end();
           ++it) {
         if (std::find(types.begin(), types.end(), (**it).getType()) != types.end()) {
           subset->addFeature(**it);
+        }
+      }
+      return subset;
+    }
+
+    /**
+     * @param id The sequence id to look for.
+     * @return A new set with all features for a given sequence id.
+     */
+    SequenceFeatureSet* getSubsetForSequence(const std::string& id) const {
+      SequenceFeatureSet* subset = new SequenceFeatureSet();
+      for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
+          it != features_.end();
+          ++it) {
+        if ((**it).getSequenceId() == id) {
+          subset->addFeature(**it);
+        }
+      }
+      return subset;
+    }
+
+    /**
+     * @param ids The sequence ids to look for.
+     * @return A new set with all features of given sequence ids.
+     */
+    SequenceFeatureSet* getSubsetForSequences(const std::vector<std::string>& ids) const {
+      SequenceFeatureSet* subset = new SequenceFeatureSet();
+      for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
+          it != features_.end();
+          ++it) {
+        if (std::find(ids.begin(), ids.end(), (**it).getSequenceId()) != ids.end()) {
+          subset->addFeature(**it);
+        }
+      }
+      return subset;
+    }
+
+    /**
+     * @param ids The sequence ids to look for.
+     * @param complete If true, only return features fully included in the given range.
+     *                 Otherwise returns features overlapping with the range.
+     * @return A new set with all features of given sequence ids.
+     */
+    SequenceFeatureSet* getSubsetForRange(const SeqRange& range, bool complete) const {
+      SequenceFeatureSet* subset = new SequenceFeatureSet();
+      for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
+          it != features_.end();
+          ++it) {
+        if (complete) {
+          if ((**it).isIncludedIn(range))
+            subset->addFeature(**it);
+        } else {
+          if ((**it).overlap(range))
+            subset->addFeature(**it);
         }
       }
       return subset;

@@ -62,11 +62,11 @@ void GtfFeatureReader::getNextLine_() {
     todo: remove characters between # and end-of-line taking care of double quotes
   */
   while (TextTools::isEmpty(nextLine_) || nextLine_.size() < 2 || nextLine_[0] == '#') {
-    if (input_->eof()) {
+    if (input_.eof()) {
       nextLine_ = "";
       return;
     }
-    getline(*input_, nextLine_);
+    getline(input_, nextLine_);
   }
 }
 
