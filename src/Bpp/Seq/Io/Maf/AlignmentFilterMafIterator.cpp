@@ -312,7 +312,7 @@ MafBlock* AlignmentFilter2MafIterator::analyseCurrentBlock_() throw (Exception)
           ApplicationTools::displayGauge(i - windowSize_, nc - windowSize_ - 1, '>');
         //Evaluate current window:
         unsigned int count = 0;
-        bool posIsGap = true;
+        bool posIsGap = false;
         for (size_t u = 0; u < window_.size(); ++u) {
           unsigned int partialCount = 0;
           if (!posIsGap || (u > 0 && window_[u] != window_[u - 1])) {
@@ -353,7 +353,7 @@ MafBlock* AlignmentFilter2MafIterator::analyseCurrentBlock_() throw (Exception)
 
       //Evaluate last window:
       unsigned int count = 0;
-      bool posIsGap = true;
+      bool posIsGap = false;
       for (size_t u = 0; u < window_.size(); ++u) {
         unsigned int partialCount = 0;
         if (!posIsGap || (u > 0 && window_[u] != window_[u - 1])) {
