@@ -79,6 +79,9 @@ MafBlock* FeatureExtractor::analyseCurrentBlock_() throw (Exception)
       goto START;
 
     //If the reference sequence is on the negative strand, then we have to correct the coordinates:
+    (*logstream_ << "Strand: " << refSeq.getStrand()).endLine();
+    (*logstream_ << refSeq.start()).endLine();
+    (*logstream_ << "ok :)").endLine();
     if (refSeq.getStrand() == '-') {
       RangeSet<size_t> cRanges;
       for (set<Range<size_t>*>::iterator it = ranges.getSet().begin();
@@ -109,14 +112,15 @@ MafBlock* FeatureExtractor::analyseCurrentBlock_() throw (Exception)
     {
       if (verbose_) {
         ApplicationTools::displayGauge(i++, ranges.getSet().size() - 1, '=');
-      }
+      } 
+      //This does not go after i=0, problem with ranges?????
       MafBlock* newBlock = new MafBlock();
       newBlock->setScore(block->getScore());
       newBlock->setPass(block->getPass());
+      size_t a = walker.getAlignmentPosition((**it).begin() - refSeq.start());
+      size_t b = walker.getAlignmentPosition((**it).end() - refSeq.start() - 1);
       for (size_t j = 0; j < block->getNumberOfSequences(); ++j) {
         auto_ptr<MafSequence> subseq;
-        size_t a = walker.getAlignmentPosition((**it).begin() - refSeq.start());
-        size_t b = walker.getAlignmentPosition((**it).end() - refSeq.start() - 1);
         subseq.reset(block->getSequence(j).subSequence(a, b - a + 1));
         if (!ignoreStrand_) {
           if ((dynamic_cast<SeqRange*>(*it)->isNegativeStrand() && refSeq.getStrand() == '+') ||

@@ -68,14 +68,13 @@ MafBlock* WindowSplitMafIterator::analyseCurrentBlock_() throw (Exception)
       case (CENTER)       : { pos = (bSize % windowSize_) / 2; break; }
       case (ADJUST)       : {
           size_t x = bSize / windowSize_;
-          if (x == 0) size = bSize;
-          else        size = bSize / x;
+          if (x > 0) size = bSize / x;
           break;
         }               
       default             : { }
     }
     //cout << "Effective size: " << size << endl;
-    for(size_t i = pos; i + size < bSize; i += size) {
+    for(size_t i = pos; i + size <= bSize; i += size) {
       MafBlock* newBlock = new MafBlock();
       newBlock->setScore(block->getScore());
       newBlock->setPass(block->getPass());
