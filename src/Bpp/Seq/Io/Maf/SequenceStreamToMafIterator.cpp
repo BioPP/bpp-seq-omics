@@ -46,7 +46,7 @@ using namespace bpp;
 
 MafBlock* SequenceStreamToMafIterator::analyseCurrentBlock_() throw (Exception)
 {
-  auto_ptr<MafBlock> block(new MafBlock());
+  unique_ptr<MafBlock> block(new MafBlock());
 
   MafSequence mafSeq;
   if (stream_->eof()) return 0;

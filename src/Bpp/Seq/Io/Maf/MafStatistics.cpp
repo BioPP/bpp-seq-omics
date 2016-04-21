@@ -157,7 +157,7 @@ void SiteFrequencySpectrumMafStatistics::compute(const MafBlock& block)
   int state;
   bool hasOutgroup = (outgroup_ != "");
   bool isAnalyzable;
-  auto_ptr<SiteContainer> alignment;
+  unique_ptr<SiteContainer> alignment;
   const Sequence* outgroupSeq = 0;
   if (hasOutgroup) {
     isAnalyzable = (block.hasSequenceForSpecies(outgroup_) && block.getNumberOfSequences() > 1);
@@ -260,7 +260,7 @@ vector<string> FourSpeciesPatternCountsMafStatistics::getSupportedTags() const
 void FourSpeciesPatternCountsMafStatistics::compute(const MafBlock& block)
 {
   counts_.assign(6, 0);
-  auto_ptr<SiteContainer> alignment(getSiteContainer_(block));
+  unique_ptr<SiteContainer> alignment(getSiteContainer_(block));
   if (alignment->getNumberOfSequences() == 4) {
     unsigned int nbIgnored = 0;
     for (size_t i = 0; i < block.getNumberOfSites(); ++i) {
@@ -305,7 +305,7 @@ vector<string> SiteMafStatistics::getSupportedTags() const
 
 void SiteMafStatistics::compute(const MafBlock& block)
 {
-  auto_ptr<SiteContainer> alignment(getSiteContainer_(block));
+  unique_ptr<SiteContainer> alignment(getSiteContainer_(block));
   unsigned int nbNg = 0;
   unsigned int nbCo = 0;
   unsigned int nbPi = 0;
@@ -453,9 +453,9 @@ vector<string> SequenceDiversityMafStatistics::getSupportedTags() const
 
 void SequenceDiversityMafStatistics::compute(const MafBlock& block)
 {
-  auto_ptr<SiteContainer> alignment(getSiteContainer_(block));
+  unique_ptr<SiteContainer> alignment(getSiteContainer_(block));
   //Get only complete sites:
-  auto_ptr<SiteContainer> alignment2(SiteContainerTools::getCompleteSites(*alignment));
+  unique_ptr<SiteContainer> alignment2(SiteContainerTools::getCompleteSites(*alignment));
   double S = 0;
   size_t nbTot = alignment2->getNumberOfSites();
   size_t n = alignment2->getNumberOfSequences();

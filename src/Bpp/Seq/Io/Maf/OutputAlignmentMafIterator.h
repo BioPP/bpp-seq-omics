@@ -65,7 +65,7 @@ class OutputAlignmentMafIterator:
     bool mask_;
     bool outputCoordinates_;
     bool addLDHatHeader_;
-    std::auto_ptr<OAlignment> writer_;
+    std::unique_ptr<OAlignment> writer_;
     unsigned int currentBlockIndex_;
     std::string refSpecies_;
 

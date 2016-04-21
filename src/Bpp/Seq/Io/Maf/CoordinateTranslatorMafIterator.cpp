@@ -53,7 +53,7 @@ using namespace std;
 
 MafBlock* CoordinateTranslator::analyseCurrentBlock_() throw (Exception)
 {
-  auto_ptr<MafBlock> block(iterator_->nextBlock());
+  unique_ptr<MafBlock> block(iterator_->nextBlock());
   if (!block.get()) return 0; //No more block.
 
   //Check if the block contains the reference and target species:
@@ -72,7 +72,7 @@ MafBlock* CoordinateTranslator::analyseCurrentBlock_() throw (Exception)
     return block.release();
     
   //second get only features within this block:
-  auto_ptr<SequenceFeatureSet> selectedFeatures(mr->second->getSubsetForRange(SeqRange(refSeq.getRange(true)), true)); 
+  unique_ptr<SequenceFeatureSet> selectedFeatures(mr->second->getSubsetForRange(SeqRange(refSeq.getRange(true)), true)); 
 
   //test if there are some features to translate here:
   if (selectedFeatures->isEmpty())

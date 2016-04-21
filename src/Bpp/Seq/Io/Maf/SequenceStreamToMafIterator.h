@@ -61,7 +61,7 @@ class SequenceStreamToMafIterator:
   public AbstractMafIterator
 {
   private:
-    std::auto_ptr<ISequenceStream> seqStream_;
+    std::unique_ptr<ISequenceStream> seqStream_;
     std::istream* stream_;
     bool zeroBasedCoords_;
     bool firstBlock_;
@@ -73,7 +73,7 @@ class SequenceStreamToMafIterator:
   private:
     //Recopy is forbidden!
     SequenceStreamToMafIterator(const SequenceStreamToMafIterator& ss2mi):
-      seqStream_(0), stream_(0), zeroBasedCoords_(ss2mi.zeroBasedCoords_), firstBlock_(ss2mi.firstBlock_) {}
+      seqStream_(), stream_(0), zeroBasedCoords_(ss2mi.zeroBasedCoords_), firstBlock_(ss2mi.firstBlock_) {}
     SequenceStreamToMafIterator& operator=(const SequenceStreamToMafIterator& ss2mi) {
       seqStream_.reset(); stream_ = 0; zeroBasedCoords_ = ss2mi.zeroBasedCoords_; firstBlock_ = ss2mi.firstBlock_;
       return *this;

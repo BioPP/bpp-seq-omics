@@ -54,7 +54,7 @@ MafBlock* FeatureExtractor::analyseCurrentBlock_() throw (Exception)
 {
   while (blockBuffer_.size() == 0) {
     //Unless there is no more block in the buffer, we need to parse more:
-    auto_ptr<MafBlock> block;
+    unique_ptr<MafBlock> block;
     START:
     block.reset(iterator_->nextBlock());
     if (!block.get()) return 0; //No more block.
@@ -120,7 +120,7 @@ MafBlock* FeatureExtractor::analyseCurrentBlock_() throw (Exception)
       size_t a = walker.getAlignmentPosition((**it).begin() - refSeq.start());
       size_t b = walker.getAlignmentPosition((**it).end() - refSeq.start() - 1);
       for (size_t j = 0; j < block->getNumberOfSequences(); ++j) {
-        auto_ptr<MafSequence> subseq;
+        unique_ptr<MafSequence> subseq;
         subseq.reset(block->getSequence(j).subSequence(a, b - a + 1));
         if (!ignoreStrand_) {
           if ((dynamic_cast<SeqRange*>(*it)->isNegativeStrand() && refSeq.getStrand() == '+') ||
