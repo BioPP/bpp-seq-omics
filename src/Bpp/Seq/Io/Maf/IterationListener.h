@@ -46,7 +46,7 @@ knowledge of the CeCILL license and that you accept its terms.
 namespace bpp {
 
 /**
- * @brief Listener which enable to catch events when parsing a Maf file.
+ * @brief Listener which enables to catch events when parsing a Maf file.
  */
 class IterationListener
 {
