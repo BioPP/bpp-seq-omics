@@ -30,6 +30,7 @@ SET(CPP_FILES
   Bpp/Seq/Io/Maf/CoordinatesOutputMafIterator.cpp
   Bpp/Seq/Io/Maf/SequenceStatisticsMafIterator.cpp
   Bpp/Seq/Io/Maf/WindowSplitMafIterator.cpp
+  Bpp/Seq/Io/Maf/RemoveEmptySequencesMafIterator.cpp
   Bpp/Seq/Io/Maf/MafSequence.cpp
   Bpp/Seq/Io/Maf/MafStatistics.cpp
   Bpp/Seq/Io/Maf/IterationListener.cpp
@@ -70,6 +71,7 @@ SET(H_FILES
   Bpp/Seq/Io/Maf/CoordinatesOutputMafIterator.h
   Bpp/Seq/Io/Maf/SequenceStatisticsMafIterator.h
   Bpp/Seq/Io/Maf/WindowSplitMafIterator.h
+  Bpp/Seq/Io/Maf/RemoveEmptySequencesMafIterator.h
   Bpp/Seq/Io/Maf/MafStatistics.h
   Bpp/Seq/Io/Maf/IterationListener.h
   Bpp/Seq/Feature/SequenceFeature.h
