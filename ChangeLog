@@ -1,3 +1,7 @@
+24/05/16 Julien Dutheil
+* Added output for SequenceLDhot.
+* Added more statistics in SiteMafStatistics: constant, bi-, tri- and quadriallelic site counts.
+
 26/04/16 Julien Dutheil
 * Portage to c++11
 * Added RemoveEmptySequencesMafFilter class.

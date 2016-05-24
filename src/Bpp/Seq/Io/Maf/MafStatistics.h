@@ -590,6 +590,10 @@ class FourSpeciesPatternCountsMafStatistics:
  * Computed statistics include:
  * - Number of sites without gaps
  * - Number of complete sites (no gap, no unresolved)
+ * - Number of complete sites with only one state (constant sites)
+ * - Number of complete biallelic sites
+ * - Number of complete triallelic sites
+ * - Number of complete Quadriallelic sites
  * - Number of parsimony informative sites
  */
 class SiteMafStatistics:

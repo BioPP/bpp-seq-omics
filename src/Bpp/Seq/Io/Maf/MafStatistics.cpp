@@ -299,6 +299,10 @@ vector<string> SiteMafStatistics::getSupportedTags() const
   vector<string> tags;
   tags.push_back("NbWithoutGap");
   tags.push_back("NbComplete");
+  tags.push_back("NbConstant");
+  tags.push_back("NbBiallelic");
+  tags.push_back("NbTriallelic");
+  tags.push_back("NbQuadriallelic");
   tags.push_back("NbParsimonyInformative");
   return tags;
 }
@@ -309,18 +313,36 @@ void SiteMafStatistics::compute(const MafBlock& block)
   unsigned int nbNg = 0;
   unsigned int nbCo = 0;
   unsigned int nbPi = 0;
+  unsigned int nbP1 = 0;
+  unsigned int nbP2 = 0;
+  unsigned int nbP3 = 0;
+  unsigned int nbP4 = 0;
   if (alignment->getNumberOfSequences() > 0) {
     for (size_t i = 0; i < alignment->getNumberOfSites(); ++i) {
       if (!SiteTools::hasGap(alignment->getSite(i)))
         nbNg++;
-      if (SiteTools::isComplete(alignment->getSite(i)))
+      if (SiteTools::isComplete(alignment->getSite(i))) {
         nbCo++;
+        map<int, size_t> counts;
+        SiteTools::getCounts(alignment->getSite(i), counts);
+        switch (counts.size()) {
+          case 1: nbP1++; break;
+          case 2: nbP2++; break;
+          case 3: nbP3++; break;
+          case 4: nbP4++; break;
+          default: throw Exception("The impossible happened. Probably a distortion in the Minkowski space.");
+        }
+      }
       if (SiteTools::isParsimonyInformativeSite(alignment->getSite(i)))
         nbPi++;
     }
   }
   result_.setValue("NbWithoutGap", nbNg);
   result_.setValue("NbComplete", nbCo);
+  result_.setValue("NbConstant", nbP1);
+  result_.setValue("NbBiallelic", nbP2);
+  result_.setValue("NbTriallelic", nbP3);
+  result_.setValue("NbQuadriallelic", nbP4);
   result_.setValue("NbParsimonyInformative", nbPi);
 }
 
