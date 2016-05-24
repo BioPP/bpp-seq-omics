@@ -27,6 +27,7 @@ SET(CPP_FILES
   Bpp/Seq/Io/Maf/VcfOutputMafIterator.cpp
   Bpp/Seq/Io/Maf/MsmcOutputMafIterator.cpp
   Bpp/Seq/Io/Maf/PlinkOutputMafIterator.cpp
+  Bpp/Seq/Io/Maf/SequenceLDhotOutputMafIterator.cpp
   Bpp/Seq/Io/Maf/CoordinatesOutputMafIterator.cpp
   Bpp/Seq/Io/Maf/SequenceStatisticsMafIterator.cpp
   Bpp/Seq/Io/Maf/WindowSplitMafIterator.cpp
@@ -68,6 +69,7 @@ SET(H_FILES
   Bpp/Seq/Io/Maf/VcfOutputMafIterator.h
   Bpp/Seq/Io/Maf/MsmcOutputMafIterator.h
   Bpp/Seq/Io/Maf/PlinkOutputMafIterator.h
+  Bpp/Seq/Io/Maf/SequenceLDhotOutputMafIterator.h
   Bpp/Seq/Io/Maf/CoordinatesOutputMafIterator.h
   Bpp/Seq/Io/Maf/SequenceStatisticsMafIterator.h
   Bpp/Seq/Io/Maf/WindowSplitMafIterator.h
