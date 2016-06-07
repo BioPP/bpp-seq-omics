@@ -62,16 +62,16 @@ class SequenceLDhotOutputMafIterator:
     std::string file_;
     std::string refSpecies_;
     unsigned int currentBlockIndex_;
+    bool completeOnly_;
 
   public:
  
     /**
-     * @brief Creates a new OutputAlignmentMafIterator object.
+     * @brief Creates a SequenceLDhotOutputMafIterator
      *
-     * All block will be printed as separate alignment, yet one after the other on the stream.
-     * Be aware that not all format will recognize the resulting file as a multiple alignment file (Mase and Clustal will for instance, not Fasta).
      * @param iterator The input iterator
      * @param file A string describing the path to the output files. Each block will be written to a distinct file.
+     * @param completeOnly Only export complete sites (no gap, no unresolved character)
      * If "file" is a fixed string, it will only contain the last block. Using the %i code in the file name allows to generate one file per block, %i denoting the block index.
      * @param reference [optional] specify a reference species which can be used to configure file names
      * (for instance using coordinates information).
@@ -79,11 +79,13 @@ class SequenceLDhotOutputMafIterator:
     SequenceLDhotOutputMafIterator(
         MafIterator* iterator,
         const std::string& file,
+        bool completeOnly = true,
         const std::string& reference = "") :
       AbstractFilterMafIterator(iterator),
       file_(file),
       refSpecies_(reference),
-      currentBlockIndex_(0)
+      currentBlockIndex_(0),
+      completeOnly_(completeOnly)
     {
     }
 
@@ -94,7 +96,8 @@ class SequenceLDhotOutputMafIterator:
       AbstractFilterMafIterator(0),
       file_(iterator.file_),
       refSpecies_(iterator.refSpecies_),
-      currentBlockIndex_(iterator.currentBlockIndex_)
+      currentBlockIndex_(iterator.currentBlockIndex_),
+      completeOnly_(iterator.completeOnly_)
     {}
     
     SequenceLDhotOutputMafIterator& operator=(const SequenceLDhotOutputMafIterator& iterator)
@@ -102,6 +105,7 @@ class SequenceLDhotOutputMafIterator:
       file_ = iterator.file_;
       refSpecies_ = iterator.refSpecies_;
       currentBlockIndex_ = iterator.currentBlockIndex_;
+      completeOnly_ = iterator.completeOnly_;
       return *this;
     }
 

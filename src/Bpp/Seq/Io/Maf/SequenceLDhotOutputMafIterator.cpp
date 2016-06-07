@@ -90,6 +90,9 @@ void SequenceLDhotOutputMafIterator::writeBlock(std::ostream& out, const MafBloc
   string positions = "";
   for (size_t i = 0; i < aln.getNumberOfSites(); ++i) {
     const Site& s = aln.getSite(i);
+    if (completeOnly_ && !SiteTools::isComplete(s)) {
+      continue;
+    }
     unsigned int count = 0;
     int x = -1;
     for (size_t j = 0; j < s.size() && count < 2; ++j) {
