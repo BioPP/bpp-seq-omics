@@ -365,42 +365,6 @@ class AlignmentScoreMafStatistics:
     }
 };
 
-/**
- * @brief Compute the base frequencies of a maf block.
- *
- * For each block, provides the following numbers (with their corresponding tags):
- * - A: total counts of A
- * - C: total counts of C
- * - G: total counts of G
- * - T [or U]: total counts of T/U
- * - Gap: total counts of gaps
- * - Unresolved: total counts of unresolved characters
- * The sum of all characters should equal BlockSize x BlockLength 
- */
-class CharacterCountsMafStatistics:
-  public AbstractMafStatistics
-{
-  private:
-    const Alphabet* alphabet_;
-
-  public:
-    CharacterCountsMafStatistics(const Alphabet* alphabet): AbstractMafStatistics(), alphabet_(alphabet) {}
-    CharacterCountsMafStatistics(const CharacterCountsMafStatistics& stats):
-      AbstractMafStatistics(stats), alphabet_(stats.alphabet_) {}
-    CharacterCountsMafStatistics& operator=(const CharacterCountsMafStatistics& stats) {
-      AbstractMafStatistics::operator=(stats);
-      alphabet_ = stats.alphabet_;
-      return *this;
-    }
-
-    virtual ~CharacterCountsMafStatistics() {}
-
-  public:
-    std::string getShortName() const { return "Count"; }
-    std::string getFullName() const { return "Character counts."; }
-    void compute(const MafBlock& block);
-    std::vector<std::string> getSupportedTags() const;
-};
 
 
 /**
@@ -413,10 +377,20 @@ class AbstractSpeciesSelectionMafStatistics:
 {
   private:
     std::vector<std::string> species_;
+    bool noSpeciesMeansAllSpecies_;
+
+  protected:
+    std::string suffix_;
 
   public:
-    AbstractSpeciesSelectionMafStatistics(const std::vector<std::string>& species):
-      species_(species) {}
+    AbstractSpeciesSelectionMafStatistics(
+        const std::vector<std::string>& species,
+        bool noSpeciesMeansAllSpecies = false,
+        const std::string& suffix = ""):
+      species_(species),
+      noSpeciesMeansAllSpecies_(noSpeciesMeansAllSpecies),
+      suffix_(suffix)
+    {}
 
   protected:
     SiteContainer* getSiteContainer_(const MafBlock& block);
@@ -442,6 +416,55 @@ class AbstractSpeciesMultipleSelectionMafStatistics:
     std::vector<SiteContainer*> getSiteContainers_(const MafBlock& block);
 
 };
+
+
+
+/**
+ * @brief Compute the base frequencies of a maf block.
+ *
+ * For each block, provides the following numbers (with their corresponding tags):
+ * - A: total counts of A
+ * - C: total counts of C
+ * - G: total counts of G
+ * - T [or U]: total counts of T/U
+ * - Gap: total counts of gaps
+ * - Unresolved: total counts of unresolved characters
+ * The sum of all characters should equal BlockSize x BlockLength 
+ */
+class CharacterCountsMafStatistics:
+  public AbstractMafStatistics,
+  public AbstractSpeciesSelectionMafStatistics
+{
+  private:
+    const Alphabet* alphabet_;
+
+  public:
+    CharacterCountsMafStatistics(const Alphabet* alphabet, const std::vector<std::string>& species, const std::string suffix):
+      AbstractMafStatistics(),
+      AbstractSpeciesSelectionMafStatistics(species, true, suffix),
+      alphabet_(alphabet) {}
+
+    CharacterCountsMafStatistics(const CharacterCountsMafStatistics& stats):
+      AbstractMafStatistics(stats),
+      AbstractSpeciesSelectionMafStatistics(stats),
+      alphabet_(stats.alphabet_) {}
+    
+    CharacterCountsMafStatistics& operator=(const CharacterCountsMafStatistics& stats) {
+      AbstractMafStatistics::operator=(stats);
+      AbstractSpeciesSelectionMafStatistics::operator=(stats);
+      alphabet_ = stats.alphabet_;
+      return *this;
+    }
+
+    virtual ~CharacterCountsMafStatistics() {}
+
+  public:
+    std::string getShortName() const { return "Counts" + suffix_; }
+    std::string getFullName() const { return "Character counts (" + suffix_ + ")."; }
+    void compute(const MafBlock& block);
+    std::vector<std::string> getSupportedTags() const;
+};
+
 
 
 /**

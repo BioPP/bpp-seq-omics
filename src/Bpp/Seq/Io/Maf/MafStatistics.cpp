@@ -65,36 +65,12 @@ void PairwiseDivergenceMafStatistics::compute(const MafBlock& block)
     result_.setValue(100. - SequenceTools::getPercentIdentity(*seqs1[0], *seqs2[0], true));
 }
 
-vector<string> CharacterCountsMafStatistics::getSupportedTags() const
-{
-  vector<string> tags;
-  for (int i = 0; i < static_cast<int>(alphabet_->getSize()); ++i) {
-    tags.push_back(alphabet_->intToChar(i));
-  }
-  tags.push_back("Gap");
-  tags.push_back("Unresolved");
-
-  return tags;
-}
-
-void CharacterCountsMafStatistics::compute(const MafBlock& block)
-{
-  std::map<int, int> counts;
-  SequenceContainerTools::getCounts(block.getAlignment(), counts); 
-  for (int i = 0; i < static_cast<int>(alphabet_->getSize()); ++i) {
-    result_.setValue(alphabet_->intToChar(i), counts[i]);
-  }
-  result_.setValue("Gap", counts[alphabet_->getGapCharacterCode()]);
-  double countUnres = 0;
-  for (map<int, int>::iterator it = counts.begin(); it != counts.end(); ++it) {
-    if (alphabet_->isUnresolved(it->first))
-      countUnres += it->second;
-  }
-  result_.setValue("Unresolved", countUnres);
-}
-
 SiteContainer* AbstractSpeciesSelectionMafStatistics::getSiteContainer_(const MafBlock& block)
 {
+  if (noSpeciesMeansAllSpecies_ && species_.size() == 0) {
+    return new VectorSiteContainer(block.getAlignment());
+  }
+  //Otherwise, we select species:
   VectorSiteContainer* alignment = new VectorSiteContainer(block.getAlignment().getAlphabet());
   for (size_t i = 0; i < species_.size(); ++i) {
     if (block.hasSequenceForSpecies(species_[i])) {
@@ -134,6 +110,35 @@ vector<SiteContainer*> AbstractSpeciesMultipleSelectionMafStatistics::getSiteCon
     alignments.push_back(alignment);
   }
   return alignments;
+}
+
+vector<string> CharacterCountsMafStatistics::getSupportedTags() const
+{
+  vector<string> tags;
+  for (int i = 0; i < static_cast<int>(alphabet_->getSize()); ++i) {
+    tags.push_back(alphabet_->intToChar(i));
+  }
+  tags.push_back("Gap");
+  tags.push_back("Unresolved");
+
+  return tags;
+}
+
+void CharacterCountsMafStatistics::compute(const MafBlock& block)
+{
+  std::map<int, int> counts;
+  unique_ptr<SiteContainer> sites(getSiteContainer_(block));
+  SequenceContainerTools::getCounts(*sites, counts); 
+  for (int i = 0; i < static_cast<int>(alphabet_->getSize()); ++i) {
+    result_.setValue(alphabet_->intToChar(i), counts[i]);
+  }
+  result_.setValue("Gap", counts[alphabet_->getGapCharacterCode()]);
+  double countUnres = 0;
+  for (map<int, int>::iterator it = counts.begin(); it != counts.end(); ++it) {
+    if (alphabet_->isUnresolved(it->first))
+      countUnres += it->second;
+  }
+  result_.setValue("Unresolved", countUnres);
 }
 
 vector<string> SiteFrequencySpectrumMafStatistics::getSupportedTags() const
