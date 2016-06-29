@@ -61,9 +61,11 @@ MafBlock* MaskFilterMafIterator::analyseCurrentBlock_() throw (Exception)
       //Parse block.
       vector< vector<bool> > aln;
       for (size_t i = 0; i < species_.size(); ++i) {
-        const MafSequence* seq = &block->getSequenceForSpecies(species_[i]);
-        if (seq->hasAnnotation(SequenceMask::MASK)) {
-          aln.push_back(dynamic_cast<const SequenceMask&>(seq->getAnnotation(SequenceMask::MASK)).getMask());
+        if (block->hasSequenceForSpecies(species_[i])) {
+          const MafSequence* seq = &block->getSequenceForSpecies(species_[i]);
+          if (seq->hasAnnotation(SequenceMask::MASK)) {
+            aln.push_back(dynamic_cast<const SequenceMask&>(seq->getAnnotation(SequenceMask::MASK)).getMask());
+          }
         }
       }
       size_t nr = aln.size();
