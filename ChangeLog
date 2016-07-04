@@ -1,3 +1,6 @@
+04/07/16 Julien Dutheil
+* Alignment filters now allow for relative proportions of gaps.
+
 24/05/16 Julien Dutheil
 * Added output for SequenceLDhot.
 * Added more statistics in SiteMafStatistics: constant, bi-, tri- and quadriallelic site counts.
