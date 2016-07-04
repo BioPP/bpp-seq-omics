@@ -75,15 +75,17 @@ MafBlock* AlignmentFilterMafIterator::analyseCurrentBlock_() throw (Exception)
         }
       } else {
         vector<string> speciesSet = VectorTools::vectorIntersection(species_, block->getSpeciesList());
-        nr = speciesSet.size();
-        aln.resize(nr);
-        for (size_t i = 0; i < nr; ++i) {
-          aln[i] = block->getSequenceForSpecies(species_[i]).getContent();
+        for (size_t i = 0; i < species_.size(); ++i) {
+          if (block->hasSequenceForSpecies(species_[i])) {
+            aln.push_back(block->getSequenceForSpecies(species_[i]).getContent());
+          } else {
+            if (!relative_) {
+              throw Exception("AlignmentFilterMafIterator::analyseCurrentBlock_. Block does not include selected species '" + species_[i] + "' and threshold are absolutes, leading to an undefined behavior. Consider selecting blocks first, or use relative thresholds.");
+            }
+          }
         }
+        nr = aln.size();
       }
-
-
-
 
       //First we create a mask:
       vector<size_t> pos;
@@ -121,7 +123,14 @@ MafBlock* AlignmentFilterMafIterator::analyseCurrentBlock_() throw (Exception)
           }
           sumEnt += VectorTools::shannonDiscrete<int, double>(col) / log(5.);
         }
-        if (sumGap > maxGap_ && (sumEnt / static_cast<double>(windowSize_)) > maxEnt_) {
+        bool test = (sumEnt / static_cast<double>(windowSize_)) > maxEnt_;
+        if (relative_) {
+          double propGap = static_cast<double>(sumGap) / static_cast<double>(nr * nc);
+          test = test && (propGap > maxPropGap_);
+        } else {
+          test = test && (sumGap > maxGap_);
+        }
+        if (test) {
           if (pos.size() == 0) {
             pos.push_back(i - windowSize_);
             pos.push_back(i);
@@ -159,7 +168,14 @@ MafBlock* AlignmentFilterMafIterator::analyseCurrentBlock_() throw (Exception)
         }
         sumEnt += VectorTools::shannonDiscrete<int, double>(col) / log(5.);
       }
-      if (sumGap > maxGap_ && (sumEnt / static_cast<double>(windowSize_)) > maxEnt_) {
+      bool test = (sumEnt / static_cast<double>(windowSize_)) > maxEnt_;
+      if (relative_) {
+        double propGap = static_cast<double>(sumGap) / static_cast<double>(nr);
+        test = test && (propGap > maxPropGap_);
+      } else {
+        test = test && (sumGap > maxGap_);
+      }
+      if (test) {
         if (pos.size() == 0) {
           pos.push_back(i - windowSize_);
           pos.push_back(i);
@@ -283,12 +299,18 @@ MafBlock* AlignmentFilter2MafIterator::analyseCurrentBlock_() throw (Exception)
         }
       } else {
         vector<string> speciesSet = VectorTools::vectorIntersection(species_, block->getSpeciesList());
-        nr = speciesSet.size();
-        aln.resize(nr);
-        for (size_t i = 0; i < nr; ++i) {
-          aln[i] = block->getSequenceForSpecies(species_[i]).getContent();
+        for (size_t i = 0; i < species_.size(); ++i) {
+          if (block->hasSequenceForSpecies(species_[i])) {
+            aln.push_back(block->getSequenceForSpecies(species_[i]).getContent());
+          } else {
+            if (!relative_) {
+              throw Exception("AlignmentFilter2MafIterator::analyseCurrentBlock_. Block does not include selected species '" + species_[i] + "' and threshold are absolutes, leading to an undefined behavior. Consider selecting blocks first, or use relative thresholds.");
+            }
+          }
         }
+        nr = aln.size();
       }
+
       //First we create a mask:
       vector<size_t> pos;
       vector<bool> col(nr);
@@ -318,7 +340,13 @@ MafBlock* AlignmentFilter2MafIterator::analyseCurrentBlock_() throw (Exception)
           if (!posIsGap || (u > 0 && window_[u] != window_[u - 1])) {
             for (size_t v = 0; v < window_[u].size(); ++v)
               if (window_[u][v]) partialCount++;
-            if (partialCount > maxGap_) {
+            bool test;
+            if (relative_) {
+              test = (static_cast<double>(partialCount) / static_cast<double>(nr) > maxPropGap_);
+            } else {
+              test = (partialCount > maxGap_);
+            }
+            if (test) {
               count++;
               posIsGap = true;
             } else {

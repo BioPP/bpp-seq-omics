@@ -69,14 +69,30 @@ class AlignmentFilterMafIterator:
     unsigned int windowSize_;
     unsigned int step_;
     unsigned int maxGap_;
+    double maxPropGap_;
     double maxEnt_;
     std::deque<MafBlock*> blockBuffer_;
     std::deque<MafBlock*> trashBuffer_;
     std::deque< std::vector<int> > window_;
     bool keepTrashedBlocks_;
     bool missingAsGap_;
+    bool relative_;
 
   public:
+
+    /**
+     * @brief Create a new AlignmentFilterMafIterator with absolute thresholds.
+     *
+     * @param iterator Input iterator
+     * @param species Selection of species on which filtering criteria are applied.
+     * Results of filtering will be applied to all species.
+     * @param windowSize Size of the sliding window (nt).
+     * @param step Step by which windows are moved (nt).
+     * @param maxGap Maximum number of gaps allowed in the window.
+     * @param maxEnt Maximum entropy allowed in the window.
+     * @param keepTrashedBlocks Removed windows are kept as separate blocks.
+     * @param missingAsGap Add missing species as gap sequences where needed.
+     */
     AlignmentFilterMafIterator(MafIterator* iterator,
         const std::vector<std::string>& species,
         unsigned int windowSize,
@@ -90,13 +106,52 @@ class AlignmentFilterMafIterator:
       windowSize_(windowSize),
       step_(step),
       maxGap_(maxGap),
+      maxPropGap_(),
       maxEnt_(maxEnt),
       blockBuffer_(),
       trashBuffer_(),
       window_(species.size()),
       keepTrashedBlocks_(keepTrashedBlocks),
-      missingAsGap_(missingAsGap)
+      missingAsGap_(missingAsGap),
+      relative_(false)
     {}
+
+    /**
+     * @brief Create a new AlignmentFilterMafIterator with relative thresholds.
+     *
+     * @param iterator Input iterator
+     * @param species Selection of species on which filtering criteria are applied.
+     * Results of filtering will be applied to all species.
+     * @param windowSize Size of the sliding window (nt).
+     * @param step Step by which windows are moved (nt).
+     * @param maxPropGap Maximum proportion of gaps allowed in the window.
+     * @param maxEnt Maximum entropy allowed in the window.
+     * @param keepTrashedBlocks Removed windows are kept as separate blocks.
+     * @param missingAsGap Add missing species as gap sequences where needed.
+     */
+    AlignmentFilterMafIterator(MafIterator* iterator,
+        const std::vector<std::string>& species,
+        unsigned int windowSize,
+        unsigned int step,
+        double maxPropGap,
+        double maxEnt,
+        bool keepTrashedBlocks,
+        bool missingAsGap) :
+      AbstractFilterMafIterator(iterator),
+      species_(species),
+      windowSize_(windowSize),
+      step_(step),
+      maxGap_(),
+      maxPropGap_(maxPropGap),
+      maxEnt_(maxEnt),
+      blockBuffer_(),
+      trashBuffer_(),
+      window_(species.size()),
+      keepTrashedBlocks_(keepTrashedBlocks),
+      missingAsGap_(missingAsGap),
+      relative_(true)
+    {}
+
 
   public:
     MafBlock* nextRemovedBlock() throw (Exception) {
@@ -127,26 +182,72 @@ class AlignmentFilter2MafIterator:
     unsigned int windowSize_;
     unsigned int step_;
     unsigned int maxGap_;
+    double maxPropGap_;
     unsigned int maxPos_;
     std::deque<MafBlock*> blockBuffer_;
     std::deque<MafBlock*> trashBuffer_;
     std::deque< std::vector<bool> > window_;
     bool keepTrashedBlocks_;
     bool missingAsGap_;
+    bool relative_;
 
   public:
+    /**
+     * @brief Create a new AlignmentFilter2MafIterator with absolute thresholds.
+     *
+     * @param iterator Input iterator
+     * @param species Selection of species on which filtering criteria are applied.
+     * Results of filtering will be applied to all species.
+     * @param windowSize Size of the sliding window (nt).
+     * @param step Step by which windows are moved (nt).
+     * @param maxGap Maximum number of gaps allowed in the window.
+     * @param maxPos Maximum number of gaps "events" allowed.
+     * @param keepTrashedBlocks Removed windows are kept as separate blocks.
+     * @param missingAsGap Add missing species as gap sequences where needed.
+     */
     AlignmentFilter2MafIterator(MafIterator* iterator, const std::vector<std::string>& species, unsigned int windowSize, unsigned int step, unsigned int maxGap, unsigned int maxPos, bool keepTrashedBlocks, bool missingAsGap) :
       AbstractFilterMafIterator(iterator),
       species_(species),
       windowSize_(windowSize),
       step_(step),
       maxGap_(maxGap),
+      maxPropGap_(),
       maxPos_(maxPos),
       blockBuffer_(),
       trashBuffer_(),
       window_(species.size()),
       keepTrashedBlocks_(keepTrashedBlocks),
-      missingAsGap_(missingAsGap)
+      missingAsGap_(missingAsGap),
+      relative_(false)
+    {}
+
+    /**
+     * @brief Create a new AlignmentFilterMafIterator with relative thresholds.
+     *
+     * @param iterator Input iterator
+     * @param species Selection of species on which filtering criteria are applied.
+     * Results of filtering will be applied to all species.
+     * @param windowSize Size of the sliding window (nt).
+     * @param step Step by which windows are moved (nt).
+     * @param maxPropGap Maximum proportion of gaps allowed in the window.
+     * @param maxGap Maximum number of gaps allowed in the window.
+     * @param keepTrashedBlocks Removed windows are kept as separate blocks.
+     * @param missingAsGap Add missing species as gap sequences where needed.
+     */
+    AlignmentFilter2MafIterator(MafIterator* iterator, const std::vector<std::string>& species, unsigned int windowSize, unsigned int step, double maxPropGap, unsigned int maxPos, bool keepTrashedBlocks, bool missingAsGap) :
+      AbstractFilterMafIterator(iterator),
+      species_(species),
+      windowSize_(windowSize),
+      step_(step),
+      maxGap_(),
+      maxPropGap_(maxPropGap),
+      maxPos_(maxPos),
+      blockBuffer_(),
+      trashBuffer_(),
+      window_(species.size()),
+      keepTrashedBlocks_(keepTrashedBlocks),
+      missingAsGap_(missingAsGap),
+      relative_(true)
     {}
 
   public:
