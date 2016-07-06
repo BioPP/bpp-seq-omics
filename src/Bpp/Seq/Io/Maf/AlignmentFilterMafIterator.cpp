@@ -387,7 +387,13 @@ MafBlock* AlignmentFilter2MafIterator::analyseCurrentBlock_() throw (Exception)
         if (!posIsGap || (u > 0 && window_[u] != window_[u - 1])) {
           for (size_t v = 0; v < window_[u].size(); ++v)
             if (window_[u][v]) partialCount++;
-          if (partialCount > maxGap_) {
+          bool test;
+          if (relative_) {
+            test = (static_cast<double>(partialCount) / static_cast<double>(nr) > maxPropGap_);
+          } else {
+            test = (partialCount > maxGap_);
+          }
+          if (test) {
             count++;
             posIsGap = true;
           } else {
