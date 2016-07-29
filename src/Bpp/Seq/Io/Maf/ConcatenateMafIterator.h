@@ -55,6 +55,7 @@ namespace bpp {
  * Blocks are appended regardless of their coordinates, to form concatenated blocks of at least a given number of positions.
  * The scores, if any, will be averaged for the block, weighted by the corresponding block sizes.
  * The pass value will be removed if it is different for the blocks.
+ * If a reference species is given, only block with identical chr tag will be concatenated.
  */
 class ConcatenateMafIterator:
   public AbstractFilterMafIterator
@@ -62,12 +63,14 @@ class ConcatenateMafIterator:
   private:
     MafBlock* incomingBlock_;
     unsigned int minimumSize_;
+    std::string refSpecies_;
 
   public:
-    ConcatenateMafIterator(MafIterator* iterator, unsigned int minimumSize) :
+    ConcatenateMafIterator(MafIterator* iterator, unsigned int minimumSize, std::string refSpecies = "") :
       AbstractFilterMafIterator(iterator),
       incomingBlock_(0),
-      minimumSize_(minimumSize)
+      minimumSize_(minimumSize),
+      refSpecies_(refSpecies)
     {
       incomingBlock_ = iterator->nextBlock();
     }
@@ -76,13 +79,15 @@ class ConcatenateMafIterator:
     ConcatenateMafIterator(const ConcatenateMafIterator& iterator) :
       AbstractFilterMafIterator(0),
       incomingBlock_(iterator.incomingBlock_),
-      minimumSize_(iterator.minimumSize_)
+      minimumSize_(iterator.minimumSize_),
+      refSpecies_(iterator.refSpecies_)
     {}
     
     ConcatenateMafIterator& operator=(const ConcatenateMafIterator& iterator)
     {
       incomingBlock_ = iterator.incomingBlock_;
       minimumSize_ = iterator.minimumSize_;
+      refSpecies_ = iterator.refSpecies_;
       return *this;
     }
 

@@ -45,6 +45,9 @@ using namespace bpp;
 #include <string>
 #include <numeric>
 
+//From bpp-core:
+#include <Bpp/App/ApplicationTools.h>
+
 using namespace std;
 
 MafBlock* ConcatenateMafIterator::analyseCurrentBlock_() throw (Exception)
@@ -52,10 +55,26 @@ MafBlock* ConcatenateMafIterator::analyseCurrentBlock_() throw (Exception)
   if (!incomingBlock_) return 0;
   currentBlock_  = incomingBlock_;
   incomingBlock_ = iterator_->nextBlock();
-  while (incomingBlock_) {
+  size_t count = 1;
+  if (verbose_)
+    ApplicationTools::displayMessage("Concatenating new block...");
+  while (incomingBlock_ &&
+          (refSpecies_ == "" || 
+            (incomingBlock_->hasSequenceForSpecies(refSpecies_) &&
+              currentBlock_->hasSequenceForSpecies(refSpecies_) &&
+              incomingBlock_->getSequenceForSpecies(refSpecies_).getChromosome() ==
+              currentBlock_->getSequenceForSpecies(refSpecies_).getChromosome()
+            )
+          )
+        )
+  {
     if (currentBlock_->getNumberOfSites() >= minimumSize_) {
       return currentBlock_;
     }
+    if (verbose_) {
+      ApplicationTools::displayUnlimitedGauge(count++, "Concatenating...");
+    }
+
     //We merge the two blocks:
     vector<string> sp1 = currentBlock_->getSpeciesList();
     vector<string> sp2 = incomingBlock_->getSpeciesList();
