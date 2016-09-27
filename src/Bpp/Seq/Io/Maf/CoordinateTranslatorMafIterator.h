@@ -58,7 +58,7 @@ namespace bpp {
  * This filter is similar in principle to the UCSC "liftOver" utility and software alike.
  * For now, only write a text file with all coordinates from reference and corresponding target sequence.
  */
-class CoordinateTranslator:
+class CoordinateTranslatorMafIterator:
   public AbstractFilterMafIterator
 {
   private:
@@ -76,7 +76,7 @@ class CoordinateTranslator:
      * @param targetSpecies The target species for which features coordinates should be translated
      * @param features The set of features to lift over
      */
-    CoordinateTranslator(
+    CoordinateTranslatorMafIterator(
         MafIterator* iterator,
         const std::string& referenceSpecies,
         const std::string& targetSpecies,
@@ -100,7 +100,7 @@ class CoordinateTranslator:
       output_ << "chr.ref\tstrand.ref\tbegin.ref\tend.ref\tchr.target\tstrand.target\tbegin.target\tend.target" << std::endl;
     }
 
-    virtual ~CoordinateTranslator() {
+    virtual ~CoordinateTranslatorMafIterator() {
       //Clean sorted features.
       for (std::map<std::string, SequenceFeatureSet*>::iterator it = inputFeaturesPerChr_.begin();
           it != inputFeaturesPerChr_.end();
