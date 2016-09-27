@@ -57,7 +57,7 @@ namespace bpp {
  * as overlapping features will all be extracted. This iterator may therefore results
  * in duplication of original data.
  */
-class FeatureExtractor:
+class FeatureExtractorMafIterator:
   public AbstractFilterMafIterator
 {
   private:
@@ -77,7 +77,7 @@ class FeatureExtractor:
      * @param features The set of features to extract
      * @param ignoreStrand If true, features will be extracted 'as is', without being reversed in case they are on the negative strand.
      */
-    FeatureExtractor(MafIterator* iterator, const std::string& refSpecies, const SequenceFeatureSet& features, bool complete = false, bool ignoreStrand = false) :
+    FeatureExtractorMafIterator(MafIterator* iterator, const std::string& refSpecies, const SequenceFeatureSet& features, bool complete = false, bool ignoreStrand = false) :
       AbstractFilterMafIterator(iterator),
       refSpecies_(refSpecies),
       completeOnly_(complete),
