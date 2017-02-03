@@ -110,7 +110,7 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_() throw (Exception)
       }
       for (size_t alnPos = 0; alnPos < refSeq.size() && refBounds.size() > 0; ++alnPos) {
         if (verbose_)
-          ApplicationTools::displayGauge(alnPos, refBounds.back(), '>');
+          ApplicationTools::displayGauge(refPos + 1, refBounds.back() + 1, '>');
         if (refSeq[alnPos] != gap) {
           refPos++;
           //check if this position is a bound:
