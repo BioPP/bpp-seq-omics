@@ -75,6 +75,7 @@ class CoordinateTranslatorMafIterator:
      * @param referenceSpecies The reference species for feature coordinates
      * @param targetSpecies The target species for which features coordinates should be translated
      * @param features The set of features to lift over
+     * @param output Output stream for translated coordinates
      */
     CoordinateTranslatorMafIterator(
         MafIterator* iterator,

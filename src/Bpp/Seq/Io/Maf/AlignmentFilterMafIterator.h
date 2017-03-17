@@ -230,7 +230,7 @@ class AlignmentFilter2MafIterator:
      * @param windowSize Size of the sliding window (nt).
      * @param step Step by which windows are moved (nt).
      * @param maxPropGap Maximum proportion of gaps allowed in the window.
-     * @param maxGap Maximum number of gaps allowed in the window.
+     * @param maxPos Maximum number of gaps "events" allowed.
      * @param keepTrashedBlocks Removed windows are kept as separate blocks.
      * @param missingAsGap Add missing species as gap sequences where needed.
      */

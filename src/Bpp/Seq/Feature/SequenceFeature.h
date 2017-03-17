@@ -614,10 +614,10 @@ class SequenceFeatureSet
     }
 
     /**
-     * @param ids The sequence ids to look for.
+     * @param range    The range of features to look for.
      * @param complete If true, only return features fully included in the given range.
      *                 Otherwise returns features overlapping with the range.
-     * @return A new set with all features of given sequence ids.
+     * @return A new set with all features included in the given range.
      */
     SequenceFeatureSet* getSubsetForRange(const SeqRange& range, bool complete) const {
       SequenceFeatureSet* subset = new SequenceFeatureSet();

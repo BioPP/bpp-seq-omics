@@ -74,8 +74,8 @@ class PlinkOutputMafIterator:
      * in the Ped file.
      *
      * @param iterator The input iterator.
-     * @param pedOut The output stream where to write the Ped file.
-     * @param mapOut The output stream where to write the Map file.
+     * @param outPed The output stream where to write the Ped file.
+     * @param outMap The output stream where to write the Map file.
      * @param species A list of at least two species to compute SNPs.
      * Only blocks containing at least these two species will be used.
      * In case one species is duplicated in a block, the first sequence will be used.
