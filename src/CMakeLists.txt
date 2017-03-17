@@ -1,111 +1,91 @@
-# CMake script for Bio++ Sequence Library
-# Author: Sylvain Gaillard and Julien Dutheil
+# CMake script for Bio++ Sequence Omics Library
+# Authors:
+#   Sylvain Gaillard
+#   Julien Dutheil
+#   Francois Gindraud (2017)
 # Created: 30/07/2012
 
-# File list
-SET(CPP_FILES
-  Bpp/Seq/Io/Fastq.cpp
-  Bpp/Seq/Io/Maf/MafParser.cpp
-  Bpp/Seq/Io/Maf/SequenceStreamToMafIterator.cpp
-  Bpp/Seq/Io/Maf/MafIterator.cpp
-  Bpp/Seq/Io/Maf/SequenceFilterMafIterator.cpp
-  Bpp/Seq/Io/Maf/OrphanSequenceFilterMafIterator.cpp
-  Bpp/Seq/Io/Maf/ChromosomeMafIterator.cpp
-  Bpp/Seq/Io/Maf/DuplicateFilterMafIterator.cpp
-  Bpp/Seq/Io/Maf/BlockMergerMafIterator.cpp
-  Bpp/Seq/Io/Maf/ConcatenateMafIterator.cpp
-  Bpp/Seq/Io/Maf/FullGapFilterMafIterator.cpp
-  Bpp/Seq/Io/Maf/AlignmentFilterMafIterator.cpp
-  Bpp/Seq/Io/Maf/EntropyFilterMafIterator.cpp
-  Bpp/Seq/Io/Maf/MaskFilterMafIterator.cpp
-  Bpp/Seq/Io/Maf/QualityFilterMafIterator.cpp
-  Bpp/Seq/Io/Maf/FeatureFilterMafIterator.cpp
-  Bpp/Seq/Io/Maf/FeatureExtractorMafIterator.cpp
-  Bpp/Seq/Io/Maf/CoordinateTranslatorMafIterator.cpp
-  Bpp/Seq/Io/Maf/OutputMafIterator.cpp
-  Bpp/Seq/Io/Maf/OutputAlignmentMafIterator.cpp
-  Bpp/Seq/Io/Maf/VcfOutputMafIterator.cpp
-  Bpp/Seq/Io/Maf/MsmcOutputMafIterator.cpp
-  Bpp/Seq/Io/Maf/PlinkOutputMafIterator.cpp
-  Bpp/Seq/Io/Maf/SequenceLDhotOutputMafIterator.cpp
-  Bpp/Seq/Io/Maf/CoordinatesOutputMafIterator.cpp
-  Bpp/Seq/Io/Maf/SequenceStatisticsMafIterator.cpp
-  Bpp/Seq/Io/Maf/WindowSplitMafIterator.cpp
-  Bpp/Seq/Io/Maf/RemoveEmptySequencesMafIterator.cpp
-  Bpp/Seq/Io/Maf/MafSequence.cpp
-  Bpp/Seq/Io/Maf/MafStatistics.cpp
-  Bpp/Seq/Io/Maf/IterationListener.cpp
-  Bpp/Seq/Feature/SequenceFeature.cpp
-  Bpp/Seq/Feature/SequenceFeatureTools.cpp
+set (CPP_FILES
+  Bpp/Seq/Feature/Bed/BedGraphFeatureReader.cpp
   Bpp/Seq/Feature/Gff/GffFeatureReader.cpp
   Bpp/Seq/Feature/Gtf/GtfFeatureReader.cpp
-  Bpp/Seq/Feature/Bed/BedGraphFeatureReader.cpp
-  )
-
-SET(H_FILES
-  Bpp/Seq/Io/Fastq.h
-  Bpp/Seq/Io/Maf/MafSequence.h
-  Bpp/Seq/Io/Maf/MafParser.h
-  Bpp/Seq/Io/Maf/SequenceStreamToMafIterator.h
-  Bpp/Seq/Io/Maf/MafIterator.h
-  Bpp/Seq/Io/Maf/BlockLengthMafIterator.h
-  Bpp/Seq/Io/Maf/BlockSizeMafIterator.h
-  Bpp/Seq/Io/Maf/SequenceFilterMafIterator.h
-  Bpp/Seq/Io/Maf/OrphanSequenceFilterMafIterator.h
-  Bpp/Seq/Io/Maf/ChromosomeMafIterator.h
-  Bpp/Seq/Io/Maf/DuplicateFilterMafIterator.h
-  Bpp/Seq/Io/Maf/BlockMergerMafIterator.h
-  Bpp/Seq/Io/Maf/ConcatenateMafIterator.h
-  Bpp/Seq/Io/Maf/FullGapFilterMafIterator.h
-  Bpp/Seq/Io/Maf/AlignmentFilterMafIterator.h
-  Bpp/Seq/Io/Maf/EntropyFilterMafIterator.h
-  Bpp/Seq/Io/Maf/MaskFilterMafIterator.h
-  Bpp/Seq/Io/Maf/QualityFilterMafIterator.h
-  Bpp/Seq/Io/Maf/FeatureFilterMafIterator.h
-  Bpp/Seq/Io/Maf/FeatureExtractorMafIterator.h
-  Bpp/Seq/Io/Maf/CoordinateTranslatorMafIterator.h
-  Bpp/Seq/Io/Maf/OutputMafIterator.h
-  Bpp/Seq/Io/Maf/OutputAlignmentMafIterator.h
-  Bpp/Seq/Io/Maf/VcfOutputMafIterator.h
-  Bpp/Seq/Io/Maf/MsmcOutputMafIterator.h
-  Bpp/Seq/Io/Maf/PlinkOutputMafIterator.h
-  Bpp/Seq/Io/Maf/SequenceLDhotOutputMafIterator.h
-  Bpp/Seq/Io/Maf/CoordinatesOutputMafIterator.h
-  Bpp/Seq/Io/Maf/SequenceStatisticsMafIterator.h
-  Bpp/Seq/Io/Maf/WindowSplitMafIterator.h
-  Bpp/Seq/Io/Maf/RemoveEmptySequencesMafIterator.h
-  Bpp/Seq/Io/Maf/MafStatistics.h
-  Bpp/Seq/Io/Maf/IterationListener.h
-  Bpp/Seq/Feature/SequenceFeature.h
-  Bpp/Seq/Feature/SequenceFeatureTools.h
-  Bpp/Seq/Feature/FeatureReader.h
-  Bpp/Seq/Feature/Gff/GffFeatureReader.h
-  Bpp/Seq/Feature/Gtf/GtfFeatureReader.h
-  Bpp/Seq/Feature/Bed/BedGraphFeatureReader.h
+  Bpp/Seq/Feature/SequenceFeature.cpp
+  Bpp/Seq/Feature/SequenceFeatureTools.cpp
+  Bpp/Seq/Io/Fastq.cpp
+  Bpp/Seq/Io/Maf/AlignmentFilterMafIterator.cpp
+  Bpp/Seq/Io/Maf/BlockMergerMafIterator.cpp
+  Bpp/Seq/Io/Maf/ChromosomeMafIterator.cpp
+  Bpp/Seq/Io/Maf/ConcatenateMafIterator.cpp
+  Bpp/Seq/Io/Maf/CoordinateTranslatorMafIterator.cpp
+  Bpp/Seq/Io/Maf/CoordinatesOutputMafIterator.cpp
+  Bpp/Seq/Io/Maf/DuplicateFilterMafIterator.cpp
+  Bpp/Seq/Io/Maf/EntropyFilterMafIterator.cpp
+  Bpp/Seq/Io/Maf/FeatureExtractorMafIterator.cpp
+  Bpp/Seq/Io/Maf/FeatureFilterMafIterator.cpp
+  Bpp/Seq/Io/Maf/FullGapFilterMafIterator.cpp
+  Bpp/Seq/Io/Maf/IterationListener.cpp
+  Bpp/Seq/Io/Maf/MafIterator.cpp
+  Bpp/Seq/Io/Maf/MafParser.cpp
+  Bpp/Seq/Io/Maf/MafSequence.cpp
+  Bpp/Seq/Io/Maf/MafStatistics.cpp
+  Bpp/Seq/Io/Maf/MaskFilterMafIterator.cpp
+  Bpp/Seq/Io/Maf/MsmcOutputMafIterator.cpp
+  Bpp/Seq/Io/Maf/OrphanSequenceFilterMafIterator.cpp
+  Bpp/Seq/Io/Maf/OutputAlignmentMafIterator.cpp
+  Bpp/Seq/Io/Maf/OutputMafIterator.cpp
+  Bpp/Seq/Io/Maf/PlinkOutputMafIterator.cpp
+  Bpp/Seq/Io/Maf/QualityFilterMafIterator.cpp
+  Bpp/Seq/Io/Maf/RemoveEmptySequencesMafIterator.cpp
+  Bpp/Seq/Io/Maf/SequenceFilterMafIterator.cpp
+  Bpp/Seq/Io/Maf/SequenceLDhotOutputMafIterator.cpp
+  Bpp/Seq/Io/Maf/SequenceStatisticsMafIterator.cpp
+  Bpp/Seq/Io/Maf/SequenceStreamToMafIterator.cpp
+  Bpp/Seq/Io/Maf/VcfOutputMafIterator.cpp
+  Bpp/Seq/Io/Maf/WindowSplitMafIterator.cpp
   )
 
 # Build the static lib
-ADD_LIBRARY(bppseqomics-static STATIC ${CPP_FILES})
-SET_TARGET_PROPERTIES(bppseqomics-static
-  PROPERTIES OUTPUT_NAME bpp-seq-omics
-  CLEAN_DIRECT_OUTPUT 1
+add_library (${PROJECT_NAME}-static STATIC ${CPP_FILES})
+target_include_directories (${PROJECT_NAME}-static PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+  $<INSTALL_INTERFACE:include>
   )
-TARGET_LINK_LIBRARIES(bppseqomics-static ${LIBS})
+set_target_properties (${PROJECT_NAME}-static PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
+target_link_libraries (${PROJECT_NAME}-static ${BPP_LIBS_STATIC})
+target_compile_options (${PROJECT_NAME}-static
+  PUBLIC ${public-compile-options}
+  PRIVATE ${private-compile-options}
+  )
 
 # Build the shared lib
-ADD_LIBRARY(bppseqomics-shared SHARED ${CPP_FILES})
-SET_TARGET_PROPERTIES(bppseqomics-shared
-  PROPERTIES OUTPUT_NAME bpp-seq-omics
-  CLEAN_DIRECT_OUTPUT 1
-  MACOSX_RPATH 1
-  VERSION ${BPPSEQOMICS_VERSION}
-  SOVERSION ${BPPSEQOMICS_VERSION_MAJOR}
+add_library (${PROJECT_NAME}-shared SHARED ${CPP_FILES})
+target_include_directories (${PROJECT_NAME}-shared PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+  $<INSTALL_INTERFACE:include>
   )
-TARGET_LINK_LIBRARIES(bppseqomics-shared ${LIBS})
+set_target_properties (${PROJECT_NAME}-shared
+  PROPERTIES OUTPUT_NAME ${PROJECT_NAME}
+  MACOSX_RPATH 1
+  VERSION ${${PROJECT_NAME}_VERSION}
+  SOVERSION ${${PROJECT_NAME}_VERSION_MAJOR}
+  )
+target_link_libraries (${PROJECT_NAME}-shared ${BPP_LIBS_SHARED})
+target_compile_options (${PROJECT_NAME}-shared
+  PUBLIC ${public-compile-options}
+  PRIVATE ${private-compile-options}
+  )
 
-# Install libs
-INSTALL(TARGETS bppseqomics-static bppseqomics-shared DESTINATION lib${LIB_SUFFIX})
-
-# Install headers
-INSTALL(DIRECTORY Bpp/ DESTINATION include/Bpp FILES_MATCHING PATTERN "*.h")
-
+# Install libs and headers
+install (
+  TARGETS ${PROJECT_NAME}-static ${PROJECT_NAME}-shared
+  EXPORT ${PROJECT_NAME}-targets
+  LIBRARY DESTINATION lib${LIB_SUFFIX}
+  ARCHIVE DESTINATION lib${LIB_SUFFIX}
+  )
+install (
+  DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
+  DESTINATION include
+  FILES_MATCHING PATTERN "*.h"
+  )
+# Install cmake file representing targets
+install (EXPORT ${PROJECT_NAME}-targets DESTINATION ${cmake-package-location})
