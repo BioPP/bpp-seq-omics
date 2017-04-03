@@ -1,3 +1,6 @@
+03/04/17 Julien Dutheil
+* VCF export now can export all position, including non-variable ones.
+
 04/07/16 Julien Dutheil
 * Alignment filters now allow for relative proportions of gaps.
 
