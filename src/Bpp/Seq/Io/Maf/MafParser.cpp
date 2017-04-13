@@ -48,9 +48,9 @@ knowledge of the CeCILL license and that you accept its terms.
 using namespace std;
 using namespace bpp;
 
-const string MafParser::DOT_ERROR = "error";
-const string MafParser::DOT_ASGAP = "asgap";
-//const string MafParser::DOT_RESOLVE = "resolve"; //not supported for now
+const string MafParser::DOT_ERROR("error");
+const string MafParser::DOT_ASGAP("asgap");
+//const string MafParser::DOT_RESOLVE("resolve"); //not supported for now
 
 MafBlock* MafParser::analyseCurrentBlock_() throw (Exception)
 {
