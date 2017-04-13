@@ -66,7 +66,7 @@ class MafParser:
     bool mask_;
     CaseMaskedAlphabet cmAlphabet_;
     bool firstBlock_;
-    std::string dotOption_;
+    short dotOption_;
 
   public:
     /**
@@ -79,7 +79,7 @@ class MafParser:
      *        will return an exception. DOT_ASGAP will convert all dots
      *        to gaps, which will increase parsing time.
      */
-    MafParser(std::istream* stream, bool parseMask = false, std::string dotOption = DOT_ERROR) :
+    MafParser(std::istream* stream, bool parseMask = false, short dotOption = DOT_ERROR) :
       stream_(stream), mask_(parseMask), cmAlphabet_(&AlphabetTools::DNA_ALPHABET), firstBlock_(true), dotOption_(dotOption) {}
 
   private:
@@ -100,9 +100,9 @@ class MafParser:
     MafBlock* analyseCurrentBlock_() throw (Exception);
 
   public:
-    static const std::string DOT_ERROR;
-    static const std::string DOT_ASGAP;
-    //static const std::string DOT_RESOLVE; // not yet supported
+    static constexpr short DOT_ERROR = 0;
+    static constexpr short DOT_ASGAP = 1;
+    //static constexpr short DOT_RESOLVE = 2; // not yet supported
 
 };
 
