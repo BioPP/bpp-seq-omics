@@ -43,8 +43,14 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <Bpp/Text/TextTools.h>
 #include <Bpp/Text/KeyvalTools.h>
 
+#include <algorithm>
+
 using namespace std;
 using namespace bpp;
+
+const string MafParser::DOT_ERROR = "error";
+const string MafParser::DOT_ASGAP = "asgap";
+//const string MafParser::DOT_RESOLVE = "resolve"; //not supported for now
 
 MafBlock* MafParser::analyseCurrentBlock_() throw (Exception)
 {
@@ -53,9 +59,12 @@ MafBlock* MafParser::analyseCurrentBlock_() throw (Exception)
   string line;
   bool test = true;
   MafSequence* currentSequence = 0;
+  
   while (test)
   {
-    if (stream_->eof()) return 0;
+    if (stream_->eof()) {
+     break;
+    }
     getline(*stream_, line, '\n');
     if (TextTools::isEmpty(line))
     {
@@ -113,7 +122,10 @@ MafBlock* MafParser::analyseCurrentBlock_() throw (Exception)
         block->addSequence(*currentSequence); //The sequence is copied in the container.
         delete currentSequence;
       }
-      const string seq = st.nextToken();
+      string seq = st.nextToken();
+      if (dotOption_ == DOT_ASGAP) {
+        std::replace(seq.begin(), seq.end(), '.', '-');
+      }
       currentSequence = new MafSequence(src, seq, start, strand, srcSize);
       if (currentSequence->getGenomicSize() != size)
         throw Exception("MafAlignmentParser::nextBlock. Sequence found (" + src + ") does not match specified size: " + TextTools::toString(currentSequence->getGenomicSize()) + ", should be " + TextTools::toString(size) + ".");
@@ -121,7 +133,7 @@ MafBlock* MafParser::analyseCurrentBlock_() throw (Exception)
       //Add mask:
       if (mask_) {
         vector<bool> mask(currentSequence->size());
-        for (unsigned int i = 0; i < mask.size(); ++i) {
+        for (size_t i = 0; i < mask.size(); ++i) {
           mask[i] = cmAlphabet_.isMasked(seq[i]);
         }
         currentSequence->addAnnotation(new SequenceMask(mask));
@@ -139,7 +151,7 @@ MafBlock* MafParser::analyseCurrentBlock_() throw (Exception)
       string qstr = st.nextToken();
       //Now parse the score string:
       SequenceQuality* seqQual = new SequenceQuality(qstr.size());
-      for (unsigned int i = 0; i < qstr.size(); ++i) {
+      for (size_t i = 0; i < qstr.size(); ++i) {
         char c = qstr[i];
         if (c == '-') {
           seqQual->setScore(i, -1);
@@ -156,6 +168,16 @@ MafBlock* MafParser::analyseCurrentBlock_() throw (Exception)
       currentSequence->addAnnotation(seqQual);
     }
   }
+  //// Final check and passing by results
+
+  //In case last line in not empty:
+  if (currentSequence) {
+    //Add previous sequence:
+    block->addSequence(*currentSequence); //The sequence is copied in the container.
+    delete currentSequence;
+  }
+  
+  //Returning block:
   return block;
 }
 

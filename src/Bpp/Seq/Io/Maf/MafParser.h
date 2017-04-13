@@ -66,18 +66,43 @@ class MafParser:
     bool mask_;
     CaseMaskedAlphabet cmAlphabet_;
     bool firstBlock_;
+    std::string dotOption_;
 
   public:
-    MafParser(std::istream* stream, bool parseMask = false) :
-      stream_(stream), mask_(parseMask), cmAlphabet_(&AlphabetTools::DNA_ALPHABET), firstBlock_(true) {}
+    /**
+     * @brief Create a new instance of MafParser
+     *
+     * @param stream The input stream to read text from
+     * @param parseMask Tell is masking (lower case) should be kept
+     * @param dotOption (one of DOT_ERROR, DOT_ASGAP or DOT_RESOLVE)
+     *        tells how dot should be treated. DOT_ERROR, the default,
+     *        will return an exception. DOT_ASGAP will convert all dots
+     *        to gaps, which will increase parsing time.
+     */
+    MafParser(std::istream* stream, bool parseMask = false, std::string dotOption = DOT_ERROR) :
+      stream_(stream), mask_(parseMask), cmAlphabet_(&AlphabetTools::DNA_ALPHABET), firstBlock_(true), dotOption_(dotOption) {}
 
   private:
     //Recopy is forbidden!
-    MafParser(const MafParser& maf): stream_(0), mask_(maf.mask_), cmAlphabet_(&AlphabetTools::DNA_ALPHABET), firstBlock_(maf.firstBlock_) {}
-    MafParser& operator=(const MafParser& maf) { stream_ = 0; mask_ = maf.mask_; firstBlock_ = maf.firstBlock_; return *this; }
+    MafParser(const MafParser& maf):
+      stream_(0), mask_(maf.mask_), cmAlphabet_(&AlphabetTools::DNA_ALPHABET),
+      firstBlock_(maf.firstBlock_), dotOption_(maf.dotOption_) {}
+
+    MafParser& operator=(const MafParser& maf) {
+      stream_ = 0;
+      mask_ = maf.mask_;
+      firstBlock_ = maf.firstBlock_;
+      dotOption_ = maf.dotOption_;
+      return *this;
+    }
 
   private:
     MafBlock* analyseCurrentBlock_() throw (Exception);
+
+  public:
+    static const std::string DOT_ERROR;
+    static const std::string DOT_ASGAP;
+    //static const std::string DOT_RESOLVE; // not yet supported
 
 };
 

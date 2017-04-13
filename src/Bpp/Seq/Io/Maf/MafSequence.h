@@ -72,22 +72,20 @@ class MafSequence:
     size_t srcSize_;
 
   public:
-    MafSequence():
-      SequenceWithAnnotation(&AlphabetTools::DNA_ALPHABET), hasCoordinates_(false), begin_(0), species_(""), chromosome_(""), strand_(0), size_(0), srcSize_(0)
-    {
-      size_ = 0;
-    }
+    MafSequence(const Alphabet* alphabet = &AlphabetTools::DNA_ALPHABET):
+      SequenceWithAnnotation(alphabet), hasCoordinates_(false), begin_(0), species_(""), chromosome_(""), strand_(0), size_(0), srcSize_(0)
+    {}
 
-    MafSequence(const std::string& name, const std::string& sequence, bool parseName = true):
-      SequenceWithAnnotation(name, sequence, &AlphabetTools::DNA_ALPHABET), hasCoordinates_(false), begin_(0), species_(""), chromosome_(""), strand_(0), size_(0), srcSize_(0)
+    MafSequence(const std::string& name, const std::string& sequence, bool parseName = true, const Alphabet* alphabet = &AlphabetTools::DNA_ALPHABET):
+      SequenceWithAnnotation(name, sequence, alphabet), hasCoordinates_(false), begin_(0), species_(""), chromosome_(""), strand_(0), size_(0), srcSize_(0)
     {
       size_ = SequenceTools::getNumberOfSites(*this);
       if (parseName)
         splitNameIntoSpeciesAndChromosome(name, species_, chromosome_);
     }
 
-    MafSequence(const std::string& name, const std::string& sequence, size_t begin, char strand, size_t srcSize, bool parseName = true) :
-      SequenceWithAnnotation(name, sequence, &AlphabetTools::DNA_ALPHABET), hasCoordinates_(true), begin_(begin), species_(""), chromosome_(""), strand_(strand), size_(0), srcSize_(srcSize)
+    MafSequence(const std::string& name, const std::string& sequence, size_t begin, char strand, size_t srcSize, bool parseName = true, const Alphabet* alphabet = &AlphabetTools::DNA_ALPHABET) :
+      SequenceWithAnnotation(name, sequence, alphabet), hasCoordinates_(true), begin_(begin), species_(""), chromosome_(""), strand_(strand), size_(0), srcSize_(srcSize)
     {
       size_ = SequenceTools::getNumberOfSites(*this);
       if (parseName)

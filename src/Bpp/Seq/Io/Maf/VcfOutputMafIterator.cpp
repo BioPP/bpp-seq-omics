@@ -132,7 +132,7 @@ void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
       }
     }
     if (ac == "" && outputAll_) {
-      ac == TextTools::toString(counts[ref]);
+      ac = TextTools::toString(counts[ref]);
     }
     if (ac != "") {
       out << chr << "\t" << (offset + walker.getSequencePosition(i) + 1) << "\t.\t" << chars[refSeq[i]] << "\t" << alt << "\t.\t" << filter << "\tAC=" << ac;
