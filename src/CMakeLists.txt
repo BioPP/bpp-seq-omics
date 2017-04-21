@@ -5,6 +5,7 @@
 #   Francois Gindraud (2017)
 # Created: 30/07/2012
 
+# File list
 set (CPP_FILES
   Bpp/Seq/Feature/Bed/BedGraphFeatureReader.cpp
   Bpp/Seq/Feature/Gff/GffFeatureReader.cpp
@@ -83,7 +84,7 @@ install (
   ARCHIVE DESTINATION lib${LIB_SUFFIX}
   )
 install (
-  DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
+  DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Bpp
   DESTINATION include
   FILES_MATCHING PATTERN "*.h"
   )
