@@ -77,7 +77,8 @@ class MafParser:
      * @param dotOption (one of DOT_ERROR, DOT_ASGAP or DOT_RESOLVE)
      *        tells how dot should be treated. DOT_ERROR, the default,
      *        will return an exception. DOT_ASGAP will convert all dots
-     *        to gaps, which will increase parsing time.
+     *        to gaps and DOT_ASUNRES will convert them to 'N', which
+     *        will increase parsing time.
      */
     MafParser(std::istream* stream, bool parseMask = false, short dotOption = DOT_ERROR) :
       stream_(stream), mask_(parseMask), cmAlphabet_(&AlphabetTools::DNA_ALPHABET), firstBlock_(true), dotOption_(dotOption) {}
@@ -102,7 +103,8 @@ class MafParser:
   public:
     static constexpr short DOT_ERROR = 0;
     static constexpr short DOT_ASGAP = 1;
-    //static constexpr short DOT_RESOLVE = 2; // not yet supported
+    static constexpr short DOT_ASUNRES = 2;
+    //static constexpr short DOT_RESOLVE = 3; // not yet supported
 
 };
 

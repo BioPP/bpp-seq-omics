@@ -122,6 +122,9 @@ MafBlock* MafParser::analyseCurrentBlock_() throw (Exception)
       if (dotOption_ == DOT_ASGAP) {
         std::replace(seq.begin(), seq.end(), '.', '-');
       }
+      if (dotOption_ == DOT_ASUNRES) {
+        std::replace(seq.begin(), seq.end(), '.', 'N');
+      }
       currentSequence = new MafSequence(src, seq, start, strand, srcSize);
       if (currentSequence->getGenomicSize() != size)
         throw Exception("MafAlignmentParser::nextBlock. Sequence found (" + src + ") does not match specified size: " + TextTools::toString(currentSequence->getGenomicSize()) + ", should be " + TextTools::toString(size) + ".");
