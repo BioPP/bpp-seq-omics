@@ -126,9 +126,15 @@ MafBlock* MafParser::analyseCurrentBlock_() throw (Exception)
         std::replace(seq.begin(), seq.end(), '.', 'N');
       }
       currentSequence = new MafSequence(src, seq, start, strand, srcSize);
-      if (currentSequence->getGenomicSize() != size)
-        throw Exception("MafAlignmentParser::nextBlock. Sequence found (" + src + ") does not match specified size: " + TextTools::toString(currentSequence->getGenomicSize()) + ", should be " + TextTools::toString(size) + ".");
-      
+      if (currentSequence->getGenomicSize() != size) {
+        if (checkSequenceSize_)
+          throw Exception("MafAlignmentParser::nextBlock. Sequence found (" + src + ") does not match specified size: " + TextTools::toString(currentSequence->getGenomicSize()) + ", should be " + TextTools::toString(size) + ".");
+        else {
+          if (verbose_) {
+            ApplicationTools::displayWarning("MafAlignmentParser::nextBlock. Sequence found (" + src + ") does not match specified size: " + TextTools::toString(currentSequence->getGenomicSize()) + ", should be " + TextTools::toString(size) + ".");
+          }
+        }
+      }
       //Add mask:
       if (mask_) {
         vector<bool> mask(currentSequence->size());
