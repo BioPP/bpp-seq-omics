@@ -80,8 +80,6 @@ MafBlock* FeatureExtractorMafIterator::analyseCurrentBlock_() throw (Exception)
 
     //If the reference sequence is on the negative strand, then we have to correct the coordinates:
     (*logstream_ << "Strand: " << refSeq.getStrand()).endLine();
-    (*logstream_ << refSeq.start()).endLine();
-    (*logstream_ << "ok :)").endLine();
     if (refSeq.getStrand() == '-') {
       RangeSet<size_t> cRanges;
       for (set<Range<size_t>*>::iterator it = ranges.getSet().begin();
@@ -129,6 +127,7 @@ MafBlock* FeatureExtractorMafIterator::analyseCurrentBlock_() throw (Exception)
             SequenceTools::invertComplement(*subseq);
           }
         }
+        (*logstream_ << subseq->getName()).endLine();
         newBlock->addSequence(*subseq);
       }
       blockBuffer_.push_back(newBlock);

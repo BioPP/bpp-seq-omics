@@ -72,6 +72,7 @@ MafBlock* OutputAlignmentMafIterator::analyseCurrentBlock_() throw (Exception)
       TextTools::replaceAll(file, "%b", start);
       TextTools::replaceAll(file, "%e", stop);
       std::ofstream output(file.c_str(), ios::out);
+
       writeBlock(output, *block);
     }
   }
@@ -87,6 +88,7 @@ void OutputAlignmentMafIterator::writeBlock(std::ostream& out, const MafBlock& b
   vector<string> names(aln.getNumberOfSequences());
   for (size_t i = 0; i < aln.getNumberOfSequences(); ++i) {
     const MafSequence& mafseq = block.getSequence(i);
+    cout << mafseq.getSpecies() << "\t" << mafseq.getChromosome() << endl;
     if (mafseq.hasCoordinates() && outputCoordinates_)
       names[i] = mafseq.getSpecies() + "-" + mafseq.getChromosome() + "(" + mafseq.getStrand() + ")/" + TextTools::toString(mafseq.start() + 1) + "-" + TextTools::toString(mafseq.stop() + 1);
     else
