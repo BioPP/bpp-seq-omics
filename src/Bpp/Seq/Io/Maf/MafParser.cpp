@@ -54,7 +54,7 @@ MafBlock* MafParser::analyseCurrentBlock_() throw (Exception)
 
   string line;
   bool test = true;
-  MafSequence* currentSequence = 0;
+  unique_ptr<MafSequence> currentSequence;
   
   while (test)
   {
@@ -69,7 +69,7 @@ MafBlock* MafParser::analyseCurrentBlock_() throw (Exception)
       if (currentSequence) {
         //Add previous sequence:
         block->addSequence(*currentSequence); //The sequence is copied in the container.
-        delete currentSequence;
+        currentSequence.reset();
       }
 
       //end of paragraph
@@ -80,7 +80,7 @@ MafBlock* MafParser::analyseCurrentBlock_() throw (Exception)
       if (currentSequence) {
         //Add previous sequence:
         block->addSequence(*currentSequence); //The sequence is copied in the container.
-        delete currentSequence;
+        currentSequence.reset();
       }
       
       //New block.
@@ -116,7 +116,7 @@ MafBlock* MafParser::analyseCurrentBlock_() throw (Exception)
       if (currentSequence) {
         //Add previous sequence:
         block->addSequence(*currentSequence); //The sequence is copied in the container.
-        delete currentSequence;
+        currentSequence.reset();
       }
       string seq = st.nextToken();
       if (dotOption_ == DOT_ASGAP) {
@@ -125,7 +125,7 @@ MafBlock* MafParser::analyseCurrentBlock_() throw (Exception)
       if (dotOption_ == DOT_ASUNRES) {
         std::replace(seq.begin(), seq.end(), '.', 'N');
       }
-      currentSequence = new MafSequence(src, seq, start, strand, srcSize);
+      currentSequence.reset(new MafSequence(src, seq, start, strand, srcSize));
       if (currentSequence->getGenomicSize() != size) {
         if (checkSequenceSize_)
           throw Exception("MafAlignmentParser::nextBlock. Sequence found (" + src + ") does not match specified size: " + TextTools::toString(currentSequence->getGenomicSize()) + ", should be " + TextTools::toString(size) + ".");
@@ -179,7 +179,7 @@ MafBlock* MafParser::analyseCurrentBlock_() throw (Exception)
   if (currentSequence) {
     //Add previous sequence:
     block->addSequence(*currentSequence); //The sequence is copied in the container.
-    delete currentSequence;
+    currentSequence.reset();
   }
   
   //Returning block:
