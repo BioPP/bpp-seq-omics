@@ -1,3 +1,5 @@
+10/05/17 -*- Version 2.3.0 -*-
+
 03/04/17 Julien Dutheil
 * VCF export now can export all position, including non-variable ones.
 
