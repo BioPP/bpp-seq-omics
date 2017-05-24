@@ -79,7 +79,7 @@ class MafParser:
      *        compared to the specified one. An exception is thrown
      *        in case of mismatch (default). If set to no, a warning
      *        will be displayed if verbose is set to true.
-     * @param dotOption (one of DOT_ERROR, DOT_ASGAP or DOT_RESOLVE)
+     * @param dotOption (one of DOT_ERROR, DOT_ASGAP or DOT_ASUNRES)
      *        tells how dot should be treated. DOT_ERROR, the default,
      *        will return an exception. DOT_ASGAP will convert all dots
      *        to gaps and DOT_ASUNRES will convert them to 'N', which
