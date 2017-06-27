@@ -59,7 +59,6 @@ class TableOutputMafIterator:
     std::ostream* output_;
     std::vector<std::string> species_;
     std::string refSpecies_;
-    std::map<std::string, MultiRange<size_t> > ranges_;
 
   public:
     /**
@@ -73,23 +72,18 @@ class TableOutputMafIterator:
      * It does not have to be one of the selected species for output.
      */
     TableOutputMafIterator(MafIterator* iterator,
-		    LIST OF FEATURES OR POSITIONS
         std::ostream* out,
         const std::vector<std::string>& species,
         const std::string& reference) :
       AbstractFilterMafIterator(iterator),
-      output_(out), species_(species), refSpecies_(reference),
-      ranges_()
+      output_(out), species_(species), refSpecies_(reference)
     {
-      //Build ranges:
-      std::set<std::string> seqIds = features.getSequences();
-      for (std::set<std::string>::iterator it = seqIds.begin();
-          it != seqIds.end();
-          ++it) {
-        {
-          features.fillRangeCollectionForSequence(*it, ranges_[*it]);
-        }
+      //Write header:
+      *output_ << "Chromosome\tPosition";
+      for (const std::string& sp : species) {
+	 *output_ << "\t" << sp;
       }
+      *output_ << std::endl;     
     }
 
   private:
@@ -97,8 +91,7 @@ class TableOutputMafIterator:
       AbstractFilterMafIterator(0),
       output_(iterator.output_),
       species_(iterator.species_),
-      refSpecies_(iterator.refSpecies_),
-      ranges_(iterator.ranges_)
+      refSpecies_(iterator.refSpecies_)
     {}
     
     TableOutputMafIterator& operator=(const TableOutputMafIterator& iterator)
@@ -106,7 +99,6 @@ class TableOutputMafIterator:
       output_ = iterator.output_;
       species_ = iterator.species_;
       refSpecies_ = iterator.refSpecies_;
-      ranges_ = iterator.ranges_;
       return *this;
     }
 

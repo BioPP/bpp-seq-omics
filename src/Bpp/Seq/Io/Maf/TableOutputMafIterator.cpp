@@ -39,11 +39,10 @@ knowledge of the CeCILL license and that you accept its terms.
 
 #include "TableOutputMafIterator.h"
 
+//From bpp-core:
+#include <Bpp/Text/TextTools.h>
+
 //From bpp-seq:
-#include <Bpp/Seq/SequenceWithAnnotationTools.h>
-#include <Bpp/Seq/SequenceWithQuality.h>
-#include <Bpp/Seq/Container/VectorSiteContainer.h>
-#include <Bpp/Seq/SiteTools.h>
 #include <Bpp/Seq/SequenceWalker.h>
 
 using namespace bpp;
@@ -57,39 +56,32 @@ using namespace std;
 
 void TableOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
 {
-  //Preliminary stuff...
-
-  VectorSiteContainer sites(&AlphabetTools::DNA_ALPHABET);
-  for (size_t i = 0; i < species_.size(); ++i) {
-    if (block.hasSequenceForSpecies(species_[i])) {
-      sites.addSequence(block.getSequenceForSpecies(species_[i]));
-      //Note: in case of duplicates, this takes the first sequence.
-    } else {
-      //Block with missing species are ignored.
-      return;
-    }
+  //Check for reference species for coordinates:
+  unique_ptr<SequenceWalker> walker;
+  bool hasCoordinates = block.hasSequenceForSpecies(refSpecies_);
+  string chr = "NA";
+  string pos = "NA";
+  if (hasCoordinates) {
+    const MafSequence& refSeq = block.getSequenceForSpecies(refSpecies_);
+    walker.reset(new SequenceWalker(refSeq));
+    chr = refSeq.getChromosome();
   }
-  //Get the reference species for coordinates:
-  if (! block.hasSequenceForSpecies(refSpecies_))
-    return;
-  const MafSequence& refSeq = block.getSequenceForSpecies(refSpecies_);
-  string chr = refSeq.getChromosome();
 
-  //first check if there is one (for now we assume that features refer to the chromosome or contig name, with implicit species):
-  std::map<std::string, RangeSet<size_t> >::iterator mr = ranges_.find(refSeq.getChromosome());
-  if (mr == ranges_.end())
-    goto START;
-        
-  RangeSet<size_t> ranges = mr->second;
-  if (completeOnly_)
-    ranges.filterWithin(refSeq.getRange(true));
-  else  
-    ranges.restrictTo(refSeq.getRange(true));
-  
-  if (!ranges.isEmpty()) {
-    //CONTINUE HERE
-
-    SequenceWalker walker(refSeq);
+  //Preprocess data:
+  vector<string> seqs;
+  for (const string& sp : species_) {
+    seqs.push_back(block.getSequenceForSpecies(sp).toString());
+  } 
+  //Loop over all alignment columns:
+  for (size_t i = 0; i < block.getNumberOfSites(); ++i) {
+    pos = TextTools::toString(walker->getSequencePosition(i));
+    if (hasCoordinates) {
+      *output_ << chr << "\t" << pos;
+    }
+    for (const string& seq : seqs) {
+      *output_ << "\t" << seq[i];
+    }
+    *output_ << endl; 
   }
 }
 
