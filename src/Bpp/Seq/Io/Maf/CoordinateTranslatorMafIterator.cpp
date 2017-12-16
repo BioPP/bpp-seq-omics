@@ -107,6 +107,7 @@ MafBlock* CoordinateTranslatorMafIterator::analyseCurrentBlock_() throw (Excepti
     (*logstream_ << "COORDINATE CONVERTOR: lifting over " << ranges.getSet().size() << " features from block " << block->getDescription() << ".").endLine();
   }
 
+  const Alphabet* alphabet = refSeq.getAlphabet(); 
   size_t i = 0;
   for (set<Range<size_t>*>::iterator it = ranges.getSet().begin();
       it !=  ranges.getSet().end();
@@ -117,14 +118,23 @@ MafBlock* CoordinateTranslatorMafIterator::analyseCurrentBlock_() throw (Excepti
     }
     size_t a = referenceWalker.getAlignmentPosition((**it).begin() - refSeq.start());
     size_t b = referenceWalker.getAlignmentPosition((**it).end() - refSeq.start() - 1);
-    size_t a2 = targetWalker.getSequencePosition(a) + targetSeq.start();
-    size_t b2 = targetWalker.getSequencePosition(b) + targetSeq.start() + 1;
-    if (targetSeq.getStrand() == '-') {
-      a2 = targetSeq.getSrcSize() - a2;
-      b2 = targetSeq.getSrcSize() - b2;
+    string targetPos1 = "NA", targetPos2 = "NA";
+    if (!alphabet->isGap(targetSeq[a]) || outputClosestCoordinate_) {
+      size_t a2 = targetWalker.getSequencePosition(a) + targetSeq.start();
+      if (targetSeq.getStrand() == '-') {
+        a2 = targetSeq.getSrcSize() - a2;
+      }
+      targetPos1 = TextTools::toString(a2);
+    }
+    if (!alphabet->isGap(targetSeq[b]) || outputClosestCoordinate_) {
+      size_t b2 = targetWalker.getSequencePosition(b) + targetSeq.start() + 1;
+      if (targetSeq.getStrand() == '-') {
+        b2 = targetSeq.getSrcSize() - b2;
+      }
+      targetPos2 = TextTools::toString(b2);
     }
     output_ << refSeq.getChromosome() << "\t" << refSeq.getStrand() << "\t" << (**it).begin() << "\t" << (**it).end() << "\t";
-    output_ << targetSeq.getChromosome() << "\t" << targetSeq.getStrand() << "\t" << a2 << "\t" << b2 << endl;
+    output_ << targetSeq.getChromosome() << "\t" << targetSeq.getStrand() << "\t" << targetPos1 << "\t" << targetPos2 << endl;
   }
         
   if (verbose_)

@@ -66,6 +66,7 @@ class CoordinateTranslatorMafIterator:
     std::string targetSpecies_;
     std::map<std::string, SequenceFeatureSet*> inputFeaturesPerChr_;
     std::ostream& output_;
+    bool outputClosestCoordinate_;
 
   public:
     /**
@@ -76,18 +77,22 @@ class CoordinateTranslatorMafIterator:
      * @param targetSpecies The target species for which features coordinates should be translated
      * @param features The set of features to lift over
      * @param output Output stream for translated coordinates
+     * @param outputClosestCoordinate In case the target sequence has a gap at the corresponding position,
+     *        tells if the previous non-gap position should be returned, or NA.
      */
     CoordinateTranslatorMafIterator(
         MafIterator* iterator,
         const std::string& referenceSpecies,
         const std::string& targetSpecies,
         const SequenceFeatureSet& features,
-        std::ostream& output) :
+        std::ostream& output,
+        bool outputClosestCoordinate = true) :
       AbstractFilterMafIterator(iterator),
       referenceSpecies_(referenceSpecies),
       targetSpecies_(targetSpecies),
       inputFeaturesPerChr_(),
-      output_(output)
+      output_(output),
+      outputClosestCoordinate_(outputClosestCoordinate)
     {
       //Sort features per chromosome for a faster access:
       std::set<std::string> seqIds = features.getSequences();
