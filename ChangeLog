@@ -1,3 +1,6 @@
+22/12/17 Julien Dutheil
+* Improved GTF parser, bug fixed when empty token in last column.
+
 10/12/17 -*- Version 2.3.2 -*-
 
 10/05/17 -*- Version 2.3.0 -*-

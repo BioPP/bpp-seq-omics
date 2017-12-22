@@ -93,7 +93,9 @@ const BasicSequenceFeature GtfFeatureReader::nextFeature() throw (Exception)
   std::map<string, string> attributes;
   bpp::StringTokenizer st1(attrDesc, ";");
   while (st1.hasMoreToken()) {
-    std::string item(bpp::TextTools::removeSurroundingWhiteSpaces(st1.nextToken()));
+    std::string item(st1.nextToken());
+    if (TextTools::isEmpty(item)) continue;
+    item = bpp::TextTools::removeSurroundingWhiteSpaces(item);
     std::string::size_type idx = item.find_first_of(' ');
     std::string key(item.substr(0, idx));
     std::string value(item.substr(idx));
