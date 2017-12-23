@@ -51,9 +51,9 @@ knowledge of the CeCILL license and that you accept its terms.
 using namespace bpp;
 using namespace std;
 
-const std::string GtfFeatureReader::GTF_PHASE = "GTF_PHASE";
-const std::string GtfFeatureReader::GTF_GENE_ID = "gene_id";
-const std::string GtfFeatureReader::GTF_TRANSCRIPT_ID = "transcript_id";
+const string GtfFeatureReader::GTF_PHASE = "GTF_PHASE";
+const string GtfFeatureReader::GTF_GENE_ID = "gene_id";
+const string GtfFeatureReader::GTF_TRANSCRIPT_ID = "transcript_id";
 
 void GtfFeatureReader::getNextLine_() {
   nextLine_ = "";
@@ -81,30 +81,30 @@ const BasicSequenceFeature GtfFeatureReader::nextFeature() throw (Exception)
     throw Exception("GtfFeatureReader::nextFeature(). Wrong GTF file format: should have 9 tab delimited columns.");
   
   //if ok, we can parse each column:
-  std::string seqId       = st.nextToken();
-  std::string source      = st.nextToken();
-  std::string type        = st.nextToken();
-  unsigned int start      = TextTools::to<unsigned int>(st.nextToken()) - 1;
-  unsigned int end        = TextTools::to<unsigned int>(st.nextToken());
-  double score            = TextTools::to<double>(st.nextToken());
-  std::string strand      = st.nextToken();
-  std::string phase       = st.nextToken();
-  std::string attrDesc    = st.nextToken();
-  std::map<string, string> attributes;
-  bpp::StringTokenizer st1(attrDesc, ";");
+  string seqId       = st.nextToken();
+  string source      = st.nextToken();
+  string type        = st.nextToken();
+  unsigned int start = TextTools::to<unsigned int>(st.nextToken()) - 1;
+  unsigned int end   = TextTools::to<unsigned int>(st.nextToken());
+  double score       = TextTools::to<double>(st.nextToken());
+  string strand      = st.nextToken();
+  string phase       = st.nextToken();
+  string attrDesc    = st.nextToken();
+  map<string, string> attributes;
+  StringTokenizer st1(attrDesc, ";");
   while (st1.hasMoreToken()) {
-    std::string item(st1.nextToken());
+    string item(st1.nextToken());
     if (TextTools::isEmpty(item)) continue;
-    item = bpp::TextTools::removeSurroundingWhiteSpaces(item);
-    std::string::size_type idx = item.find_first_of(' ');
-    std::string key(item.substr(0, idx));
-    std::string value(item.substr(idx));
+    item = TextTools::removeSurroundingWhiteSpaces(item);
+    string::size_type idx = item.find_first_of(' ');
+    string key(item.substr(0, idx));
+    string value(item.substr(idx));
     // remove first "
     while (
         value.size() > 0 
         && (
           value[0] == '"' 
-          || bpp::TextTools::isWhiteSpaceCharacter(value[0])
+          || TextTools::isWhiteSpaceCharacter(value[0])
           )
         ) {
       value.erase(value.begin());
@@ -114,7 +114,7 @@ const BasicSequenceFeature GtfFeatureReader::nextFeature() throw (Exception)
         value.size() > 0 
         && (
           value[value.size() - 1] == '"' 
-          || bpp::TextTools::isWhiteSpaceCharacter(value[value.size() - 1])
+          || TextTools::isWhiteSpaceCharacter(value[value.size() - 1])
           )
         ) {
       value.erase(value.end() - 1);
@@ -124,15 +124,15 @@ const BasicSequenceFeature GtfFeatureReader::nextFeature() throw (Exception)
   }
   //KeyvalTools::multipleKeyvals(attrDesc, attributes, ";", false);
   //std::string id = attributes["ID"];
-  std::string id = "";
+  string id = "";
   BasicSequenceFeature feature(id, seqId, source, type, start, end, strand[0], score);
   
   //Set phase attributes:
-  phase = bpp::TextTools::removeSurroundingWhiteSpaces(phase);
+  phase = TextTools::removeSurroundingWhiteSpaces(phase);
   if (phase != ".") feature.setAttribute(GTF_PHASE, phase);
 
   //now check additional attributes:
-  for (std::map<std::string, std::string>::iterator it = attributes.begin(); it != attributes.end(); ++it) {
+  for (map<std::string, std::string>::iterator it = attributes.begin(); it != attributes.end(); ++it) {
     feature.setAttribute(it->first, it->second); //We accept all attributes, even if they are not standard.
     //std::cout << "[" << it->first << "] = [" << it->second << "]" << std::endl;
     //std::cout << "phase: " << phase << std::endl;
