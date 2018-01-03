@@ -125,7 +125,7 @@ MafBlock* AlignmentFilterMafIterator::analyseCurrentBlock_() throw (Exception)
         }
         bool test = (sumEnt / static_cast<double>(windowSize_)) > maxEnt_;
         if (relative_) {
-          double propGap = static_cast<double>(sumGap) / static_cast<double>(nr * nc);
+          double propGap = static_cast<double>(sumGap) / static_cast<double>(nr * windowSize_);
           test = test && (propGap > maxPropGap_);
         } else {
           test = test && (sumGap > maxGap_);
@@ -170,7 +170,7 @@ MafBlock* AlignmentFilterMafIterator::analyseCurrentBlock_() throw (Exception)
       }
       bool test = (sumEnt / static_cast<double>(windowSize_)) > maxEnt_;
       if (relative_) {
-        double propGap = static_cast<double>(sumGap) / static_cast<double>(nr);
+        double propGap = static_cast<double>(sumGap) / static_cast<double>(nr * windowSize_);
         test = test && (propGap > maxPropGap_);
       } else {
         test = test && (sumGap > maxGap_);
