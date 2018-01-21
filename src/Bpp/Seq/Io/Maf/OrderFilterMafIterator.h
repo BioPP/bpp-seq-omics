@@ -83,6 +83,7 @@ class OrderFilterMafIterator:
         bool overlappingBlockThrowsException = false) :
       AbstractFilterMafIterator(iterator),
       refSpecies_(reference),
+      currentChr_(),
       previousBlockStart_(),
       previousBlockStop_(),
       unsortedBlockDiscarded_(unsortedBlockDiscarded),
@@ -95,6 +96,7 @@ class OrderFilterMafIterator:
     OrderFilterMafIterator(const OrderFilterMafIterator& iterator) :
       AbstractFilterMafIterator(0),
       refSpecies_(iterator.refSpecies_),
+      currentChr_(iterator.currentChr_),
       previousBlockStart_(iterator.previousBlockStart_),
       previousBlockStop_(iterator.previousBlockStop_),
       unsortedBlockDiscarded_(iterator.unsortedBlockDiscarded_),
@@ -106,8 +108,9 @@ class OrderFilterMafIterator:
     OrderFilterMafIterator& operator=(const OrderFilterMafIterator& iterator)
     {
       refSpecies_                      = iterator.refSpecies_;
+      currentChr_                      = iterator.currentChr_;
       previousBlockStart_              = iterator.previousBlockStart_;
-      previousBlockStop_                = iterator.previousBlockStop_;
+      previousBlockStop_               = iterator.previousBlockStop_;
       unsortedBlockDiscarded_          = iterator.unsortedBlockDiscarded_;
       unsortedBlockThrowsException_    = iterator.unsortedBlockThrowsException_;
       overlappingBlockDiscarded_       = iterator.overlappingBlockDiscarded_;
