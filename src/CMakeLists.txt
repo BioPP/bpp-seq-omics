@@ -32,6 +32,7 @@ set (CPP_FILES
   Bpp/Seq/Io/Maf/MaskFilterMafIterator.cpp
   Bpp/Seq/Io/Maf/MsmcOutputMafIterator.cpp
   Bpp/Seq/Io/Maf/TableOutputMafIterator.cpp
+  Bpp/Seq/Io/Maf/OrderFilterMafIterator.cpp
   Bpp/Seq/Io/Maf/OrphanSequenceFilterMafIterator.cpp
   Bpp/Seq/Io/Maf/OutputAlignmentMafIterator.cpp
   Bpp/Seq/Io/Maf/OutputMafIterator.cpp

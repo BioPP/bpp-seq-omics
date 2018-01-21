@@ -1,3 +1,6 @@
+21/01/18 Julien Dutheil
+* Added OrderFilterMafIterator class.
+
 03/01/18 Julien Dutheil
 * Fixed bug in AlnFilter when relative proportions are set. Proportion was relative to block and not to window, which was incorrect.
 

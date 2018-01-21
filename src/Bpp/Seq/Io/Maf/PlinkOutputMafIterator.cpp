@@ -85,8 +85,20 @@ void PlinkOutputMafIterator::parseBlock_(std::ostream& out, const MafBlock& bloc
   } else {
     //Check that block are ordered according to reference sequence:
     if (refSeq.start() < lastPosition_)
-      throw Exception("MsmcOutputMafIterator: blocks are not projected according to reference sequence: " + refSeq.getDescription() + "<!>" + TextTools::toString(lastPosition_) + ".");
+      throw Exception("PlinkOutputMafIterator: blocks are not projected according to reference sequence: " + refSeq.getDescription() + "<!>" + TextTools::toString(lastPosition_) + ".");
     lastPosition_ = refSeq.stop();
+  }
+
+  string chrStr = chr;
+  if (recodeChr_) {
+    auto i = chrCodes_.find(chr);
+    if (i != chrCodes_.end()) {
+      chrStr = TextTools::toString(i->second);
+    } else {
+      unsigned int code = currentCode_++;
+      chrCodes_[chr] = code;
+      chrStr = TextTools::toString(code);
+    }
   }
 
   SequenceWalker walker(refSeq);
@@ -109,7 +121,7 @@ void PlinkOutputMafIterator::parseBlock_(std::ostream& out, const MafBlock& bloc
         ped_[j] += "\t" + TextTools::toString(alleles[j]) + " " + alleles[j];
       }
       // SNP identifier are built as <chr>.<pos>
-      out << chr << "\t" << chr << "." << pos << "\t";
+      out << chrStr << "\t" << chr << "." << pos << "\t";
       if (!map3_)
         out << "0\t"; //Add null genetic distance
       out << pos << endl;

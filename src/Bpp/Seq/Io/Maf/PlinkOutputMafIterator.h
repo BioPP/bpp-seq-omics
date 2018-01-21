@@ -64,6 +64,9 @@ class PlinkOutputMafIterator:
     std::vector<std::string> ped_;
     std::string currentChr_;
     size_t lastPosition_;
+    bool recodeChr_;
+    std::map<std::string, unsigned int> chrCodes_;
+    unsigned int currentCode_;
 
   public:
     /**
@@ -82,16 +85,18 @@ class PlinkOutputMafIterator:
      * @param reference The species to use as a reference for coordinates.
      * It does not have to be one of the selected species on which SNPs are computed.
      * @param map3 Tell if genetic distance column should be ommited in the map file. Otherwise set to 0.
+     * @param recodeChr Tell if chromosomes should be recoded to numbers.
      */
     PlinkOutputMafIterator(MafIterator* iterator,
         std::ostream* outPed,
         std::ostream* outMap,
         const std::vector<std::string>& species,
         const std::string& reference,
-        bool map3 = false) :
+        bool map3 = false,
+        bool recodeChr = false) :
       AbstractFilterMafIterator(iterator),
       outputPed_(outPed), outputMap_(outMap), species_(species), refSpecies_(reference), map3_(map3),
-      ped_(species.size()), currentChr_(""), lastPosition_(0)
+      ped_(species.size()), currentChr_(""), lastPosition_(0), recodeChr_(recodeChr), chrCodes_(), currentCode_(1)
     {
       init_();
     }
@@ -106,7 +111,10 @@ class PlinkOutputMafIterator:
       map3_(iterator.map3_),
       ped_(iterator.ped_),
       currentChr_(iterator.currentChr_),
-      lastPosition_(iterator.lastPosition_)
+      lastPosition_(iterator.lastPosition_),
+      recodeChr_(iterator.recodeChr_),
+      chrCodes_(iterator.chrCodes_),
+      currentCode_(iterator.currentCode_)
     {}
     
     PlinkOutputMafIterator& operator=(const PlinkOutputMafIterator& iterator)
@@ -119,6 +127,9 @@ class PlinkOutputMafIterator:
       ped_             = iterator.ped_;
       currentChr_      = iterator.currentChr_;
       lastPosition_    = iterator.lastPosition_;
+      recodeChr_       = iterator.recodeChr_;
+      chrCodes_        = iterator.chrCodes_;
+      currentCode_     = iterator.currentCode_;
       return *this;
     }
 
