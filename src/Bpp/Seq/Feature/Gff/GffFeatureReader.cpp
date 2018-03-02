@@ -76,7 +76,7 @@ void GffFeatureReader::getNextLine_() {
   }
 }
 
-const BasicSequenceFeature GffFeatureReader::nextFeature() throw (Exception)
+const BasicSequenceFeature GffFeatureReader::nextFeature()
 {
   if (!hasMoreFeature())
     throw Exception("GffFeatureReader::nextFeature(). No more feature in file.");

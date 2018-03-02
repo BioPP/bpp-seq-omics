@@ -78,7 +78,7 @@ class MafStatisticsResult
     }
 
   public:
-    virtual const BppNumberI& getValue(const std::string& tag) const throw (Exception) {
+    virtual const BppNumberI& getValue(const std::string& tag) const {
       std::map<std::string, BppNumberI*>::iterator it = values_.find(tag);
       if (it != values_.end())
         return *it->second;
@@ -92,7 +92,7 @@ class MafStatisticsResult
      * @param tag The name of the value to associate.
      * @param value The value to associate to the tag.
      */
-    virtual void setValue(const std::string& tag, double value) throw (Exception) {
+    virtual void setValue(const std::string& tag, double value) {
       if (values_[tag]) {
         delete values_[tag];
       }
@@ -105,7 +105,7 @@ class MafStatisticsResult
      * @param tag The name of the value to associate.
      * @param value The value to associate to the tag.
      */
-    virtual void setValue(const std::string& tag, int value) throw (Exception) {
+    virtual void setValue(const std::string& tag, int value) {
       if (values_[tag]) {
         delete values_[tag];
       }
@@ -118,7 +118,7 @@ class MafStatisticsResult
      * @param tag The name of the value to associate.
      * @param value The value to associate to the tag.
      */
-    virtual void setValue(const std::string& tag, unsigned int value) throw (Exception) {
+    virtual void setValue(const std::string& tag, unsigned int value) {
       if (values_[tag]) {
         delete values_[tag];
       }
@@ -155,25 +155,27 @@ class SimpleMafStatisticsResult:
     virtual ~SimpleMafStatisticsResult() {}
 
   public:
-    virtual const BppNumberI& getValue(const std::string& tag) const throw (Exception) { return MafStatisticsResult::getValue(tag); }
+    virtual const BppNumberI& getValue(const std::string& tag) const {
+      return MafStatisticsResult::getValue(tag);
+    }
     
     virtual const BppNumberI& getValue() const { return *values_[name_]; }
 
-    virtual void setValue(const std::string& tag, double value) throw (Exception) {
+    virtual void setValue(const std::string& tag, double value) {
       if (tag == name_)
         setValue(value);
       else
         throw Exception("SimpleMafStatisticsResult::setValue(). Unvalid tag name: " + tag + ".");
     }
  
-    virtual void setValue(const std::string& tag, int value) throw (Exception) {
+    virtual void setValue(const std::string& tag, int value) {
       if (tag == name_)
         setValue(value);
       else
         throw Exception("SimpleMafStatisticsResult::setValue(). Unvalid tag name: " + tag + ".");
     }
  
-    virtual void setValue(const std::string& tag, unsigned int value) throw (Exception) {
+    virtual void setValue(const std::string& tag, unsigned int value) {
       if (tag == name_)
         setValue(value);
       else
@@ -492,7 +494,7 @@ class SiteFrequencySpectrumMafStatistics:
         size_t getNumberOfCategories() const { return (bounds_.size() - 1); }
 
         //Category numbers start at 1!
-        size_t getCategory(double value) const throw (OutOfRangeException) {
+        size_t getCategory(double value) const {
           if (value < bounds_[0])
             throw OutOfRangeException("SiteFrequencySpectrumMafStatistics::Categorizer::getCategory.", value, *bounds_.begin(), *bounds_.rbegin());
           for (size_t i = 1; i < bounds_.size(); ++i) {

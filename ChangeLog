@@ -1,3 +1,9 @@
+02/03/18 -*- Version 2.4.0 -*-
+
+02/03/18 Julien Dutheil
+* Removed all dynamic exception specifications
+* Increased interface number to 3
+
 21/01/18 Julien Dutheil
 * Added OrderFilterMafIterator class.
 

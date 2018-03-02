@@ -50,7 +50,7 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* MaskFilterMafIterator::analyseCurrentBlock_() throw (Exception)
+MafBlock* MaskFilterMafIterator::analyseCurrentBlock_()
 {
   if (blockBuffer_.size() == 0) {
     do {

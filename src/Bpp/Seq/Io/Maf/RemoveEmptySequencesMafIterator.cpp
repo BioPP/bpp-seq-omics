@@ -42,7 +42,7 @@ knowledge of the CeCILL license and that you accept its terms.
 using namespace bpp;
 using namespace std;
 
-MafBlock* RemoveEmptySequencesMafIterator::analyseCurrentBlock_() throw (Exception)
+MafBlock* RemoveEmptySequencesMafIterator::analyseCurrentBlock_()
 {
   currentBlock_ = iterator_->nextBlock();
   if (currentBlock_) {

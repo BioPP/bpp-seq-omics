@@ -118,11 +118,11 @@ class MafBlock:
       return getAlignment().hasSequence(name);
     }
 
-    const MafSequence& getSequence(const std::string& name) const throw (SequenceNotFoundException) {
+    const MafSequence& getSequence(const std::string& name) const {
       return dynamic_cast<const MafSequence&>(getAlignment().getSequence(name));
     }
 
-    const MafSequence& getSequence(size_t i) const throw (IndexOutOfBoundsException) {
+    const MafSequence& getSequence(size_t i) const {
       return dynamic_cast<const MafSequence&>(getAlignment().getSequence(i));
     }
 
@@ -136,7 +136,7 @@ class MafBlock:
     }
 
     //Return the first sequence with the species name.
-    const MafSequence& getSequenceForSpecies(const std::string& species) const throw (SequenceNotFoundException) {
+    const MafSequence& getSequenceForSpecies(const std::string& species) const {
       for (size_t i = 0; i < getNumberOfSequences(); ++i) {
         const MafSequence& seq = getSequence(i);
         if (seq.getSpecies() == species)
@@ -146,7 +146,7 @@ class MafBlock:
     }
 
     //Return all sequences with the species name.
-    std::vector<const MafSequence*> getSequencesForSpecies(const std::string& species) const throw (SequenceNotFoundException) {
+    std::vector<const MafSequence*> getSequencesForSpecies(const std::string& species) const {
       std::vector<const MafSequence*> selection;
       for (size_t i = 0; i < getNumberOfSequences(); ++i) {
         const MafSequence* seq = &getSequence(i);
@@ -167,7 +167,7 @@ class MafBlock:
       return lst;
     }
 
-    void removeCoordinatesFromSequence(size_t i) throw (IndexOutOfBoundsException) {
+    void removeCoordinatesFromSequence(size_t i) {
       //This is a bit of a trick, but avoid useless recopies.
       //It is safe here because the AlignedSequenceContainer is fully encapsulated.
       //It would not work if a VectorSiteContainer was used.
@@ -197,7 +197,7 @@ class MafBlock:
      * @return The data associated to the given property.
      * @throw Exception if no data is associated to the given property.
      */
-    const Clonable& getProperty(const std::string& property) const throw (Exception)
+    const Clonable& getProperty(const std::string& property) const
     {
       std::map<std::string, Clonable*>::const_iterator it = properties_.find(property);
       if (it == properties_.end())
@@ -211,7 +211,7 @@ class MafBlock:
      * @param property The property to look for.
      * @throw Exception if no data is associated to the given property.
      */
-    void deleteProperty(const std::string& property) throw (Exception)
+    void deleteProperty(const std::string& property)
     {
       std::map<std::string, Clonable*>::iterator it = properties_.find(property);
       if (it == properties_.end())
@@ -228,7 +228,7 @@ class MafBlock:
      * @param data The data to associate to this property.
      * @throw Exception if the pointer toward the input data is NULL.
      */
-    void setProperty(const std::string& property, Clonable* data) throw (Exception) 
+    void setProperty(const std::string& property, Clonable* data)
     {
       if (!data)
         throw Exception("MafBlock::setProperty. Pointer to data is NULL.");

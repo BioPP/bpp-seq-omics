@@ -66,7 +66,7 @@ class MafIterator
      *
      * @return A maf alignment block, or a null pointer if no more block is available.
      */
-    virtual MafBlock* nextBlock() throw (Exception) = 0;
+    virtual MafBlock* nextBlock() = 0;
 
     virtual bool isVerbose() const = 0;
     
@@ -100,7 +100,7 @@ class AbstractMafIterator:
       iterationListeners_.push_back(listener);
     }
 
-    MafBlock* nextBlock() throw (Exception) {
+    MafBlock* nextBlock() {
       if (!started_) {
         fireIterationStartSignal_();
         started_ = true;
@@ -138,7 +138,7 @@ class MafTrashIterator
      *
      * @return A maf alignment block, or a null pointer if no more block is available.
      */
-    virtual MafBlock* nextRemovedBlock() throw (Exception) = 0;
+    virtual MafBlock* nextRemovedBlock() = 0;
     
 };
 
@@ -152,7 +152,7 @@ class AbstractFilterMafIterator:
   protected:
     MafIterator* iterator_;
     MafBlock* currentBlock_;
-    OutputStream* logstream_;
+    std::shared_ptr<OutputStream> logstream_;
 
   public:
     AbstractFilterMafIterator(MafIterator* iterator) :
@@ -175,7 +175,7 @@ class AbstractFilterMafIterator:
     }
 
   public:
-    void setLogStream(OutputStream* logstream) { logstream_ = logstream; }
+    void setLogStream(std::shared_ptr<OutputStream> logstream) { logstream_ = logstream; }
 
 };
 
@@ -200,7 +200,7 @@ class TrashIteratorAdapter:
     }
 
   private:
-    MafBlock* analyseCurrentBlock_() throw (Exception) {
+    MafBlock* analyseCurrentBlock_() {
       return iterator_->nextRemovedBlock();
     }
 };
@@ -238,7 +238,7 @@ class MafIteratorSynchronizer:
 
 
   private:
-    MafBlock* analyseCurrentBlock_() throw (Exception) {
+    MafBlock* analyseCurrentBlock_() {
       currentBlock_ = iterator_->nextBlock();
       MafBlock* secondBlock = secondaryIterator_->nextBlock();
       if (secondBlock)

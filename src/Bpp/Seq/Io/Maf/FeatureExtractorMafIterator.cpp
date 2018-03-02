@@ -50,7 +50,7 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* FeatureExtractorMafIterator::analyseCurrentBlock_() throw (Exception)
+MafBlock* FeatureExtractorMafIterator::analyseCurrentBlock_()
 {
   while (blockBuffer_.size() == 0) {
     //Unless there is no more block in the buffer, we need to parse more:

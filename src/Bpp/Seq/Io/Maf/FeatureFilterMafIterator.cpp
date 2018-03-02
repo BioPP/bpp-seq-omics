@@ -47,7 +47,7 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_() throw (Exception)
+MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_()
 {
   if (blockBuffer_.size() == 0) {
     //Unless there is no more block in the buffer, we need to parse more:

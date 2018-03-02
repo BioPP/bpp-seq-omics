@@ -107,7 +107,7 @@ class MafSequence:
 
     void removeCoordinates() { hasCoordinates_ = false; begin_ = 0; }
 
-    size_t start() const throw (Exception) {
+    size_t start() const {
       if (hasCoordinates_) return begin_;
       else throw Exception("MafSequence::start(). Sequence " + getName() + " does not have coordinates.");
     }

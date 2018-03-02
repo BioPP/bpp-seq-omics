@@ -64,7 +64,7 @@ class FeatureReader
 
   public:
     virtual bool hasMoreFeature() const = 0;
-    virtual const BasicSequenceFeature nextFeature() throw (Exception) = 0;
+    virtual const BasicSequenceFeature nextFeature() = 0;
     virtual void getAllFeatures(SequenceFeatureSet& features) = 0;
     virtual void getFeaturesOfType(const std::string& type, SequenceFeatureSet& features) = 0;
     virtual void getFeaturesOfSequence(const std::string& seqId, SequenceFeatureSet& features) = 0;

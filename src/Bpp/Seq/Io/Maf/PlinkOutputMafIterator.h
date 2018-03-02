@@ -135,7 +135,7 @@ class PlinkOutputMafIterator:
 
 
   public:
-    MafBlock* analyseCurrentBlock_() throw (Exception) {
+    MafBlock* analyseCurrentBlock_() {
       currentBlock_ = iterator_->nextBlock();
       if (outputMap_ && currentBlock_)
         parseBlock_(*outputMap_, *currentBlock_);

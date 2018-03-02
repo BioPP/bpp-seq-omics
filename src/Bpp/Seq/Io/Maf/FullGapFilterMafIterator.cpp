@@ -51,7 +51,7 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* FullGapFilterMafIterator::analyseCurrentBlock_() throw (Exception)
+MafBlock* FullGapFilterMafIterator::analyseCurrentBlock_()
 {
   MafBlock* block = iterator_->nextBlock();
   if (!block) return 0;

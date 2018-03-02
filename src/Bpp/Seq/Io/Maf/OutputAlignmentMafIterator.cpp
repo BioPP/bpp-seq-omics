@@ -50,7 +50,7 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* OutputAlignmentMafIterator::analyseCurrentBlock_() throw (Exception)
+MafBlock* OutputAlignmentMafIterator::analyseCurrentBlock_()
 {
   MafBlock* block = iterator_->nextBlock();
   if (block) {

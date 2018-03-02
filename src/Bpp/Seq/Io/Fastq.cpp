@@ -44,7 +44,7 @@ knowledge of the CeCILL license and that you accept its terms.
 
 using namespace bpp;
 
-bool Fastq::nextSequence(std::istream& input, Sequence& seq) const throw (Exception) {
+bool Fastq::nextSequence(std::istream& input, Sequence& seq) const {
   if (input && ! input.eof()) {
     //SequenceWithQuality& sq;
     std::string buffer;
@@ -85,7 +85,7 @@ bool Fastq::nextSequence(std::istream& input, Sequence& seq) const throw (Except
 
 /******************************************************************************/
 
-void Fastq::writeSequence(std::ostream& output, const Sequence& seq) const throw (Exception)
+void Fastq::writeSequence(std::ostream& output, const Sequence& seq) const
 {
   std::string qual(seq.size(), static_cast<char>(33));
   try {

@@ -111,7 +111,7 @@ class SequenceLDhotOutputMafIterator:
 
 
   private:
-    MafBlock* analyseCurrentBlock_() throw (Exception);
+    MafBlock* analyseCurrentBlock_();
 
     void writeBlock(std::ostream& out, const MafBlock& block) const;
 };

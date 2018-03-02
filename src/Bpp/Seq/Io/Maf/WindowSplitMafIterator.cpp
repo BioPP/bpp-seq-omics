@@ -52,7 +52,7 @@ const short WindowSplitMafIterator::RAGGED_RIGHT = 1;
 const short WindowSplitMafIterator::CENTER = 2;
 const short WindowSplitMafIterator::ADJUST= 3;
 
-MafBlock* WindowSplitMafIterator::analyseCurrentBlock_() throw (Exception)
+MafBlock* WindowSplitMafIterator::analyseCurrentBlock_()
 {
   while (blockBuffer_.size() == 0) {
     //Build a new series of windows:

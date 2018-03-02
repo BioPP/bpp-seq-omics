@@ -68,7 +68,7 @@ class WindowSplitMafIterator:
     static const short ADJUST;
 
   public:
-    WindowSplitMafIterator(MafIterator* iterator, size_t windowSize, short splitOption = CENTER, bool keepSmallBlocks = false) throw (Exception):
+    WindowSplitMafIterator(MafIterator* iterator, size_t windowSize, short splitOption = CENTER, bool keepSmallBlocks = false):
       AbstractFilterMafIterator(iterator),
       windowSize_(windowSize), align_(splitOption), blockBuffer_(), keepSmallBlocks_(keepSmallBlocks)
     {
@@ -78,7 +78,7 @@ class WindowSplitMafIterator:
     }
 
   private:
-    MafBlock* analyseCurrentBlock_() throw (Exception);
+    MafBlock* analyseCurrentBlock_();
 
 };
 

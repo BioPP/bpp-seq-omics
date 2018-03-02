@@ -108,7 +108,7 @@ class BlockMergerMafIterator:
     }
   
   private:
-    MafBlock* analyseCurrentBlock_() throw (Exception);
+    MafBlock* analyseCurrentBlock_();
 
 };
 

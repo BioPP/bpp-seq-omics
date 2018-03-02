@@ -47,7 +47,7 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* ChromosomeMafIterator::analyseCurrentBlock_() throw (Exception)
+MafBlock* ChromosomeMafIterator::analyseCurrentBlock_()
 {
   currentBlock_ = iterator_->nextBlock();
   while (currentBlock_) {

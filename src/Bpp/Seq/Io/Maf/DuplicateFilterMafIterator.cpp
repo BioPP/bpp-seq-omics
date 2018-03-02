@@ -47,7 +47,7 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* DuplicateFilterMafIterator::analyseCurrentBlock_() throw (Exception)
+MafBlock* DuplicateFilterMafIterator::analyseCurrentBlock_()
 {
   currentBlock_ = iterator_->nextBlock();
   while (currentBlock_) {

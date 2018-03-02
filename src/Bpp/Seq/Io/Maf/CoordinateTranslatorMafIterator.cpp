@@ -51,7 +51,7 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* CoordinateTranslatorMafIterator::analyseCurrentBlock_() throw (Exception)
+MafBlock* CoordinateTranslatorMafIterator::analyseCurrentBlock_()
 {
   unique_ptr<MafBlock> block(iterator_->nextBlock());
   if (!block.get()) return 0; //No more block.

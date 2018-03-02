@@ -50,7 +50,7 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* ConcatenateMafIterator::analyseCurrentBlock_() throw (Exception)
+MafBlock* ConcatenateMafIterator::analyseCurrentBlock_()
 {
   if (!incomingBlock_) return 0;
   currentBlock_  = incomingBlock_;

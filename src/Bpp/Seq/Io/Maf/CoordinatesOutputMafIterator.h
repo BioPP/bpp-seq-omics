@@ -97,7 +97,7 @@ class CoordinatesOutputMafIterator:
 
   private:
     void writeHeader_(std::ostream& out) const;
-    MafBlock* analyseCurrentBlock_() throw (Exception);
+    MafBlock* analyseCurrentBlock_();
 
 };
 

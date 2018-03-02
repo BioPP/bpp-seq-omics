@@ -68,7 +68,7 @@ SequenceStatisticsMafIterator::SequenceStatisticsMafIterator(MafIterator* iterat
   results_.resize(names_.size());
 }
 
-MafBlock* SequenceStatisticsMafIterator::analyseCurrentBlock_() throw (Exception)
+MafBlock* SequenceStatisticsMafIterator::analyseCurrentBlock_()
 {
   vector<string> tags;
   currentBlock_ = iterator_->nextBlock();

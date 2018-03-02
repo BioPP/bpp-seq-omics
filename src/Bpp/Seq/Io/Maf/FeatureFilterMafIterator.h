@@ -86,7 +86,7 @@ class FeatureFilterMafIterator:
     }
 
   public:
-    MafBlock* nextRemovedBlock() throw (Exception) {
+    MafBlock* nextRemovedBlock() {
       if (trashBuffer_.size() == 0) return 0;
       MafBlock* block = trashBuffer_.front();
       trashBuffer_.pop_front();
@@ -94,7 +94,7 @@ class FeatureFilterMafIterator:
     }
 
   private:
-    MafBlock* analyseCurrentBlock_() throw (Exception);
+    MafBlock* analyseCurrentBlock_();
 
 };
 

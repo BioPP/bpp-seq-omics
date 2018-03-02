@@ -70,7 +70,7 @@ void GtfFeatureReader::getNextLine_() {
   }
 }
 
-const BasicSequenceFeature GtfFeatureReader::nextFeature() throw (Exception)
+const BasicSequenceFeature GtfFeatureReader::nextFeature()
 {
   if (!hasMoreFeature())
     throw Exception("GtfFeatureReader::nextFeature(). No more feature in file.");

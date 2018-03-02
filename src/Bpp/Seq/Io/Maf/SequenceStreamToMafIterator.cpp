@@ -44,7 +44,7 @@ knowledge of the CeCILL license and that you accept its terms.
 using namespace std;
 using namespace bpp;
 
-MafBlock* SequenceStreamToMafIterator::analyseCurrentBlock_() throw (Exception)
+MafBlock* SequenceStreamToMafIterator::analyseCurrentBlock_()
 {
   unique_ptr<MafBlock> block(new MafBlock());
 

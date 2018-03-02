@@ -47,7 +47,7 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* SequenceFilterMafIterator::analyseCurrentBlock_() throw (Exception)
+MafBlock* SequenceFilterMafIterator::analyseCurrentBlock_()
 {
   currentBlock_ = iterator_->nextBlock();
   while (currentBlock_) {

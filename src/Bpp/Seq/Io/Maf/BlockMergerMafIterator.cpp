@@ -47,7 +47,7 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* BlockMergerMafIterator::analyseCurrentBlock_() throw (Exception)
+MafBlock* BlockMergerMafIterator::analyseCurrentBlock_()
 {
   if (!incomingBlock_) return 0;
   currentBlock_  = incomingBlock_;

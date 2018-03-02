@@ -52,7 +52,7 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* SequenceLDhotOutputMafIterator::analyseCurrentBlock_() throw (Exception)
+MafBlock* SequenceLDhotOutputMafIterator::analyseCurrentBlock_()
 {
   MafBlock* block = iterator_->nextBlock();
   if (block) {

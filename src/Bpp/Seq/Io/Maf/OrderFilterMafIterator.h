@@ -120,7 +120,7 @@ class OrderFilterMafIterator:
 
 
   public:
-    MafBlock* analyseCurrentBlock_() throw (Exception) {
+    MafBlock* analyseCurrentBlock_() {
       bool testCont = true;
       while (testCont) {
         currentBlock_ = iterator_->nextBlock();

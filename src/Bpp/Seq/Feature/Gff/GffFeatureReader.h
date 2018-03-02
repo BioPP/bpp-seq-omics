@@ -93,7 +93,7 @@ class GffFeatureReader:
 
   public:
     bool hasMoreFeature() const { return nextLine_ != ""; }
-    const BasicSequenceFeature nextFeature() throw (Exception);
+    const BasicSequenceFeature nextFeature();
 
     void getAllFeatures(SequenceFeatureSet& features) {
       while (hasMoreFeature()) {

@@ -106,7 +106,7 @@ class MafParser:
     }
 
   private:
-    MafBlock* analyseCurrentBlock_() throw (Exception);
+    MafBlock* analyseCurrentBlock_();
 
   public:
     static constexpr short DOT_ERROR = 0;

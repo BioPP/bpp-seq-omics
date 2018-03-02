@@ -47,7 +47,7 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* AlignmentFilterMafIterator::analyseCurrentBlock_() throw (Exception)
+MafBlock* AlignmentFilterMafIterator::analyseCurrentBlock_()
 {
   if (blockBuffer_.size() == 0) {
     //Else there is no more block in the buffer, we need to parse more:
@@ -271,7 +271,7 @@ MafBlock* AlignmentFilterMafIterator::analyseCurrentBlock_() throw (Exception)
   return block;
 }
 
-MafBlock* AlignmentFilter2MafIterator::analyseCurrentBlock_() throw (Exception)
+MafBlock* AlignmentFilter2MafIterator::analyseCurrentBlock_()
 {
   if (blockBuffer_.size() == 0) {
     //Else there is no more block in the buffer, we need to parse more:

@@ -54,7 +54,7 @@ void CoordinatesOutputMafIterator::writeHeader_(ostream& out) const
   out << endl;
 }
 
-MafBlock* CoordinatesOutputMafIterator::analyseCurrentBlock_() throw (Exception)
+MafBlock* CoordinatesOutputMafIterator::analyseCurrentBlock_()
 {
   currentBlock_ = iterator_->nextBlock();
   if (currentBlock_) {

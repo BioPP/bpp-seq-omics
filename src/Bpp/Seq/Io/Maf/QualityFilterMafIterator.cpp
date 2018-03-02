@@ -50,7 +50,7 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* QualityFilterMafIterator::analyseCurrentBlock_() throw (Exception)
+MafBlock* QualityFilterMafIterator::analyseCurrentBlock_()
 {
   if (blockBuffer_.size() == 0) {
     do {

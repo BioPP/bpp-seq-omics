@@ -66,7 +66,7 @@ void BedGraphFeatureReader::getNextLine_() {
   }
 }
 
-const BasicSequenceFeature BedGraphFeatureReader::nextFeature() throw (Exception)
+const BasicSequenceFeature BedGraphFeatureReader::nextFeature()
 {
   if (!hasMoreFeature())
     throw Exception("BedGraphFeatureReader::nextFeature(). No more feature in file.");
