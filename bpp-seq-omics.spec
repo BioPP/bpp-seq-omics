@@ -1,28 +1,25 @@
-%define _basename bpp-seq-omics
-%define _version 2.3.1
-%define _release 1
 %define _prefix /usr
 
-URL: http://biopp.univ-montp2.fr/
+URL: https://github.com/BioPP/bpp-seq-omics
 
-Name: %{_basename}
-Version: %{_version}
-Release: %{_release}
+Name: bpp-seq-omics
+Version: 2.4.0
+Release: 1
 License: CECILL-2.0
 Vendor: The Bio++ Project
-Source: http://biopp.univ-montp2.fr/repos/sources/%{_basename}-%{_version}.tar.gz
+Source: %{name}-%{version}.tar.gz
 Summary: Bio++ Sequence library: genomics components
 Group: Development/Libraries/C and C++
-Requires: bpp-core = %{_version}
-Requires: bpp-seq = %{_version}
+Requires: bpp-core = %{version}
+Requires: bpp-seq = %{version}
 
-BuildRoot: %{_builddir}/%{_basename}-root
+BuildRoot: %{_builddir}/%{name}-root
 BuildRequires: cmake >= 2.8.11
 BuildRequires: gcc-c++ >= 4.7.0
-BuildRequires: libbpp-core3 = %{_version}
-BuildRequires: libbpp-core-devel = %{_version}
-BuildRequires: libbpp-seq11 = %{_version}
-BuildRequires: libbpp-seq-devel = %{_version}
+BuildRequires: libbpp-core4 = %{version}
+BuildRequires: libbpp-core-devel = %{version}
+BuildRequires: libbpp-seq12 = %{version}
+BuildRequires: libbpp-seq-devel = %{version}
 
 AutoReq: yes
 AutoProv: yes
@@ -31,22 +28,22 @@ AutoProv: yes
 This library contains the genomics components of the Bio++ sequence library.
 It is part of the Bio++ project.
 
-%package -n libbpp-seq-omics2
+%package -n libbpp-seq-omics3
 Summary: Bio++ Sequence library: genomics components
 Group: Development/Libraries/C and C++
 
-%description -n libbpp-seq-omics2
+%description -n libbpp-seq-omics3
 This library contains the genomics components of the Bio++ sequence library.
 It is part of the Bio++ project.
 
 %package -n libbpp-seq-omics-devel
 Summary: Bio++ Sequence library: genomics components
 Group: Development/Libraries/C and C++
-Requires: libbpp-seq-omics2 = %{_version}
-Requires: libbpp-seq11 = %{_version}
-Requires: libbpp-seq-devel = %{_version}
-Requires: libbpp-core3 = %{_version}
-Requires: libbpp-core-devel = %{_version}
+Requires: libbpp-seq-omics3 = %{version}
+Requires: libbpp-seq12 = %{_version}
+Requires: libbpp-seq-devel = %{version}
+Requires: libbpp-core4 = %{_version}
+Requires: libbpp-core-devel = %{version}
 
 %description -n libbpp-seq-omics-devel
 The libbpp-seq-omics-devel package contains the header files and static libraries for
@@ -67,11 +64,11 @@ make DESTDIR=$RPM_BUILD_ROOT install
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post -n libbpp-seq-omics2 -p /sbin/ldconfig
+%post -n libbpp-seq-omics3 -p /sbin/ldconfig
 
-%postun -n libbpp-seq-omics2 -p /sbin/ldconfig
+%postun -n libbpp-seq-omics3 -p /sbin/ldconfig
 
-%files -n libbpp-seq-omics2
+%files -n libbpp-seq-omics3
 %defattr(-,root,root)
 %doc AUTHORS.txt COPYING.txt INSTALL.txt ChangeLog
 %{_prefix}/%{_lib}/lib*.so.*
@@ -87,6 +84,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_prefix}/include/*
 
 %changelog
+* Fri Mar 03 2018 Julien Dutheil <julien.dutheil@univ-montp2.fr> 2.4.0-1
+- Increased interface number
+- Removed dynamic exceptions declarations.
 * Tue Jun 06 2017 Julien Dutheil <julien.dutheil@univ-montp2.fr> 2.3.1-1
 - Increased interface number
 * Wed May 10 2017 Julien Dutheil <julien.dutheil@univ-montp2.fr> 2.3.0-1

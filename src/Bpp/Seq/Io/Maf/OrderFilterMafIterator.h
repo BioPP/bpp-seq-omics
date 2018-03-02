@@ -74,6 +74,10 @@ class OrderFilterMafIterator:
      *
      * @param iterator The input iterator.
      * @param reference The species to use as a reference for coordinates.
+     * @param unsortedBlockDiscarded Tell is unsorted blocks should be discarded
+     * @param unsortedBlockThrowsException Tell is unsorted blocks should throw an exception
+     * @param overlappingBlockDiscarded Tell is overlapping blocks should be discarded
+     * @param overlappingBlockThrowsException Tell is overlapping blocks should throw an exception
      */
     OrderFilterMafIterator(MafIterator* iterator,
         const std::string& reference,
