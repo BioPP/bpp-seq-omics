@@ -4,7 +4,7 @@ URL: https://github.com/BioPP/bpp-seq-omics
 
 Name: bpp-seq-omics
 Version: 2.4.0
-Release: 1
+Release: 1%{?dist}
 License: CECILL-2.0
 Vendor: The Bio++ Project
 Source: %{name}-%{version}.tar.gz
@@ -40,14 +40,14 @@ It is part of the Bio++ project.
 Summary: Bio++ Sequence library: genomics components
 Group: Development/Libraries/C and C++
 Requires: libbpp-seq-omics3 = %{version}
-Requires: libbpp-seq12 = %{_version}
+Requires: libbpp-seq12 = %{version}
 Requires: libbpp-seq-devel = %{version}
-Requires: libbpp-core4 = %{_version}
+Requires: libbpp-core4 = %{version}
 Requires: libbpp-core-devel = %{version}
 
 %description -n libbpp-seq-omics-devel
 The libbpp-seq-omics-devel package contains the header files and static libraries for
-building applications which use %{_basename}.
+building applications which use %{name}.
 
 %prep
 %setup -q
