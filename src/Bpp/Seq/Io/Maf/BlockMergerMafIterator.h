@@ -66,16 +66,20 @@ class BlockMergerMafIterator:
   private:
     std::vector<std::string> species_;
     MafBlock* incomingBlock_;
-    std::vector<std::string> ignoreChrs_; //These chromsomes will never be merged (ex: 'Un').
+    std::vector<std::string> ignoreChrs_; //These chromosomes will never be merged (ex: 'Un').
     unsigned int maxDist_;
+    bool renameChimericChromosomes_;
+    std::map<std::string, unsigned int> chimericChromosomeCounts_;
 
   public:
-    BlockMergerMafIterator(MafIterator* iterator, const std::vector<std::string>& species, unsigned int maxDist = 0) :
+    BlockMergerMafIterator(MafIterator* iterator, const std::vector<std::string>& species, unsigned int maxDist = 0, bool renameChimericChromosomes = false) :
       AbstractFilterMafIterator(iterator),
       species_(species),
       incomingBlock_(0),
       ignoreChrs_(),
-      maxDist_(maxDist)
+      maxDist_(maxDist),
+      renameChimericChromosomes_(renameChimericChromosomes),
+      chimericChromosomeCounts_()
     {
       incomingBlock_ = iterator->nextBlock();
     }
@@ -86,15 +90,19 @@ class BlockMergerMafIterator:
       species_(iterator.species_),
       incomingBlock_(iterator.incomingBlock_),
       ignoreChrs_(iterator.ignoreChrs_),
-      maxDist_(iterator.maxDist_)
+      maxDist_(iterator.maxDist_),
+      renameChimericChromosomes_(iterator.renameChimericChromosomes_),
+      chimericChromosomeCounts_(iterator.chimericChromosomeCounts_)
     {}
     
     BlockMergerMafIterator& operator=(const BlockMergerMafIterator& iterator)
     {
-      species_       = iterator.species_;
-      incomingBlock_ = iterator.incomingBlock_;
-      ignoreChrs_    = iterator.ignoreChrs_;
-      maxDist_       = iterator.maxDist_;
+      species_                   = iterator.species_;
+      incomingBlock_             = iterator.incomingBlock_;
+      ignoreChrs_                = iterator.ignoreChrs_;
+      maxDist_                   = iterator.maxDist_;
+      renameChimericChromosomes_ = iterator.renameChimericChromosomes_;
+      chimericChromosomeCounts_  = iterator.chimericChromosomeCounts_;
       return *this;
     }
 

@@ -124,7 +124,15 @@ MafBlock* BlockMergerMafIterator::analyseCurrentBlock_()
             seq->append(vector<int>(globalSpace, AlphabetTools::DNA_ALPHABET.getUnknownCharacterCode()));
           }
           if (seq->getChromosome() != tmp->getChromosome()) {
-            seq->setChromosome(seq->getChromosome() + "-" + tmp->getChromosome());
+            if (renameChimericChromosomes_) {
+              if (seq->getChromosome().substr(0, 7) != "chimtig") {
+                //Creates a new chimeric chromosome for this species:
+                chimericChromosomeCounts_[seq->getSpecies()]++;
+                seq->setChromosome("chimtig" + TextTools::toString(chimericChromosomeCounts_[seq->getSpecies()]));
+              }
+            } else {
+              seq->setChromosome(seq->getChromosome() + "-" + tmp->getChromosome());
+            }
             seq->removeCoordinates();
           }
           if (seq->getStrand() != tmp->getStrand()) {
