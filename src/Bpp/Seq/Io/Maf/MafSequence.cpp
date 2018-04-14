@@ -50,7 +50,7 @@ MafSequence* MafSequence::subSequence(size_t startAt, size_t length) const
   string subseq = toString().substr(startAt, length);
   size_t begin = begin_;
   if (hasCoordinates_) {
-    for (unsigned int i = 0; i < startAt; ++i) {
+    for (size_t i = 0; i < startAt; ++i) {
       if (! getAlphabet()->isGap(operator[](i))) begin++;
     }
   }

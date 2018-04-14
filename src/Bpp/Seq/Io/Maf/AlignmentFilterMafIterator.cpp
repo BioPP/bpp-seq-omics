@@ -60,6 +60,8 @@ MafBlock* AlignmentFilterMafIterator::analyseCurrentBlock_()
       int unk = AlphabetTools::DNA_ALPHABET.getUnknownCharacterCode();
       size_t nr;
       size_t nc = static_cast<size_t>(block->getNumberOfSites());
+      if (nc < windowSize_)
+        throw Exception("AlignmentFilterMafIterator::analyseCurrentBlock_. Block is smaller than window size: " + TextTools::toString(nc));
 
       vector< vector<int> > aln;
       if (missingAsGap_) {
@@ -94,8 +96,6 @@ MafBlock* AlignmentFilterMafIterator::analyseCurrentBlock_()
       window_.clear();
       //Init window:
       size_t i;
-      if (nc < windowSize_)
-        throw Exception("AlignmentFilterMafIterator::analyseCurrentBlock_. Block is smaller than window size: " + TextTools::toString(nc));
       for (i = 0; i < windowSize_; ++i) {
         for (size_t j = 0; j < nr; ++j) {
           col[j] = aln[j][i];
@@ -284,6 +284,8 @@ MafBlock* AlignmentFilter2MafIterator::analyseCurrentBlock_()
       int unk = AlphabetTools::DNA_ALPHABET.getUnknownCharacterCode();
       size_t nr;
       size_t nc = static_cast<size_t>(block->getNumberOfSites());
+      if (nc < windowSize_)
+        throw Exception("AlignmentFilter2MafIterator::analyseCurrentBlock_. Block is smaller than window size: " + TextTools::toString(nc));
 
       vector< vector<int> > aln;
       if (missingAsGap_) {

@@ -64,12 +64,12 @@ class MafSequence:
 {
   private:
     bool         hasCoordinates_;
-    size_t begin_;
+    size_t       begin_;
     std::string  species_;
     std::string  chromosome_;
     char         strand_;
-    size_t size_;
-    size_t srcSize_;
+    size_t       size_;
+    size_t       srcSize_;
 
   public:
     MafSequence(const Alphabet* alphabet = &AlphabetTools::DNA_ALPHABET):
