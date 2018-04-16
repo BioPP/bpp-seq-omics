@@ -509,7 +509,7 @@ void SequenceDiversityMafStatistics::compute(const MafBlock& block)
   double e1 = c1 / a1;
   double e2 = c2 / (a1 * a1 + a2);
   
-  //Compute pairwise heterozigocity:
+  //Compute pairwise heterozigosity:
   double pi = 0;
   for (size_t i = 0; i < n - 1; ++i) {
     for (size_t j = i + 1; j < n; ++j) {
@@ -517,7 +517,7 @@ void SequenceDiversityMafStatistics::compute(const MafBlock& block)
           alignment2->getSequence(i),
           alignment2->getSequence(j),
           true,
-          SiteContainerTools::SIMILARITY_ALL,
+          SiteContainerTools::SIMILARITY_NOGAP,
           false);
     }
   }
