@@ -66,6 +66,7 @@ void VcfOutputMafIterator::writeHeader_(std::ostream& out) const
   out << "##FILTER=<ID=unk,Description=\"At least one sequence contains an unresolved character\">" << endl;
   if (genotypes_.size() > 0)
     out << "##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">" << endl;
+  out << "##INFO=<ID=AC,Number=A,Type=Integer,Description=\"Total number of alternate alleles in called genotypes\">" << endl;
   //There are more options in the header that we may want to support...
 
   //Now write the header line:
