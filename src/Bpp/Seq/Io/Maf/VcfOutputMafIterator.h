@@ -62,6 +62,7 @@ class VcfOutputMafIterator:
     std::string refSpecies_;
     std::vector<std::string> genotypes_;
     bool outputAll_;
+    bool generateDiploids_;
 
   public:
     /**
@@ -72,9 +73,10 @@ class VcfOutputMafIterator:
      * @param reference The species to use as a reference.
      * @param genotypes A list of species for which genotype information should be written in the VCF file. There will be one extra column per genotype, +1 format column.
      * @param outputAll If true, also output non-variable positions.
+     * @param generateDiploids If true, output articifical "homozygous" diploids.
      */
-    VcfOutputMafIterator(MafIterator* iterator, std::ostream* out, const std::string& reference, const std::vector<std::string>& genotypes, bool outputAll = false) :
-      AbstractFilterMafIterator(iterator), output_(out), refSpecies_(reference), genotypes_(genotypes), outputAll_(outputAll)
+    VcfOutputMafIterator(MafIterator* iterator, std::ostream* out, const std::string& reference, const std::vector<std::string>& genotypes, bool outputAll = false, bool generateDiploids = false) :
+      AbstractFilterMafIterator(iterator), output_(out), refSpecies_(reference), genotypes_(genotypes), outputAll_(outputAll), generateDiploids_(generateDiploids)
     {
       if (output_)
         writeHeader_(*output_);
@@ -86,7 +88,8 @@ class VcfOutputMafIterator:
       output_(iterator.output_),
       refSpecies_(iterator.refSpecies_),
       genotypes_(iterator.genotypes_),
-      outputAll_(iterator.outputAll_)
+      outputAll_(iterator.outputAll_),
+      generateDiploids_(iterator.generateDiploids_)
     {}
     
     VcfOutputMafIterator& operator=(const VcfOutputMafIterator& iterator)
@@ -95,6 +98,7 @@ class VcfOutputMafIterator:
       refSpecies_ = iterator.refSpecies_;
       genotypes_ = iterator.genotypes_;
       outputAll_ = iterator.outputAll_;
+      generateDiploids_ = iterator.generateDiploids_;
       return *this;
     }
 

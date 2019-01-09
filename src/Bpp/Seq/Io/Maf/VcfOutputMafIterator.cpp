@@ -150,9 +150,12 @@ void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
           else {
             int state = (*sequences[0])[i];
             if (AlphabetTools::DNA_ALPHABET.isGap(state) || AlphabetTools::DNA_ALPHABET.isUnresolved(state))
-              out << "\t.";
-            else 
+              out << (generateDiploids_ ? "\t.|." : "\t.");
+            else { 
               out << "\t" << snps[state];
+              if (generateDiploids_) 
+                out << "|" << snps[state];
+            }
           }
         }
       }
