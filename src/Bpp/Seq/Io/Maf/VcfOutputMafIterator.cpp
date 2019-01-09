@@ -62,6 +62,7 @@ void VcfOutputMafIterator::writeHeader_(std::ostream& out) const
   out << "##fileformat=VCFv4.0" << endl;
   out << "##fileDate=" << (ct->tm_year + 1900) << (ct->tm_mon + 1) << ct->tm_mday << endl;
   out << "##source=Bio++" << endl;  
+  out << "##FILTER=<ID=PASS,Description=\"All filters passed\">" << endl;
   out << "##FILTER=<ID=gap,Description=\"At least one sequence contains a gap\">" << endl;
   out << "##FILTER=<ID=unk,Description=\"At least one sequence contains an unresolved character\">" << endl;
   if (genotypes_.size() > 0)
@@ -102,7 +103,7 @@ void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
     }
     if (SiteTools::hasUnknown(sites.getSite(i))) {
       if (filter != "")
-        filter += ",";
+        filter += ";";
       filter += "unk";
     }
     if (filter == "")
