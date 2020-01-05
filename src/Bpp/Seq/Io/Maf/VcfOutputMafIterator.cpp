@@ -74,8 +74,15 @@ void VcfOutputMafIterator::writeHeader_(std::ostream& out) const
   out << "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO";
   if (genotypes_.size() > 0) {
     out << "\tFORMAT";
-    for (size_t i = 0; i < genotypes_.size(); ++i)
-      out << "\t" << genotypes_[i];
+    for (size_t i = 0; i < genotypes_.size(); ++i) {
+      out << "\t" << genotypes_[i][0];
+      if (genotypes_[i].size() > 1) {
+        //Polyploid case
+        for (size_t j = 1; j < genotypes_[i].size(); ++j) {
+          out << "-" << genotypes_[i][j];
+        }
+      }
+    }
   }
   out << endl;
 }
@@ -142,21 +149,26 @@ void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
       if (genotypes_.size() > 0) {
         out << "\tGT";
         for (size_t g = 0; g < genotypes_.size(); ++g) {
-          vector<const MafSequence*> sequences = block.getSequencesForSpecies(genotypes_[g]);
-          if (sequences.size() == 0)
-            out << "\t.";
-          else if (sequences.size() > 1)
-            throw Exception("VcfOutputMafIterator::writeBlock(). Duplicated sequence for species '" + genotypes_[g] + ",.");
-          else {
-            int state = (*sequences[0])[i];
-            if (AlphabetTools::DNA_ALPHABET.isGap(state) || AlphabetTools::DNA_ALPHABET.isUnresolved(state))
-              out << (generateDiploids_ ? "\t.|." : "\t.");
-            else { 
-              out << "\t" << snps[state];
-              if (generateDiploids_) 
-                out << "|" << snps[state];
+          string geno = "";
+          for (auto x: genotypes_[g]) {
+            if (geno != "") geno += "|"; //Polyploid
+            vector<const MafSequence*> sequences = block.getSequencesForSpecies(x);
+            if (sequences.size() == 0)
+              geno += (generateDiploids_ ? ".|." : ".");
+            else if (sequences.size() > 1)
+              throw Exception("VcfOutputMafIterator::writeBlock(). Duplicated sequence for species '" + x + "'.");
+            else {
+              int state = (*sequences[0])[i];
+              if (AlphabetTools::DNA_ALPHABET.isGap(state) || AlphabetTools::DNA_ALPHABET.isUnresolved(state))
+                geno += (generateDiploids_ ? ".|." : ".");
+              else { 
+                geno += TextTools::toString(snps[state]);
+                if (generateDiploids_) 
+                  geno += geno +  "|" + TextTools::toString(snps[state]);
+              }
             }
           }
+          out << "\t" << geno;
         }
       }
       out << endl;

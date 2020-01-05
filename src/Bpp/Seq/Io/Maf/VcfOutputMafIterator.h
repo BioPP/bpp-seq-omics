@@ -60,7 +60,7 @@ class VcfOutputMafIterator:
   private:
     std::ostream* output_;
     std::string refSpecies_;
-    std::vector<std::string> genotypes_;
+    std::vector<std::vector<std::string> >genotypes_;
     bool outputAll_;
     bool generateDiploids_;
 
@@ -73,10 +73,31 @@ class VcfOutputMafIterator:
      * @param reference The species to use as a reference.
      * @param genotypes A list of species for which genotype information should be written in the VCF file. There will be one extra column per genotype, +1 format column.
      * @param outputAll If true, also output non-variable positions.
-     * @param generateDiploids If true, output articifical "homozygous" diploids.
+     * @param generateDiploids If true, output artificial "homozygous" diploids.
      */
     VcfOutputMafIterator(MafIterator* iterator, std::ostream* out, const std::string& reference, const std::vector<std::string>& genotypes, bool outputAll = false, bool generateDiploids = false) :
-      AbstractFilterMafIterator(iterator), output_(out), refSpecies_(reference), genotypes_(genotypes), outputAll_(outputAll), generateDiploids_(generateDiploids)
+      AbstractFilterMafIterator(iterator), output_(out), refSpecies_(reference), genotypes_(), outputAll_(outputAll), generateDiploids_(generateDiploids)
+    {
+      for (auto g: genotypes) {
+        std::vector<std::string> tmp;
+        tmp.push_back(g);
+        genotypes_.push_back(tmp);
+      }
+      if (output_)
+        writeHeader_(*output_);
+    }
+
+    /**
+     * @brief Build a new VcfOutputMafIterator object.
+     *
+     * @param iterator The input iterator.
+     * @param out The output stream where to write the VCF file.
+     * @param reference The species to use as a reference.
+     * @param genotypes A list of species combinations for which genotype information should be written in the VCF file. There will be one extra column per genotype, +1 format column. When more than one sequence is specified in a combination, a (phased) polyploid genotype will be created.
+     * @param outputAll If true, also output non-variable positions.
+     */
+    VcfOutputMafIterator(MafIterator* iterator, std::ostream* out, const std::string& reference, const std::vector< std::vector<std::string> >& genotypes, bool outputAll = false, bool generateDiploids = false) :
+      AbstractFilterMafIterator(iterator), output_(out), refSpecies_(reference), genotypes_(genotypes), outputAll_(outputAll), generateDiploids_(false)
     {
       if (output_)
         writeHeader_(*output_);
