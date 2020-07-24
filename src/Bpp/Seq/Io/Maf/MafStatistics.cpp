@@ -484,14 +484,19 @@ void SequenceDiversityMafStatistics::compute(const MafBlock& block)
   //Get only complete sites:
   unique_ptr<SiteContainer> alignment2(SiteContainerTools::getCompleteSites(*alignment));
   double S = 0;
-  size_t nbTot = alignment2->getNumberOfSites();
+  size_t nbTot = 0;
   size_t n = alignment2->getNumberOfSequences();
   if (n > 0) {
     for (size_t i = 0; i < alignment2->getNumberOfSites(); ++i) {
       const Site& site = alignment2->getSite(i);
-      if (!SiteTools::isConstant(site))
-        S++;
+      if (SiteTools::isComplete(site)) {
+        nbTot++;
+        if (!SiteTools::isConstant(site))
+          S++;
+      }
     }
+  } else {
+    size_t nbTot = alignment2->getNumberOfSites();
   }
 
   double a1 = 0;
@@ -518,7 +523,7 @@ void SequenceDiversityMafStatistics::compute(const MafBlock& block)
           alignment2->getSequence(j),
           true,
           SiteContainerTools::SIMILARITY_NOGAP,
-          false);
+          true);
     }
   }
   pi /= static_cast<double>((n - 1) * n / 2);

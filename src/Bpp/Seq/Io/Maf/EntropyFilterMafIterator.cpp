@@ -61,6 +61,8 @@ MafBlock* EntropyFilterMafIterator::analyseCurrentBlock_()
       //int unk = AlphabetTools::DNA_ALPHABET.getUnknownCharacterCode();
       size_t nr;
       size_t nc = static_cast<size_t>(block->getNumberOfSites());
+      if (nc < windowSize_)
+        throw Exception("EntropyFilterMafIterator::analyseCurrentBlock_. Block is smaller than window size: " + TextTools::toString(nc));
 
       vector< vector<int> > aln;
       if (missingAsGap_ && !ignoreGaps_) {
