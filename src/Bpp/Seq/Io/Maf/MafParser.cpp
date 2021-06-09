@@ -104,20 +104,32 @@ MafBlock* MafParser::analyseCurrentBlock_()
     {
       StringTokenizer st(line);
       st.nextToken(); //The 's' tag
+      if (! st.hasMoreToken())
+	throw IOException("Sequence description should include a source field.");
       string src = st.nextToken();
+      if (! st.hasMoreToken())
+	throw IOException("Sequence description should include a start field.");
       unsigned int start = TextTools::to<unsigned int>(st.nextToken());
+      if (! st.hasMoreToken())
+	throw IOException("Sequence description should include a size field.");
       unsigned int size = TextTools::to<unsigned int>(st.nextToken());
+      if (! st.hasMoreToken())
+	throw IOException("Sequence description should include a strand field.");
       string tmp = st.nextToken();
       if (tmp.size() != 1)
         throw Exception("MafAlignmentParser::nextBlock. Strand specification is incorrect, should be only one character long, found " + TextTools::toString(tmp.size()) + ".");
       char strand = tmp[0];
 
+      if (! st.hasMoreToken())
+	throw IOException("Sequence description should include a source size field.");
       unsigned int srcSize = TextTools::to<unsigned int>(st.nextToken());
       if (currentSequence) {
         //Add previous sequence:
         block->addSequence(*currentSequence); //The sequence is copied in the container.
         currentSequence.reset();
       }
+      if (! st.hasMoreToken())
+	throw IOException("Sequence description without a sequence.");
       string seq = st.nextToken();
       if (dotOption_ == DOT_ASGAP) {
         std::replace(seq.begin(), seq.end(), '.', '-');
