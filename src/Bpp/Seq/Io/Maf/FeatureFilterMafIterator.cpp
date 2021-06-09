@@ -167,7 +167,10 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_()
               newBlock->addSequence(*subseq);
               delete subseq;
             }
-            blockBuffer_.push_back(newBlock);
+	    if (newBlock->getNumberOfSites() > 0)
+              blockBuffer_.push_back(newBlock);
+	    else
+	      delete newBlock;
           }
         
           if (keepTrashedBlocks_) {
