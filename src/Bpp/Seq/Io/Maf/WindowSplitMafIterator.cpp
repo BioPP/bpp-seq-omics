@@ -54,6 +54,7 @@ const short WindowSplitMafIterator::ADJUST= 3;
 
 MafBlock* WindowSplitMafIterator::analyseCurrentBlock_()
 {
+  //Note 02/08/21: For now overlapping windows are only supported with the RAGGED_LEFT option. It could be easily generalized for cases where the window size is a multiple of the step value. More general cases are more tricky to implement, in particular for the ADJUST case.
   while (blockBuffer_.size() == 0) {
     //Build a new series of windows:
     MafBlock* block = iterator_->nextBlock();
@@ -64,17 +65,18 @@ MafBlock* WindowSplitMafIterator::analyseCurrentBlock_()
     size_t bSize = block->getNumberOfSites();
 
     switch (align_) {
-      case (RAGGED_RIGHT) : { pos = bSize % windowSize_; break; }
-      case (CENTER)       : { pos = (bSize % windowSize_) / 2; break; }
+      case (RAGGED_RIGHT) : { pos = bSize % windowSize_; windowStep_ = size; break; }
+      case (CENTER)       : { pos = (bSize % windowSize_) / 2; windowStep_ = size; break; }
       case (ADJUST)       : {
           size_t x = bSize / windowSize_;
           if (x > 0) size = bSize / x;
+	  windowStep_ = size;
           break;
         }               
       default             : { }
     }
     //cout << "Effective size: " << size << endl;
-    for(size_t i = pos; i + size <= bSize; i += size) {
+    for(size_t i = pos; i + size <= bSize; i += windowStep_) {
       MafBlock* newBlock = new MafBlock();
       newBlock->setScore(block->getScore());
       newBlock->setPass(block->getPass());

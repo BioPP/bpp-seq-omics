@@ -57,6 +57,7 @@ class WindowSplitMafIterator:
 {
   private:
     size_t windowSize_;
+    size_t windowStep_;
     short align_;
     std::deque<MafBlock*> blockBuffer_;
     bool keepSmallBlocks_;
@@ -68,13 +69,16 @@ class WindowSplitMafIterator:
     static const short ADJUST;
 
   public:
-    WindowSplitMafIterator(MafIterator* iterator, size_t windowSize, short splitOption = CENTER, bool keepSmallBlocks = false):
+    WindowSplitMafIterator(MafIterator* iterator, size_t windowSize, size_t windowStep, short splitOption = CENTER, bool keepSmallBlocks = false):
       AbstractFilterMafIterator(iterator),
-      windowSize_(windowSize), align_(splitOption), blockBuffer_(), keepSmallBlocks_(keepSmallBlocks)
+      windowSize_(windowSize), windowStep_(windowStep),
+      align_(splitOption), blockBuffer_(), keepSmallBlocks_(keepSmallBlocks)
     {
       if (splitOption != RAGGED_LEFT && splitOption != RAGGED_RIGHT
           && splitOption != CENTER && splitOption != ADJUST)
         throw Exception("WindowSplitMafIterator: unvalid split option: " + TextTools::toString(splitOption));
+      if (splitOption != RAGGED_LEFT && windowStep != windowSize)
+        throw Exception("WindowSplitMafIterator: overlapping windows are only supported together with the RAGGED_LEFT option.");
     }
 
   private:
