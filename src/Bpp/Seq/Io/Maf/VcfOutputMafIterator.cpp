@@ -108,7 +108,7 @@ void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
     if (SiteTools::hasGap(sites.getSite(i))) {
       filter = "gap";
     }
-    if (SiteTools::hasUnknown(sites.getSite(i))) {
+    if (SiteTools::hasUnresolved(sites.getSite(i))) {
       if (filter != "")
         filter += ";";
       filter += "unk";
@@ -164,7 +164,7 @@ void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
               else { 
                 geno += TextTools::toString(snps[state]);
                 if (generateDiploids_) 
-                  geno += geno +  "|" + TextTools::toString(snps[state]);
+                  geno += "|" + TextTools::toString(snps[state]);
               }
             }
           }
