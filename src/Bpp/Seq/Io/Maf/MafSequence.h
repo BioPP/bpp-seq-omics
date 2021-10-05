@@ -73,10 +73,14 @@ class MafSequence:
 
   public:
     MafSequence(const Alphabet* alphabet = &AlphabetTools::DNA_ALPHABET):
+      EdSymbolList<int>(alphabet),
+      EdIntSymbolList(alphabet),
       SequenceWithAnnotation(alphabet), hasCoordinates_(false), begin_(0), species_(""), chromosome_(""), strand_(0), size_(0), srcSize_(0)
     {}
 
     MafSequence(const std::string& name, const std::string& sequence, bool parseName = true, const Alphabet* alphabet = &AlphabetTools::DNA_ALPHABET):
+      EdSymbolList<int>(alphabet),
+      EdIntSymbolList(alphabet),
       SequenceWithAnnotation(name, sequence, alphabet), hasCoordinates_(false), begin_(0), species_(""), chromosome_(""), strand_(0), size_(0), srcSize_(0)
     {
       size_ = SequenceTools::getNumberOfSites(*this);
@@ -85,6 +89,8 @@ class MafSequence:
     }
 
     MafSequence(const std::string& name, const std::string& sequence, size_t begin, char strand, size_t srcSize, bool parseName = true, const Alphabet* alphabet = &AlphabetTools::DNA_ALPHABET) :
+      EdSymbolList<int>(alphabet),
+      EdIntSymbolList(alphabet),
       SequenceWithAnnotation(name, sequence, alphabet), hasCoordinates_(true), begin_(begin), species_(""), chromosome_(""), strand_(strand), size_(0), srcSize_(srcSize)
     {
       size_ = SequenceTools::getNumberOfSites(*this);
@@ -191,14 +197,14 @@ class MafSequence:
     MafSequence* subSequence(size_t startAt, size_t length) const;
     
   private:
-    void beforeSequenceChanged(const SymbolListEditionEvent& event) {}
-    void afterSequenceChanged(const SymbolListEditionEvent& event) { size_ = SequenceTools::getNumberOfSites(*this); }
-    void beforeSequenceInserted(const SymbolListInsertionEvent& event) {}
-    void afterSequenceInserted(const SymbolListInsertionEvent& event) { size_ = SequenceTools::getNumberOfSites(*this); }
-    void beforeSequenceDeleted(const SymbolListDeletionEvent& event) {}
-    void afterSequenceDeleted(const SymbolListDeletionEvent& event) { size_ = SequenceTools::getNumberOfSites(*this); }
-    void beforeSequenceSubstituted(const SymbolListSubstitutionEvent& event) {}
-    void afterSequenceSubstituted(const SymbolListSubstitutionEvent& event) {}
+    void beforeSequenceChanged(const IntSymbolListEditionEvent& event) {}
+    void afterSequenceChanged(const IntSymbolListEditionEvent& event) { size_ = SequenceTools::getNumberOfSites(*this); }
+    void beforeSequenceInserted(const IntSymbolListInsertionEvent& event) {}
+    void afterSequenceInserted(const IntSymbolListInsertionEvent& event) { size_ = SequenceTools::getNumberOfSites(*this); }
+    void beforeSequenceDeleted(const IntSymbolListDeletionEvent& event) {}
+    void afterSequenceDeleted(const IntSymbolListDeletionEvent& event) { size_ = SequenceTools::getNumberOfSites(*this); }
+    void beforeSequenceSubstituted(const IntSymbolListSubstitutionEvent& event) {}
+    void afterSequenceSubstituted(const IntSymbolListSubstitutionEvent& event) {}
 };
 
 } // end of namespace bpp.

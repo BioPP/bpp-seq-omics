@@ -482,7 +482,10 @@ void SequenceDiversityMafStatistics::compute(const MafBlock& block)
 {
   unique_ptr<SiteContainer> alignment(getSiteContainer_(block));
   //Get only complete sites:
-  unique_ptr<SiteContainer> alignment2(SiteContainerTools::getCompleteSites(*alignment));
+  unique_ptr<VectorSiteContainer> alignment2(dynamic_cast<VectorSiteContainer*>(SiteContainerTools::getCompleteSites(*alignment)));
+  if (alignment2==0)
+    throw Exception("SequenceDiversityMafStatistics::compute : alignment2 not plain VectorSiteContainer.");
+  
   double S = 0;
   size_t nbTot = 0;
   size_t n = alignment2->getNumberOfSequences();
@@ -496,7 +499,7 @@ void SequenceDiversityMafStatistics::compute(const MafBlock& block)
       }
     }
   } else {
-    size_t nbTot = alignment2->getNumberOfSites();
+    nbTot = alignment2->getNumberOfSites();
   }
 
   double a1 = 0;

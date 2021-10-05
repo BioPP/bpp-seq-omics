@@ -108,7 +108,7 @@ void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
     if (SiteTools::hasGap(sites.getSite(i))) {
       filter = "gap";
     }
-    if (SiteTools::hasUnresolved(sites.getSite(i))) {
+    if (SymbolListTools::hasUnresolved(sites.getSite(i))) {
       if (filter != "")
         filter += ";";
       filter += "unk";
