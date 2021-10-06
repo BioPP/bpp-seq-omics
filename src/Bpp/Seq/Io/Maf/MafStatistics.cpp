@@ -5,37 +5,37 @@
 //
 
 /*
-Copyright or © or Copr. Bio++ Development Team, (2010)
+   Copyright or © or Copr. Bio++ Development Team, (2010)
 
-This software is a computer program whose purpose is to provide classes
-for sequences analysis.
+   This software is a computer program whose purpose is to provide classes
+   for sequences analysis.
 
-This software is governed by the CeCILL  license under French law and
-abiding by the rules of distribution of free software.  You can  use, 
-modify and/ or redistribute the software under the terms of the CeCILL
-license as circulated by CEA, CNRS and INRIA at the following URL
-"http://www.cecill.info". 
+   This software is governed by the CeCILL  license under French law and
+   abiding by the rules of distribution of free software.  You can  use,
+   modify and/ or redistribute the software under the terms of the CeCILL
+   license as circulated by CEA, CNRS and INRIA at the following URL
+   "http://www.cecill.info".
 
-As a counterpart to the access to the source code and  rights to copy,
-modify and redistribute granted by the license, users are provided only
-with a limited warranty  and the software's author,  the holder of the
-economic rights,  and the successive licensors  have only  limited
-liability. 
+   As a counterpart to the access to the source code and  rights to copy,
+   modify and redistribute granted by the license, users are provided only
+   with a limited warranty  and the software's author,  the holder of the
+   economic rights,  and the successive licensors  have only  limited
+   liability.
 
-In this respect, the user's attention is drawn to the risks associated
-with loading,  using,  modifying and/or developing or reproducing the
-software by the user in light of its specific status of free software,
-that may mean  that it is complicated to manipulate,  and  that  also
-therefore means  that it is reserved for developers  and  experienced
-professionals having in-depth computer knowledge. Users are therefore
-encouraged to load and test the software's suitability as regards their
-requirements in conditions enabling the security of their systems and/or 
-data to be ensured and,  more generally, to use and operate it in the 
-same conditions as regards security. 
+   In this respect, the user's attention is drawn to the risks associated
+   with loading,  using,  modifying and/or developing or reproducing the
+   software by the user in light of its specific status of free software,
+   that may mean  that it is complicated to manipulate,  and  that  also
+   therefore means  that it is reserved for developers  and  experienced
+   professionals having in-depth computer knowledge. Users are therefore
+   encouraged to load and test the software's suitability as regards their
+   requirements in conditions enabling the security of their systems and/or
+   data to be ensured and,  more generally, to use and operate it in the
+   same conditions as regards security.
 
-The fact that you are presently reading this means that you have had
-knowledge of the CeCILL license and that you accept its terms.
-*/
+   The fact that you are presently reading this means that you have had
+   knowledge of the CeCILL license and that you accept its terms.
+ */
 
 #include "MafStatistics.h"
 #include <Bpp/Seq/Container/SequenceContainerTools.h>
@@ -43,10 +43,10 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <Bpp/Seq/Container/SiteContainerTools.h>
 #include <Bpp/Seq/SiteTools.h>
 
-//From bpp-core:
+// From bpp-core:
 #include <Bpp/Numeric/NumConstants.h>
 
-//From the STL:
+// From the STL:
 #include <cmath>
 #include <map>
 
@@ -67,15 +67,19 @@ void PairwiseDivergenceMafStatistics::compute(const MafBlock& block)
 
 SiteContainer* AbstractSpeciesSelectionMafStatistics::getSiteContainer_(const MafBlock& block)
 {
-  if (noSpeciesMeansAllSpecies_ && species_.size() == 0) {
+  if (noSpeciesMeansAllSpecies_ && species_.size() == 0)
+  {
     return new VectorSiteContainer(block.getAlignment());
   }
-  //Otherwise, we select species:
+  // Otherwise, we select species:
   VectorSiteContainer* alignment = new VectorSiteContainer(block.getAlignment().getAlphabet());
-  for (size_t i = 0; i < species_.size(); ++i) {
-    if (block.hasSequenceForSpecies(species_[i])) {
+  for (size_t i = 0; i < species_.size(); ++i)
+  {
+    if (block.hasSequenceForSpecies(species_[i]))
+    {
       vector<const MafSequence*> selection = block.getSequencesForSpecies(species_[i]);
-      for (size_t j = 0; j < selection.size(); ++j) {
+      for (size_t j = 0; j < selection.size(); ++j)
+      {
         alignment->addSequence(*selection[j]);
       }
     }
@@ -83,13 +87,15 @@ SiteContainer* AbstractSpeciesSelectionMafStatistics::getSiteContainer_(const Ma
   return alignment;
 }
 
-AbstractSpeciesMultipleSelectionMafStatistics::AbstractSpeciesMultipleSelectionMafStatistics(const std::vector< std::vector<std::string> >& species):
+AbstractSpeciesMultipleSelectionMafStatistics::AbstractSpeciesMultipleSelectionMafStatistics(const std::vector< std::vector<std::string> >& species) :
   species_(species)
 {
   size_t n = VectorTools::vectorUnion(species).size();
   size_t m = 0;
   for (size_t i =  0; i < species.size(); ++i)
+  {
     m += species_[i].size();
+  }
   if (m != n)
     throw Exception("AbstractSpeciesMultipleSelectionMafStatistics (constructor). Species selections must be fully distinct.");
 }
@@ -97,12 +103,16 @@ AbstractSpeciesMultipleSelectionMafStatistics::AbstractSpeciesMultipleSelectionM
 vector<SiteContainer*> AbstractSpeciesMultipleSelectionMafStatistics::getSiteContainers_(const MafBlock& block)
 {
   vector<SiteContainer*> alignments;
-  for (size_t k = 0; k < species_.size(); ++k) {
+  for (size_t k = 0; k < species_.size(); ++k)
+  {
     VectorSiteContainer* alignment = new VectorSiteContainer(block.getAlignment().getAlphabet());
-    for (size_t i = 0; i < species_[k].size(); ++i) {
-      if (block.hasSequenceForSpecies(species_[k][i])) {
+    for (size_t i = 0; i < species_[k].size(); ++i)
+    {
+      if (block.hasSequenceForSpecies(species_[k][i]))
+      {
         vector<const MafSequence*> selection = block.getSequencesForSpecies(species_[k][i]);
-        for (size_t j = 0; j < selection.size(); ++j) {
+        for (size_t j = 0; j < selection.size(); ++j)
+        {
           alignment->addSequence(*selection[j]);
         }
       }
@@ -115,7 +125,8 @@ vector<SiteContainer*> AbstractSpeciesMultipleSelectionMafStatistics::getSiteCon
 vector<string> CharacterCountsMafStatistics::getSupportedTags() const
 {
   vector<string> tags;
-  for (int i = 0; i < static_cast<int>(alphabet_->getSize()); ++i) {
+  for (int i = 0; i < static_cast<int>(alphabet_->getSize()); ++i)
+  {
     tags.push_back(alphabet_->intToChar(i));
   }
   tags.push_back("Gap");
@@ -128,13 +139,15 @@ void CharacterCountsMafStatistics::compute(const MafBlock& block)
 {
   std::map<int, int> counts;
   unique_ptr<SiteContainer> sites(getSiteContainer_(block));
-  SequenceContainerTools::getCounts(*sites, counts); 
-  for (int i = 0; i < static_cast<int>(alphabet_->getSize()); ++i) {
+  SequenceContainerTools::getCounts(*sites, counts);
+  for (int i = 0; i < static_cast<int>(alphabet_->getSize()); ++i)
+  {
     result_.setValue(alphabet_->intToChar(i), counts[i]);
   }
   result_.setValue("Gap", counts[alphabet_->getGapCharacterCode()]);
   double countUnres = 0;
-  for (map<int, int>::iterator it = counts.begin(); it != counts.end(); ++it) {
+  for (map<int, int>::iterator it = counts.begin(); it != counts.end(); ++it)
+  {
     if (alphabet_->isUnresolved(it->first))
       countUnres += it->second;
   }
@@ -144,8 +157,9 @@ void CharacterCountsMafStatistics::compute(const MafBlock& block)
 vector<string> SiteFrequencySpectrumMafStatistics::getSupportedTags() const
 {
   vector<string> tags;
-  for (size_t i = 0; i < categorizer_.getNumberOfCategories(); ++i) {
-    tags.push_back("Bin" + TextTools::toString(i + 1)); 
+  for (size_t i = 0; i < categorizer_.getNumberOfCategories(); ++i)
+  {
+    tags.push_back("Bin" + TextTools::toString(i + 1));
   }
   tags.push_back("Unresolved");
   tags.push_back("Saturated");
@@ -164,80 +178,112 @@ void SiteFrequencySpectrumMafStatistics::compute(const MafBlock& block)
   bool isAnalyzable;
   unique_ptr<SiteContainer> alignment;
   const Sequence* outgroupSeq = 0;
-  if (hasOutgroup) {
+  if (hasOutgroup)
+  {
     isAnalyzable = (block.hasSequenceForSpecies(outgroup_) && block.getNumberOfSequences() > 1);
-    if (isAnalyzable) {
-      //We need to extract the outgroup sequence:
-      outgroupSeq = &block.getSequenceForSpecies(outgroup_); //Here we assume there is only one! Otherwise we take the first one...
+    if (isAnalyzable)
+    {
+      // We need to extract the outgroup sequence:
+      outgroupSeq = &block.getSequenceForSpecies(outgroup_); // Here we assume there is only one! Otherwise we take the first one...
       alignment.reset(getSiteContainer_(block));
     }
-  } else {
+  }
+  else
+  {
     isAnalyzable = (block.getNumberOfSequences() > 0);
     if (isAnalyzable)
       alignment.reset(getSiteContainer_(block));
   }
-  if (isAnalyzable) {
-    for (size_t i = 0; i < alignment->getNumberOfSites(); ++i) {
-      //Note: we do not rely on SiteTool::getCounts as it would be unefficient to count everything.
+  if (isAnalyzable)
+  {
+    for (size_t i = 0; i < alignment->getNumberOfSites(); ++i)
+    {
+      // Note: we do not rely on SiteTool::getCounts as it would be unefficient to count everything.
       const Site& site = alignment->getSite(i);
       map<int, unsigned int> counts;
       bool isUnresolved = false;
       bool isSaturated = false;
-      for (size_t j = 0; !isUnresolved && !isSaturated && j < site.size(); ++j) {
+      for (size_t j = 0; !isUnresolved && !isSaturated && j < site.size(); ++j)
+      {
         state = site[j];
-        if (alphabet_->isGap(state) || alphabet_->isUnresolved(state)) {
+        if (alphabet_->isGap(state) || alphabet_->isUnresolved(state))
+        {
           isUnresolved = true;
-        } else {
+        }
+        else
+        {
           counts[state]++;
-          if (counts.size() > 2) {
+          if (counts.size() > 2)
+          {
             isSaturated = true;
           }
         }
       }
-      if (isUnresolved) {
+      if (isUnresolved)
+      {
         nbUnresolved++;
-      } else if (isSaturated) {
+      }
+      else if (isSaturated)
+      {
         nbSaturated++;
-      } else if (hasOutgroup && (
-          alignment->getAlphabet()->isGap((*outgroupSeq)[i]) ||
-          alignment->getAlphabet()->isUnresolved((*outgroupSeq)[i]))) {
+      }
+      else if (hasOutgroup && (
+                 alignment->getAlphabet()->isGap((*outgroupSeq)[i]) ||
+                 alignment->getAlphabet()->isUnresolved((*outgroupSeq)[i])))
+      {
         nbUnresolved++;
-      } else {
-        //Determine frequency class:
+      }
+      else
+      {
+        // Determine frequency class:
         double count;
-        if (counts.size() == 1) {
-          if (hasOutgroup) {
+        if (counts.size() == 1)
+        {
+          if (hasOutgroup)
+          {
             if (counts.begin()->first == (*outgroupSeq)[i])
-              count = 0; //This is the ancestral state.
+              count = 0; // This is the ancestral state.
             else
-              count = counts.begin()->second; //This is a derived state.
-          } else {
-            count = 0; //In this case we do not know, so we put 0.
+              count = counts.begin()->second; // This is a derived state.
           }
-        } else {
+          else
+          {
+            count = 0; // In this case we do not know, so we put 0.
+          }
+        }
+        else
+        {
           map<int, unsigned int>::iterator it = counts.begin();
           unsigned int count1 = it->second;
           it++;
           unsigned int count2 = it->second;
-          if (hasOutgroup) {
+          if (hasOutgroup)
+          {
             if (counts.begin()->first == (*outgroupSeq)[i])
-              count = counts.rbegin()->second; //This is the ancestral state, therefore we other one is the derived state.
+              count = counts.rbegin()->second; // This is the ancestral state, therefore we other one is the derived state.
             else if (counts.rbegin()->first == (*outgroupSeq)[i])
-              count = counts.begin()->second; //The second state is the ancestral one, therefore the first one is the derived state.
-            else {
-              //None of the two states are ancestral! The position is therefore discarded.
+              count = counts.begin()->second; // The second state is the ancestral one, therefore the first one is the derived state.
+            else
+            {
+              // None of the two states are ancestral! The position is therefore discarded.
               isSaturated = true;
             }
-          } else {
-            count = min(count1, count2); //In this case we do not know, so we take the minimum of the two values.
+          }
+          else
+          {
+            count = min(count1, count2); // In this case we do not know, so we take the minimum of the two values.
           }
         }
         if (isSaturated)
           nbSaturated++;
-        else {
-          try {
+        else
+        {
+          try
+          {
             counts_[categorizer_.getCategory(count) - 1]++;
-          } catch (OutOfRangeException& oof) {
+          }
+          catch (OutOfRangeException& oof)
+          {
             nbIgnored++;
           }
         }
@@ -247,7 +293,8 @@ void SiteFrequencySpectrumMafStatistics::compute(const MafBlock& block)
   result_.setValue("Unresolved", nbUnresolved);
   result_.setValue("Saturated", nbSaturated);
   result_.setValue("Ignored", nbIgnored);
-  for (size_t i = 0; i < counts_.size(); ++i) {
+  for (size_t i = 0; i < counts_.size(); ++i)
+  {
     result_.setValue("Bin" + TextTools::toString(i + 1), counts_[i]);
   }
 }
@@ -266,24 +313,29 @@ void FourSpeciesPatternCountsMafStatistics::compute(const MafBlock& block)
 {
   counts_.assign(6, 0);
   unique_ptr<SiteContainer> alignment(getSiteContainer_(block));
-  if (alignment->getNumberOfSequences() == 4) {
+  if (alignment->getNumberOfSequences() == 4)
+  {
     unsigned int nbIgnored = 0;
-    for (size_t i = 0; i < block.getNumberOfSites(); ++i) {
+    for (size_t i = 0; i < block.getNumberOfSites(); ++i)
+    {
       const Site& site = alignment->getSite(i);
-      if (SiteTools::isComplete(site)) {
+      if (SiteTools::isComplete(site))
+      {
         if (site[0] == site[1] &&
             site[2] != site[1] &&
             site[3] == site[2])
           counts_[0]++;
         else if (site[1] == site[2] &&
-            site[1] != site[0] &&
-            site[3] == site[0])
+                 site[1] != site[0] &&
+                 site[3] == site[0])
           counts_[1]++;
         else if (site[0] == site[2] &&
-            site[1] != site[0] &&
-            site[3] == site[1])
+                 site[1] != site[0] &&
+                 site[3] == site[1])
           counts_[2]++;
-      } else {
+      }
+      else
+      {
         nbIgnored++;
       }
     }
@@ -291,7 +343,9 @@ void FourSpeciesPatternCountsMafStatistics::compute(const MafBlock& block)
     result_.setValue("f0110", counts_[1]);
     result_.setValue("f1010", counts_[2]);
     result_.setValue("Ignored", nbIgnored);
-  } else {
+  }
+  else
+  {
     result_.setValue("f1100", 0);
     result_.setValue("f0110", 0);
     result_.setValue("f1010", 0);
@@ -322,20 +376,24 @@ void SiteMafStatistics::compute(const MafBlock& block)
   unsigned int nbP2 = 0;
   unsigned int nbP3 = 0;
   unsigned int nbP4 = 0;
-  if (alignment->getNumberOfSequences() > 0) {
-    for (size_t i = 0; i < alignment->getNumberOfSites(); ++i) {
+  if (alignment->getNumberOfSequences() > 0)
+  {
+    for (size_t i = 0; i < alignment->getNumberOfSites(); ++i)
+    {
       if (!SiteTools::hasGap(alignment->getSite(i)))
         nbNg++;
-      if (SiteTools::isComplete(alignment->getSite(i))) {
+      if (SiteTools::isComplete(alignment->getSite(i)))
+      {
         nbCo++;
         map<int, size_t> counts;
         SiteTools::getCounts(alignment->getSite(i), counts);
-        switch (counts.size()) {
-          case 1: nbP1++; break;
-          case 2: nbP2++; break;
-          case 3: nbP3++; break;
-          case 4: nbP4++; break;
-          default: throw Exception("The impossible happened. Probably a distortion in the Minkowski space.");
+        switch (counts.size())
+        {
+        case 1: nbP1++; break;
+        case 2: nbP2++; break;
+        case 3: nbP3++; break;
+        case 4: nbP4++; break;
+        default: throw Exception("The impossible happened. Probably a distortion in the Minkowski space.");
         }
       }
       if (SiteTools::isParsimonyInformativeSite(alignment->getSite(i)))
@@ -370,14 +428,19 @@ vector<string> PolymorphismMafStatistics::getSupportedTags() const
 vector<int> PolymorphismMafStatistics::getPatterns_(const SiteContainer& sites)
 {
   vector<int> patterns(sites.getNumberOfSites());
-  for (size_t i = 0; i < sites.getNumberOfSites(); ++i) {
+  for (size_t i = 0; i < sites.getNumberOfSites(); ++i)
+  {
     const Site& site = sites.getSite(i);
-    int s = -1; //Unresolved
-    if (SiteTools::isComplete(site)) {
-      if (SiteTools::isConstant(site)) {
-        s = site[0]; //The fixed state
-      } else {
-        s = -10; //Polymorphic.
+    int s = -1; // Unresolved
+    if (SiteTools::isComplete(site))
+    {
+      if (SiteTools::isConstant(site))
+      {
+        s = site[0]; // The fixed state
+      }
+      else
+      {
+        s = -10; // Polymorphic.
       }
     }
     patterns[i] = s;
@@ -398,64 +461,71 @@ void PolymorphismMafStatistics::compute(const MafBlock& block)
   unsigned int nbPX = 0;
   unsigned int nbXF = 0;
   unsigned int nbXP = 0;
-  //Get all patterns:
+  // Get all patterns:
   vector<int> patterns1(block.getNumberOfSites(), -1);
-  vector<int> patterns2(block.getNumberOfSites(), -1); 
-  if (alignments[0]->getNumberOfSequences() > 0) {
+  vector<int> patterns2(block.getNumberOfSites(), -1);
+  if (alignments[0]->getNumberOfSequences() > 0)
+  {
     patterns1 = getPatterns_(*alignments[0]);
   }
-  if (alignments[1]->getNumberOfSequences() > 0) {
+  if (alignments[1]->getNumberOfSequences() > 0)
+  {
     patterns2 = getPatterns_(*alignments[1]);
   }
-  //Compare patterns:
-  for (size_t i = 0; i < block.getNumberOfSites(); ++i) {
-    int p1 = patterns1[i];  
+  // Compare patterns:
+  for (size_t i = 0; i < block.getNumberOfSites(); ++i)
+  {
+    int p1 = patterns1[i];
     int p2 = patterns2[i];
-    switch (p1) {
-      case -1 :
-        switch (p2) {
-          case -1 :
-            nbX++;
-            break;
-          case -10 :
-            nbXP++;
-            break;
-          default :
-            nbXF++;
-        }
-        break;            
-      
-      case -10 :
-        switch (p2) {
-          case -1 :
-            nbPX++;
-            break;
-          case -10 :
-            nbP++;
-            break;
-          default :
-            nbPF++;
-        }
-        break;            
+    switch (p1)
+    {
+    case -1:
+      switch (p2)
+      {
+      case -1:
+        nbX++;
+        break;
+      case -10:
+        nbXP++;
+        break;
+      default:
+        nbXF++;
+      }
+      break;
 
-      default :
-        switch (p2) {
-          case -1 :
-            nbFX++;
-            break;
-          case -10 :
-            nbFP++;
-            break;
-          default :
-            if (p1 == p2)
-              nbF++;
-            else
-              nbFF++;
-        }
+    case -10:
+      switch (p2)
+      {
+      case -1:
+        nbPX++;
+        break;
+      case -10:
+        nbP++;
+        break;
+      default:
+        nbPF++;
+      }
+      break;
+
+    default:
+      switch (p2)
+      {
+      case -1:
+        nbFX++;
+        break;
+      case -10:
+        nbFP++;
+        break;
+      default:
+        if (p1 == p2)
+          nbF++;
+        else
+          nbFF++;
+      }
     }
   }
 
-  //Set results:
+  // Set results:
   result_.setValue("F", nbF);
   result_.setValue("P", nbP);
   result_.setValue("FF", nbFF);
@@ -481,31 +551,37 @@ vector<string> SequenceDiversityMafStatistics::getSupportedTags() const
 void SequenceDiversityMafStatistics::compute(const MafBlock& block)
 {
   unique_ptr<SiteContainer> alignment(getSiteContainer_(block));
-  //Get only complete sites:
+  // Get only complete sites:
   unique_ptr<VectorSiteContainer> alignment2(dynamic_cast<VectorSiteContainer*>(SiteContainerTools::getCompleteSites(*alignment)));
-  if (alignment2==0)
+  if (alignment2 == 0)
     throw Exception("SequenceDiversityMafStatistics::compute : alignment2 not plain VectorSiteContainer.");
-  
+
   double S = 0;
   size_t nbTot = 0;
   size_t n = alignment2->getNumberOfSequences();
-  if (n > 0) {
-    for (size_t i = 0; i < alignment2->getNumberOfSites(); ++i) {
+  if (n > 0)
+  {
+    for (size_t i = 0; i < alignment2->getNumberOfSites(); ++i)
+    {
       const Site& site = alignment2->getSite(i);
-      if (SiteTools::isComplete(site)) {
+      if (SiteTools::isComplete(site))
+      {
         nbTot++;
         if (!SiteTools::isConstant(site))
           S++;
       }
     }
-  } else {
+  }
+  else
+  {
     nbTot = alignment2->getNumberOfSites();
   }
 
   double a1 = 0;
   double a2 = 0;
   double dn = static_cast<double>(n);
-  for (double i = 1; i < dn; ++i) {
+  for (double i = 1; i < dn; ++i)
+  {
     a1 += 1. / i;
     a2 += 1. / (i * i);
   }
@@ -516,22 +592,24 @@ void SequenceDiversityMafStatistics::compute(const MafBlock& block)
   double c2 = b2 - (dn + 2) / (a1 * dn) + a2 / (a1 * a1);
   double e1 = c1 / a1;
   double e2 = c2 / (a1 * a1 + a2);
-  
-  //Compute pairwise heterozigosity:
+
+  // Compute pairwise heterozigosity:
   double pi = 0;
-  for (size_t i = 0; i < n - 1; ++i) {
-    for (size_t j = i + 1; j < n; ++j) {
+  for (size_t i = 0; i < n - 1; ++i)
+  {
+    for (size_t j = i + 1; j < n; ++j)
+    {
       pi += SiteContainerTools::computeSimilarity(
-          alignment2->getSequence(i),
-          alignment2->getSequence(j),
-          true,
-          SiteContainerTools::SIMILARITY_NOGAP,
-          true);
+        alignment2->getSequence(i),
+        alignment2->getSequence(j),
+        true,
+        SiteContainerTools::SIMILARITY_NOGAP,
+        true);
     }
   }
   pi /= static_cast<double>((n - 1) * n / 2);
 
-  //Compute Tajima's D:
+  // Compute Tajima's D:
   double tajd = static_cast<double>(nbTot) * (pi - wt) / sqrt(e1 * S + e2 * S * (S - 1));
 
   result_.setValue("NbSeggregating", S);
@@ -539,4 +617,3 @@ void SequenceDiversityMafStatistics::compute(const MafBlock& block)
   result_.setValue("TajimaPi", pi);
   result_.setValue("TajimaD", tajd);
 }
-

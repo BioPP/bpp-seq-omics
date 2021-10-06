@@ -5,54 +5,54 @@
 //
 
 /*
-Copyright or © or Copr. Bio++ Development Team, (2012)
+   Copyright or © or Copr. Bio++ Development Team, (2012)
 
-This software is a computer program whose purpose is to provide classes
-for sequences analysis.
+   This software is a computer program whose purpose is to provide classes
+   for sequences analysis.
 
-This software is governed by the CeCILL  license under French law and
-abiding by the rules of distribution of free software.  You can  use, 
-modify and/ or redistribute the software under the terms of the CeCILL
-license as circulated by CEA, CNRS and INRIA at the following URL
-"http://www.cecill.info". 
+   This software is governed by the CeCILL  license under French law and
+   abiding by the rules of distribution of free software.  You can  use,
+   modify and/ or redistribute the software under the terms of the CeCILL
+   license as circulated by CEA, CNRS and INRIA at the following URL
+   "http://www.cecill.info".
 
-As a counterpart to the access to the source code and  rights to copy,
-modify and redistribute granted by the license, users are provided only
-with a limited warranty  and the software's author,  the holder of the
-economic rights,  and the successive licensors  have only  limited
-liability. 
+   As a counterpart to the access to the source code and  rights to copy,
+   modify and redistribute granted by the license, users are provided only
+   with a limited warranty  and the software's author,  the holder of the
+   economic rights,  and the successive licensors  have only  limited
+   liability.
 
-In this respect, the user's attention is drawn to the risks associated
-with loading,  using,  modifying and/or developing or reproducing the
-software by the user in light of its specific status of free software,
-that may mean  that it is complicated to manipulate,  and  that  also
-therefore means  that it is reserved for developers  and  experienced
-professionals having in-depth computer knowledge. Users are therefore
-encouraged to load and test the software's suitability as regards their
-requirements in conditions enabling the security of their systems and/or 
-data to be ensured and,  more generally, to use and operate it in the 
-same conditions as regards security. 
+   In this respect, the user's attention is drawn to the risks associated
+   with loading,  using,  modifying and/or developing or reproducing the
+   software by the user in light of its specific status of free software,
+   that may mean  that it is complicated to manipulate,  and  that  also
+   therefore means  that it is reserved for developers  and  experienced
+   professionals having in-depth computer knowledge. Users are therefore
+   encouraged to load and test the software's suitability as regards their
+   requirements in conditions enabling the security of their systems and/or
+   data to be ensured and,  more generally, to use and operate it in the
+   same conditions as regards security.
 
-The fact that you are presently reading this means that you have had
-knowledge of the CeCILL license and that you accept its terms.
-*/
+   The fact that you are presently reading this means that you have had
+   knowledge of the CeCILL license and that you accept its terms.
+ */
 
 #ifndef _MAFSTATISTICS_H_
 #define _MAFSTATISTICS_H_
 
 #include "MafBlock.h"
 
-//From bpp-core:
+// From bpp-core:
 #include <Bpp/Utils/MapTools.h>
 #include <Bpp/Numeric/VectorTools.h>
 #include <Bpp/Numeric/Number.h>
 
-//From the STL:
+// From the STL:
 #include <map>
 #include <string>
 
-namespace bpp {
-
+namespace bpp
+{
 /**
  * @brief General interface for storing statistical results.
  *
@@ -61,142 +61,158 @@ namespace bpp {
  */
 class MafStatisticsResult
 {
-  protected:
-    mutable std::map<std::string, BppNumberI*> values_;
+protected:
+  mutable std::map<std::string, BppNumberI*> values_;
 
-  public:
-    MafStatisticsResult(): values_() {}
-    virtual ~MafStatisticsResult() {}
+public:
+  MafStatisticsResult() : values_() {}
+  virtual ~MafStatisticsResult() {}
 
-    MafStatisticsResult(const MafStatisticsResult& msr): values_()
+  MafStatisticsResult(const MafStatisticsResult& msr) : values_()
+  {
+    for (std::map<std::string, BppNumberI*>::const_iterator it = msr.values_.begin();
+         it != msr.values_.end();
+         ++it)
     {
-      for (std::map<std::string, BppNumberI*>::const_iterator it = msr.values_.begin();
-          it != msr.values_.end();
-          ++it) {
-        values_[it->first] = it->second->clone();
-      }
+      values_[it->first] = it->second->clone();
     }
+  }
 
-  public:
-    virtual const BppNumberI& getValue(const std::string& tag) const {
-      std::map<std::string, BppNumberI*>::iterator it = values_.find(tag);
-      if (it != values_.end())
-        return *it->second;
-      else
-        throw Exception("MafStatisticsResult::getValue(). No value found for tag: " + tag + ".");
+public:
+  virtual const BppNumberI& getValue(const std::string& tag) const
+  {
+    std::map<std::string, BppNumberI*>::iterator it = values_.find(tag);
+    if (it != values_.end())
+      return *it->second;
+    else
+      throw Exception("MafStatisticsResult::getValue(). No value found for tag: " + tag + ".");
+  }
+
+  /**
+   * @brief Associate a value to a certain tag. Any existing tag will be overwritten
+   *
+   * @param tag The name of the value to associate.
+   * @param value The value to associate to the tag.
+   */
+  virtual void setValue(const std::string& tag, double value)
+  {
+    if (values_[tag])
+    {
+      delete values_[tag];
     }
+    values_[tag] = new BppDouble(value);
+  }
 
-    /**
-     * @brief Associate a value to a certain tag. Any existing tag will be overwritten
-     *
-     * @param tag The name of the value to associate.
-     * @param value The value to associate to the tag.
-     */
-    virtual void setValue(const std::string& tag, double value) {
-      if (values_[tag]) {
-        delete values_[tag];
-      }
-      values_[tag] = new BppDouble(value);
+  /**
+   * @brief Associate a value to a certain tag. Any existing tag will be overwritten
+   *
+   * @param tag The name of the value to associate.
+   * @param value The value to associate to the tag.
+   */
+  virtual void setValue(const std::string& tag, int value)
+  {
+    if (values_[tag])
+    {
+      delete values_[tag];
     }
+    values_[tag] = new BppInteger(value);
+  }
 
-    /**
-     * @brief Associate a value to a certain tag. Any existing tag will be overwritten
-     *
-     * @param tag The name of the value to associate.
-     * @param value The value to associate to the tag.
-     */
-    virtual void setValue(const std::string& tag, int value) {
-      if (values_[tag]) {
-        delete values_[tag];
-      }
-      values_[tag] = new BppInteger(value);
+  /**
+   * @brief Associate a value to a certain tag. Any existing tag will be overwritten
+   *
+   * @param tag The name of the value to associate.
+   * @param value The value to associate to the tag.
+   */
+  virtual void setValue(const std::string& tag, unsigned int value)
+  {
+    if (values_[tag])
+    {
+      delete values_[tag];
     }
+    values_[tag] = new BppUnsignedInteger(value);
+  }
 
-    /**
-     * @brief Associate a value to a certain tag. Any existing tag will be overwritten
-     *
-     * @param tag The name of the value to associate.
-     * @param value The value to associate to the tag.
-     */
-    virtual void setValue(const std::string& tag, unsigned int value) {
-      if (values_[tag]) {
-        delete values_[tag];
-      }
-      values_[tag] = new BppUnsignedInteger(value);
-    }
+  /**
+   * @return A boolean saying whether a value is available for the given tag.
+   * @param tag The name of the value to associate.
+   */
+  virtual bool hasValue(const std::string& tag) const
+  {
+    return values_.find(tag) != values_.end();
+  }
 
-    /**
-     * @return A boolean saying whether a value is available for the given tag.
-     * @param tag The name of the value to associate.
-     */
-    virtual bool hasValue(const std::string& tag) const {
-      return (values_.find(tag) != values_.end()); 
-    }
-
-    /**
-     * @return A vector with all available tags.
-     */
-    std::vector<std::string> getAvailableTags() const { return MapTools::getKeys(values_); }
+  /**
+   * @return A vector with all available tags.
+   */
+  std::vector<std::string> getAvailableTags() const { return MapTools::getKeys(values_); }
 };
 
 /**
  * @brief A simple maf statistics result, with only one value.
  */
-class SimpleMafStatisticsResult:
+class SimpleMafStatisticsResult :
   public virtual MafStatisticsResult
 {
-  private:
-    std::string name_;
+private:
+  std::string name_;
 
-  public:
-    SimpleMafStatisticsResult(const std::string& name): MafStatisticsResult(), name_(name) {
-      setValue(name, 0);
-    }
-    virtual ~SimpleMafStatisticsResult() {}
+public:
+  SimpleMafStatisticsResult(const std::string& name) : MafStatisticsResult(), name_(name)
+  {
+    setValue(name, 0);
+  }
+  virtual ~SimpleMafStatisticsResult() {}
 
-  public:
-    virtual const BppNumberI& getValue(const std::string& tag) const {
-      return MafStatisticsResult::getValue(tag);
-    }
-    
-    virtual const BppNumberI& getValue() const { return *values_[name_]; }
+public:
+  virtual const BppNumberI& getValue(const std::string& tag) const
+  {
+    return MafStatisticsResult::getValue(tag);
+  }
 
-    virtual void setValue(const std::string& tag, double value) {
-      if (tag == name_)
-        setValue(value);
-      else
-        throw Exception("SimpleMafStatisticsResult::setValue(). Unvalid tag name: " + tag + ".");
-    }
- 
-    virtual void setValue(const std::string& tag, int value) {
-      if (tag == name_)
-        setValue(value);
-      else
-        throw Exception("SimpleMafStatisticsResult::setValue(). Unvalid tag name: " + tag + ".");
-    }
- 
-    virtual void setValue(const std::string& tag, unsigned int value) {
-      if (tag == name_)
-        setValue(value);
-      else
-        throw Exception("SimpleMafStatisticsResult::setValue(). Unvalid tag name: " + tag + ".");
-    }
-   
-    virtual void setValue(double value) {
-      if (values_[name_]) delete values_[name_];
-      values_[name_] = new BppDouble(value);
-    }
+  virtual const BppNumberI& getValue() const { return *values_[name_]; }
 
-    virtual void setValue(int value) {
-      if (values_[name_]) delete values_[name_];
-      values_[name_] = new BppInteger(value);
-    }
+  virtual void setValue(const std::string& tag, double value)
+  {
+    if (tag == name_)
+      setValue(value);
+    else
+      throw Exception("SimpleMafStatisticsResult::setValue(). Unvalid tag name: " + tag + ".");
+  }
 
-    virtual void setValue(unsigned int value) {
-      if (values_[name_]) delete values_[name_];
-      values_[name_] = new BppUnsignedInteger(value);
-    }
+  virtual void setValue(const std::string& tag, int value)
+  {
+    if (tag == name_)
+      setValue(value);
+    else
+      throw Exception("SimpleMafStatisticsResult::setValue(). Unvalid tag name: " + tag + ".");
+  }
 
+  virtual void setValue(const std::string& tag, unsigned int value)
+  {
+    if (tag == name_)
+      setValue(value);
+    else
+      throw Exception("SimpleMafStatisticsResult::setValue(). Unvalid tag name: " + tag + ".");
+  }
+
+  virtual void setValue(double value)
+  {
+    if (values_[name_]) delete values_[name_];
+    values_[name_] = new BppDouble(value);
+  }
+
+  virtual void setValue(int value)
+  {
+    if (values_[name_]) delete values_[name_];
+    values_[name_] = new BppInteger(value);
+  }
+
+  virtual void setValue(unsigned int value)
+  {
+    if (values_[name_]) delete values_[name_];
+    values_[name_] = new BppUnsignedInteger(value);
+  }
 };
 
 /**
@@ -207,115 +223,115 @@ class SimpleMafStatisticsResult:
  */
 class MafStatistics
 {
-  public:
-    MafStatistics() {}
-    virtual ~MafStatistics() {}
+public:
+  MafStatistics() {}
+  virtual ~MafStatistics() {}
 
-  public:
-    virtual std::string getShortName() const = 0;
-    virtual std::string getFullName() const = 0;
-    virtual const MafStatisticsResult& getResult() const = 0;
-    virtual void compute(const MafBlock& block) = 0;
+public:
+  virtual std::string getShortName() const = 0;
+  virtual std::string getFullName() const = 0;
+  virtual const MafStatisticsResult& getResult() const = 0;
+  virtual void compute(const MafBlock& block) = 0;
 
-    /**
-     * @return A vector with all available tags.
-     */
-    virtual std::vector<std::string> getSupportedTags() const = 0;
-
+  /**
+   * @return A vector with all available tags.
+   */
+  virtual std::vector<std::string> getSupportedTags() const = 0;
 };
 
 /**
  * @brief Partial implementation of MafStatistics, for convenience.
  */
-class AbstractMafStatistics:
+class AbstractMafStatistics :
   public virtual MafStatistics
 {
-  protected:
-    MafStatisticsResult result_;
+protected:
+  MafStatisticsResult result_;
 
-  public:
-    AbstractMafStatistics(): result_() {}
-    virtual ~AbstractMafStatistics() {}
+public:
+  AbstractMafStatistics() : result_() {}
+  virtual ~AbstractMafStatistics() {}
 
-  public:
-    const MafStatisticsResult& getResult() const { return result_; }
+public:
+  const MafStatisticsResult& getResult() const { return result_; }
 };
 
 /**
  * @brief Partial implementation of MafStatistics, for convenience.
  */
-class AbstractMafStatisticsSimple:
+class AbstractMafStatisticsSimple :
   public MafStatistics
 {
-  protected:
-    SimpleMafStatisticsResult result_;
+protected:
+  SimpleMafStatisticsResult result_;
 
-  public:
-    AbstractMafStatisticsSimple(const std::string& name): result_(name) {}
-    virtual ~AbstractMafStatisticsSimple() {}
+public:
+  AbstractMafStatisticsSimple(const std::string& name) : result_(name) {}
+  virtual ~AbstractMafStatisticsSimple() {}
 
-  public:
-    const SimpleMafStatisticsResult& getResult() const { return result_; }
-    std::vector<std::string> getSupportedTags() const { return result_.getAvailableTags(); }
+public:
+  const SimpleMafStatisticsResult& getResult() const { return result_; }
+  std::vector<std::string> getSupportedTags() const { return result_.getAvailableTags(); }
 };
 
 /**
  * @brief Computes the pairwise divergence for a pair of sequences in a maf block.
  */
-class PairwiseDivergenceMafStatistics:
+class PairwiseDivergenceMafStatistics :
   public AbstractMafStatisticsSimple
 {
-  private:
-    std::string species1_;
-    std::string species2_;
+private:
+  std::string species1_;
+  std::string species2_;
 
-  public:
-    PairwiseDivergenceMafStatistics(const std::string& species1, const std::string& species2):
-      AbstractMafStatisticsSimple("Divergence"), species1_(species1), species2_(species2) {}
+public:
+  PairwiseDivergenceMafStatistics(const std::string& species1, const std::string& species2) :
+    AbstractMafStatisticsSimple("Divergence"), species1_(species1), species2_(species2) {}
 
-    ~PairwiseDivergenceMafStatistics() {}
+  ~PairwiseDivergenceMafStatistics() {}
 
-  public:
-    std::string getShortName() const { return "Div." + species1_ + "-" + species2_; }
-    std::string getFullName() const { return "Pairwise divergence between " + species1_ + " and " + species2_ + "."; }
-    void compute(const MafBlock& block);
-
+public:
+  std::string getShortName() const { return "Div." + species1_ + "-" + species2_; }
+  std::string getFullName() const { return "Pairwise divergence between " + species1_ + " and " + species2_ + "."; }
+  void compute(const MafBlock& block);
 };
 
 /**
  * @brief Computes the number of sequences in a maf block.
  */
-class BlockSizeMafStatistics:
+class BlockSizeMafStatistics :
   public AbstractMafStatisticsSimple
 {
-  public:
-    BlockSizeMafStatistics(): AbstractMafStatisticsSimple("BlockSize") {}
-    ~BlockSizeMafStatistics() {}
+public:
+  BlockSizeMafStatistics() : AbstractMafStatisticsSimple("BlockSize") {}
+  ~BlockSizeMafStatistics() {}
 
-  public:
-    std::string getShortName() const { return "BlockSize"; }
-    std::string getFullName() const { return "Number of sequences."; }
-    void compute(const MafBlock& block) {
-      result_.setValue(static_cast<double>(block.getNumberOfSequences()));
-    }
+public:
+  std::string getShortName() const { return "BlockSize"; }
+  std::string getFullName() const { return "Number of sequences."; }
+  void compute(const MafBlock& block)
+  {
+    result_.setValue(static_cast<double>(block.getNumberOfSequences()));
+  }
 };
 
 /**
  * @brief Computes the number of columns in a maf block.
  */
-class BlockLengthMafStatistics:
+class BlockLengthMafStatistics :
   public AbstractMafStatisticsSimple
 {
-  public:
-    BlockLengthMafStatistics(): AbstractMafStatisticsSimple("BlockLength") {}
-    ~BlockLengthMafStatistics() {}
+public:
+  BlockLengthMafStatistics() : AbstractMafStatisticsSimple("BlockLength") {}
+  ~BlockLengthMafStatistics() {}
 
-  public:
-    std::string getShortName() const { return "BlockLength"; }
-    std::string getFullName() const { return "Number of sites."; }
-    void compute(const MafBlock& block) {
-      result_.setValue(static_cast<double>(block.getNumberOfSites()));
-    }
+public:
+  std::string getShortName() const { return "BlockLength"; }
+  std::string getFullName() const { return "Number of sites."; }
+  void compute(const MafBlock& block)
+  {
+    result_.setValue(static_cast<double>(block.getNumberOfSites()));
+  }
 };
 
 /**
@@ -324,49 +340,50 @@ class BlockLengthMafStatistics:
  * If no sequence is found for the current block, 0 is returned.
  * If several sequences are found for a given species, an exception is thrown.
  */
-class SequenceLengthMafStatistics:
+class SequenceLengthMafStatistics :
   public AbstractMafStatisticsSimple
 {
-  private:
-    std::string species_;
+private:
+  std::string species_;
 
-  public:
-    SequenceLengthMafStatistics(const std::string& species): AbstractMafStatisticsSimple("BlockSize"), species_(species) {}
-    ~SequenceLengthMafStatistics() {}
+public:
+  SequenceLengthMafStatistics(const std::string& species) : AbstractMafStatisticsSimple("BlockSize"), species_(species) {}
+  ~SequenceLengthMafStatistics() {}
 
-  public:
-    std::string getShortName() const { return "SequenceLengthFor" + species_; }
-    std::string getFullName() const { return "Sequence length for species " + species_; }
-    void compute(const MafBlock& block) {
-      std::vector<const MafSequence*> seqs = block.getSequencesForSpecies(species_);
-      if (seqs.size() == 0)
-        result_.setValue(0.);
-      else if (seqs.size() == 1)
-        result_.setValue(static_cast<double>(SequenceTools::getNumberOfSites(*seqs[0])));
-      else
-        throw Exception("SequenceLengthMafStatistics::compute. More than one sequence found for species " + species_ + " in current block.");
-    }
+public:
+  std::string getShortName() const { return "SequenceLengthFor" + species_; }
+  std::string getFullName() const { return "Sequence length for species " + species_; }
+  void compute(const MafBlock& block)
+  {
+    std::vector<const MafSequence*> seqs = block.getSequencesForSpecies(species_);
+    if (seqs.size() == 0)
+      result_.setValue(0.);
+    else if (seqs.size() == 1)
+      result_.setValue(static_cast<double>(SequenceTools::getNumberOfSites(*seqs[0])));
+    else
+      throw Exception("SequenceLengthMafStatistics::compute. More than one sequence found for species " + species_ + " in current block.");
+  }
 };
 
 
 /**
  * @brief Retrieves the alignment score of a maf block.
  */
-class AlignmentScoreMafStatistics:
+class AlignmentScoreMafStatistics :
   public AbstractMafStatisticsSimple
 {
-  public:
-    AlignmentScoreMafStatistics(): AbstractMafStatisticsSimple("AlnScore") {}
-    ~AlignmentScoreMafStatistics() {}
+public:
+  AlignmentScoreMafStatistics() : AbstractMafStatisticsSimple("AlnScore") {}
+  ~AlignmentScoreMafStatistics() {}
 
-  public:
-    std::string getShortName() const { return "AlnScore"; }
-    std::string getFullName() const { return "Alignment score."; }
-    void compute(const MafBlock& block) {
-      result_.setValue(block.getScore());
-    }
+public:
+  std::string getShortName() const { return "AlnScore"; }
+  std::string getFullName() const { return "Alignment score."; }
+  void compute(const MafBlock& block)
+  {
+    result_.setValue(block.getScore());
+  }
 };
-
 
 
 /**
@@ -374,29 +391,28 @@ class AlignmentScoreMafStatistics:
  *
  * This class stores a selection of species and create for each block the corresponding SiteContainer instance.
  */
-class AbstractSpeciesSelectionMafStatistics:
+class AbstractSpeciesSelectionMafStatistics :
   public virtual MafStatistics
 {
-  private:
-    std::vector<std::string> species_;
-    bool noSpeciesMeansAllSpecies_;
+private:
+  std::vector<std::string> species_;
+  bool noSpeciesMeansAllSpecies_;
 
-  protected:
-    std::string suffix_;
+protected:
+  std::string suffix_;
 
-  public:
-    AbstractSpeciesSelectionMafStatistics(
-        const std::vector<std::string>& species,
-        bool noSpeciesMeansAllSpecies = false,
-        const std::string& suffix = ""):
-      species_(species),
-      noSpeciesMeansAllSpecies_(noSpeciesMeansAllSpecies),
-      suffix_(suffix)
-    {}
+public:
+  AbstractSpeciesSelectionMafStatistics(
+    const std::vector<std::string>& species,
+    bool noSpeciesMeansAllSpecies = false,
+    const std::string& suffix = "") :
+    species_(species),
+    noSpeciesMeansAllSpecies_(noSpeciesMeansAllSpecies),
+    suffix_(suffix)
+  {}
 
-  protected:
-    SiteContainer* getSiteContainer_(const MafBlock& block);
-
+protected:
+  SiteContainer* getSiteContainer_(const MafBlock& block);
 };
 
 
@@ -405,20 +421,18 @@ class AbstractSpeciesSelectionMafStatistics:
  *
  * This class stores two non-overlapping selections of species and create for each block the corresponding SiteContainer instances.
  */
-class AbstractSpeciesMultipleSelectionMafStatistics:
+class AbstractSpeciesMultipleSelectionMafStatistics :
   public virtual MafStatistics
 {
-  private:
-    std::vector< std::vector<std::string> > species_;
+private:
+  std::vector< std::vector<std::string> > species_;
 
-  public:
-    AbstractSpeciesMultipleSelectionMafStatistics(const std::vector< std::vector<std::string> >& species);
+public:
+  AbstractSpeciesMultipleSelectionMafStatistics(const std::vector< std::vector<std::string> >& species);
 
-  protected:
-    std::vector<SiteContainer*> getSiteContainers_(const MafBlock& block);
-
+protected:
+  std::vector<SiteContainer*> getSiteContainers_(const MafBlock& block);
 };
-
 
 
 /**
@@ -431,42 +445,42 @@ class AbstractSpeciesMultipleSelectionMafStatistics:
  * - T [or U]: total counts of T/U
  * - Gap: total counts of gaps
  * - Unresolved: total counts of unresolved characters
- * The sum of all characters should equal BlockSize x BlockLength 
+ * The sum of all characters should equal BlockSize x BlockLength
  */
-class CharacterCountsMafStatistics:
+class CharacterCountsMafStatistics :
   public AbstractMafStatistics,
   public AbstractSpeciesSelectionMafStatistics
 {
-  private:
-    const Alphabet* alphabet_;
+private:
+  const Alphabet* alphabet_;
 
-  public:
-    CharacterCountsMafStatistics(const Alphabet* alphabet, const std::vector<std::string>& species, const std::string suffix):
-      AbstractMafStatistics(),
-      AbstractSpeciesSelectionMafStatistics(species, true, suffix),
-      alphabet_(alphabet) {}
+public:
+  CharacterCountsMafStatistics(const Alphabet* alphabet, const std::vector<std::string>& species, const std::string suffix) :
+    AbstractMafStatistics(),
+    AbstractSpeciesSelectionMafStatistics(species, true, suffix),
+    alphabet_(alphabet) {}
 
-    CharacterCountsMafStatistics(const CharacterCountsMafStatistics& stats):
-      AbstractMafStatistics(stats),
-      AbstractSpeciesSelectionMafStatistics(stats),
-      alphabet_(stats.alphabet_) {}
-    
-    CharacterCountsMafStatistics& operator=(const CharacterCountsMafStatistics& stats) {
-      AbstractMafStatistics::operator=(stats);
-      AbstractSpeciesSelectionMafStatistics::operator=(stats);
-      alphabet_ = stats.alphabet_;
-      return *this;
-    }
+  CharacterCountsMafStatistics(const CharacterCountsMafStatistics& stats) :
+    AbstractMafStatistics(stats),
+    AbstractSpeciesSelectionMafStatistics(stats),
+    alphabet_(stats.alphabet_) {}
 
-    virtual ~CharacterCountsMafStatistics() {}
+  CharacterCountsMafStatistics& operator=(const CharacterCountsMafStatistics& stats)
+  {
+    AbstractMafStatistics::operator=(stats);
+    AbstractSpeciesSelectionMafStatistics::operator=(stats);
+    alphabet_ = stats.alphabet_;
+    return *this;
+  }
 
-  public:
-    std::string getShortName() const { return "Counts" + suffix_; }
-    std::string getFullName() const { return "Character counts (" + suffix_ + ")."; }
-    void compute(const MafBlock& block);
-    std::vector<std::string> getSupportedTags() const;
+  virtual ~CharacterCountsMafStatistics() {}
+
+public:
+  std::string getShortName() const { return "Counts" + suffix_; }
+  std::string getFullName() const { return "Character counts (" + suffix_ + ")."; }
+  void compute(const MafBlock& block);
+  std::vector<std::string> getSupportedTags() const;
 };
-
 
 
 /**
@@ -475,78 +489,83 @@ class CharacterCountsMafStatistics:
  * If no outgroup is provided, the ancestral states are considered as unknown
  * and the unfolded spectrum is computed, so that 10000 and 11110 sites are treated equally.
  */
-class SiteFrequencySpectrumMafStatistics:
+class SiteFrequencySpectrumMafStatistics :
   public AbstractMafStatistics,
   public AbstractSpeciesSelectionMafStatistics
 {
-  private:
-    class Categorizer {
-      private:
-        std::vector<double> bounds_;
+private:
+  class Categorizer
+  {
+private:
+    std::vector<double> bounds_;
 
-      public:
-        Categorizer(const std::vector<double>& bounds):
-          bounds_(bounds) {
-          std::sort(bounds_.begin(), bounds_.end());
-        }
-
-      public:
-        size_t getNumberOfCategories() const { return (bounds_.size() - 1); }
-
-        //Category numbers start at 1!
-        size_t getCategory(double value) const {
-          if (value < bounds_[0])
-            throw OutOfRangeException("SiteFrequencySpectrumMafStatistics::Categorizer::getCategory.", value, *bounds_.begin(), *bounds_.rbegin());
-          for (size_t i = 1; i < bounds_.size(); ++i) {
-            if (value < bounds_[i])
-              return i;
-          }
-          throw OutOfRangeException("SiteFrequencySpectrumMafStatistics::Categorizer::getCategory.", value, *bounds_.begin(), *bounds_.rbegin());
-        }
-    };
-
-  private:
-    const Alphabet* alphabet_;
-    Categorizer categorizer_;
-    std::vector<unsigned int> counts_;
-    std::string outgroup_;
-
-  public:
-    SiteFrequencySpectrumMafStatistics(const Alphabet* alphabet, const std::vector<double>& bounds, const std::vector<std::string>& ingroup, const std::string outgroup = ""):
-      AbstractMafStatistics(),
-      AbstractSpeciesSelectionMafStatistics(ingroup),
-      alphabet_(alphabet),
-      categorizer_(bounds),
-      counts_(bounds.size() - 1),
-      outgroup_(outgroup)
-    {}
-
-    SiteFrequencySpectrumMafStatistics(const SiteFrequencySpectrumMafStatistics& stats):
-      AbstractMafStatistics(),
-      AbstractSpeciesSelectionMafStatistics(stats),
-      alphabet_(stats.alphabet_),
-      categorizer_(stats.categorizer_),
-      counts_(stats.counts_),
-      outgroup_(stats.outgroup_)
-    {}
-
-    SiteFrequencySpectrumMafStatistics& operator=(const SiteFrequencySpectrumMafStatistics& stats) {
-      AbstractMafStatistics::operator=(stats);
-      AbstractSpeciesSelectionMafStatistics::operator=(stats);
-      alphabet_    = stats.alphabet_;
-      categorizer_ = stats.categorizer_;
-      counts_      = stats.counts_;
-      outgroup_    = stats.outgroup_;
-      return *this;
+public:
+    Categorizer(const std::vector<double>& bounds) :
+      bounds_(bounds)
+    {
+      std::sort(bounds_.begin(), bounds_.end());
     }
 
-    virtual ~SiteFrequencySpectrumMafStatistics() {}
+public:
+    size_t getNumberOfCategories() const { return bounds_.size() - 1; }
 
-  public:
-    std::string getShortName() const { return "SiteFrequencySpectrum"; }
-    std::string getFullName() const { return "Site frequency spectrum."; }
-    void compute(const MafBlock& block);
-    std::vector<std::string> getSupportedTags() const;
+    // Category numbers start at 1!
+    size_t getCategory(double value) const
+    {
+      if (value < bounds_[0])
+        throw OutOfRangeException("SiteFrequencySpectrumMafStatistics::Categorizer::getCategory.", value, *bounds_.begin(), *bounds_.rbegin());
+      for (size_t i = 1; i < bounds_.size(); ++i)
+      {
+        if (value < bounds_[i])
+          return i;
+      }
+      throw OutOfRangeException("SiteFrequencySpectrumMafStatistics::Categorizer::getCategory.", value, *bounds_.begin(), *bounds_.rbegin());
+    }
+  };
+
+private:
+  const Alphabet* alphabet_;
+  Categorizer categorizer_;
+  std::vector<unsigned int> counts_;
+  std::string outgroup_;
+
+public:
+  SiteFrequencySpectrumMafStatistics(const Alphabet* alphabet, const std::vector<double>& bounds, const std::vector<std::string>& ingroup, const std::string outgroup = "") :
+    AbstractMafStatistics(),
+    AbstractSpeciesSelectionMafStatistics(ingroup),
+    alphabet_(alphabet),
+    categorizer_(bounds),
+    counts_(bounds.size() - 1),
+    outgroup_(outgroup)
+  {}
+
+  SiteFrequencySpectrumMafStatistics(const SiteFrequencySpectrumMafStatistics& stats) :
+    AbstractMafStatistics(),
+    AbstractSpeciesSelectionMafStatistics(stats),
+    alphabet_(stats.alphabet_),
+    categorizer_(stats.categorizer_),
+    counts_(stats.counts_),
+    outgroup_(stats.outgroup_)
+  {}
+
+  SiteFrequencySpectrumMafStatistics& operator=(const SiteFrequencySpectrumMafStatistics& stats)
+  {
+    AbstractMafStatistics::operator=(stats);
+    AbstractSpeciesSelectionMafStatistics::operator=(stats);
+    alphabet_    = stats.alphabet_;
+    categorizer_ = stats.categorizer_;
+    counts_      = stats.counts_;
+    outgroup_    = stats.outgroup_;
+    return *this;
+  }
+
+  virtual ~SiteFrequencySpectrumMafStatistics() {}
+
+public:
+  std::string getShortName() const { return "SiteFrequencySpectrum"; }
+  std::string getFullName() const { return "Site frequency spectrum."; }
+  void compute(const MafBlock& block);
+  std::vector<std::string> getSupportedTags() const;
 };
 
 
@@ -560,53 +579,53 @@ class SiteFrequencySpectrumMafStatistics:
  * P3       1 0 1 0
  * Sites with more than two states are ignored, as well as sites containing gaps or unresolved characters.
  */
-class FourSpeciesPatternCountsMafStatistics:
+class FourSpeciesPatternCountsMafStatistics :
   public AbstractMafStatistics,
   public AbstractSpeciesSelectionMafStatistics
 {
-  private:
-    const Alphabet* alphabet_;
-    std::vector<unsigned int> counts_;
+private:
+  const Alphabet* alphabet_;
+  std::vector<unsigned int> counts_;
 
-  public:
-    FourSpeciesPatternCountsMafStatistics(
-        const Alphabet* alphabet,
-        const std::vector<std::string>& species):
-      AbstractMafStatistics(),
-      AbstractSpeciesSelectionMafStatistics(species),
-      alphabet_(alphabet),
-      counts_(6)
-    {
-      if (species.size() != 4)
-        throw Exception("FourSpeciesPatternCountsMafStatistics, constructor: 4 species should be provided.");
-      if (VectorTools::unique(species).size() != 4)
-        throw Exception("FourSpeciesPatternCountsMafStatistics, constructor: duplicated species name!");
-    }
+public:
+  FourSpeciesPatternCountsMafStatistics(
+    const Alphabet* alphabet,
+    const std::vector<std::string>& species) :
+    AbstractMafStatistics(),
+    AbstractSpeciesSelectionMafStatistics(species),
+    alphabet_(alphabet),
+    counts_(6)
+  {
+    if (species.size() != 4)
+      throw Exception("FourSpeciesPatternCountsMafStatistics, constructor: 4 species should be provided.");
+    if (VectorTools::unique(species).size() != 4)
+      throw Exception("FourSpeciesPatternCountsMafStatistics, constructor: duplicated species name!");
+  }
 
-    FourSpeciesPatternCountsMafStatistics(const FourSpeciesPatternCountsMafStatistics& stats):
-      AbstractMafStatistics(),
-      AbstractSpeciesSelectionMafStatistics(stats),
-      alphabet_(stats.alphabet_),
-      counts_(stats.counts_)
-    {}
+  FourSpeciesPatternCountsMafStatistics(const FourSpeciesPatternCountsMafStatistics& stats) :
+    AbstractMafStatistics(),
+    AbstractSpeciesSelectionMafStatistics(stats),
+    alphabet_(stats.alphabet_),
+    counts_(stats.counts_)
+  {}
 
-    FourSpeciesPatternCountsMafStatistics& operator=(const FourSpeciesPatternCountsMafStatistics& stats) {
-      AbstractMafStatistics::operator=(stats);
-      AbstractSpeciesSelectionMafStatistics::operator=(stats);
-      alphabet_    = stats.alphabet_;
-      counts_      = stats.counts_;
-      return *this;
-    }
+  FourSpeciesPatternCountsMafStatistics& operator=(const FourSpeciesPatternCountsMafStatistics& stats)
+  {
+    AbstractMafStatistics::operator=(stats);
+    AbstractSpeciesSelectionMafStatistics::operator=(stats);
+    alphabet_    = stats.alphabet_;
+    counts_      = stats.counts_;
+    return *this;
+  }
 
-    virtual ~FourSpeciesPatternCountsMafStatistics() {}
+  virtual ~FourSpeciesPatternCountsMafStatistics() {}
 
-  public:
-    std::string getShortName() const { return "FourSpeciesPatternCounts"; }
-    std::string getFullName() const { return "FourSpecies pattern counts."; }
-    void compute(const MafBlock& block);
-    std::vector<std::string> getSupportedTags() const;
+public:
+  std::string getShortName() const { return "FourSpeciesPatternCounts"; }
+  std::string getFullName() const { return "FourSpecies pattern counts."; }
+  void compute(const MafBlock& block);
+  std::vector<std::string> getSupportedTags() const;
 };
-
 
 
 /**
@@ -621,23 +640,23 @@ class FourSpeciesPatternCountsMafStatistics:
  * - Number of complete Quadriallelic sites
  * - Number of parsimony informative sites
  */
-class SiteMafStatistics:
+class SiteMafStatistics :
   public AbstractMafStatistics,
   public AbstractSpeciesSelectionMafStatistics
 {
-  public:
-    SiteMafStatistics(const std::vector<std::string>& species):
-      AbstractMafStatistics(),
-      AbstractSpeciesSelectionMafStatistics(species)
-    {}
+public:
+  SiteMafStatistics(const std::vector<std::string>& species) :
+    AbstractMafStatistics(),
+    AbstractSpeciesSelectionMafStatistics(species)
+  {}
 
-    virtual ~SiteMafStatistics() {}
+  virtual ~SiteMafStatistics() {}
 
-  public:
-    std::string getShortName() const { return "SiteStatistics"; }
-    std::string getFullName() const { return "Site statistics."; }
-    void compute(const MafBlock& block);
-    std::vector<std::string> getSupportedTags() const;
+public:
+  std::string getShortName() const { return "SiteStatistics"; }
+  std::string getFullName() const { return "Site statistics."; }
+  void compute(const MafBlock& block);
+  std::vector<std::string> getSupportedTags() const;
 };
 
 
@@ -653,31 +672,30 @@ class SiteMafStatistics:
  * - X: unresolved (because of gap or generic character)
  * - FX / PX / XF / XP: unresolved in one population
  */
-class PolymorphismMafStatistics:
+class PolymorphismMafStatistics :
   public AbstractMafStatistics,
   public AbstractSpeciesMultipleSelectionMafStatistics
 {
-  public:
-    PolymorphismMafStatistics(const std::vector< std::vector<std::string> >& species):
-      AbstractMafStatistics(),
-      AbstractSpeciesMultipleSelectionMafStatistics(species)
-    {
-      if (species.size() != 2)
-        throw Exception("PolymorphismStatistics: exactly two species selection should be provided.");
-    }
+public:
+  PolymorphismMafStatistics(const std::vector< std::vector<std::string> >& species) :
+    AbstractMafStatistics(),
+    AbstractSpeciesMultipleSelectionMafStatistics(species)
+  {
+    if (species.size() != 2)
+      throw Exception("PolymorphismStatistics: exactly two species selection should be provided.");
+  }
 
-    virtual ~PolymorphismMafStatistics() {}
+  virtual ~PolymorphismMafStatistics() {}
 
-  public:
-    std::string getShortName() const { return "PolymorphismStatistics"; }
-    std::string getFullName() const { return "Polymorphism statistics."; }
-    void compute(const MafBlock& block);
-    std::vector<std::string> getSupportedTags() const;
+public:
+  std::string getShortName() const { return "PolymorphismStatistics"; }
+  std::string getFullName() const { return "Polymorphism statistics."; }
+  void compute(const MafBlock& block);
+  std::vector<std::string> getSupportedTags() const;
 
-  private:
-    static std::vector<int> getPatterns_(const SiteContainer& sites); 
+private:
+  static std::vector<int> getPatterns_(const SiteContainer& sites);
 };
-
 
 
 /**
@@ -690,30 +708,27 @@ class PolymorphismMafStatistics:
  *
  * Only fully resolved sites are analyzed (no gap, no generic character).
  */
-class SequenceDiversityMafStatistics:
+class SequenceDiversityMafStatistics :
   public AbstractMafStatistics,
   public AbstractSpeciesSelectionMafStatistics
 {
-  public:
-    SequenceDiversityMafStatistics(const std::vector<std::string>& ingroup):
-      AbstractMafStatistics(),
-      AbstractSpeciesSelectionMafStatistics(ingroup)
-    {}
+public:
+  SequenceDiversityMafStatistics(const std::vector<std::string>& ingroup) :
+    AbstractMafStatistics(),
+    AbstractSpeciesSelectionMafStatistics(ingroup)
+  {}
 
-    virtual ~SequenceDiversityMafStatistics() {}
+  virtual ~SequenceDiversityMafStatistics() {}
 
-  public:
-    std::string getShortName() const { return "SequenceDiversityStatistics"; }
-    std::string getFullName() const { return "Sequence diversity statistics."; }
-    void compute(const MafBlock& block);
-    std::vector<std::string> getSupportedTags() const;
+public:
+  std::string getShortName() const { return "SequenceDiversityStatistics"; }
+  std::string getFullName() const { return "Sequence diversity statistics."; }
+  void compute(const MafBlock& block);
+  std::vector<std::string> getSupportedTags() const;
 
-  private:
-    static std::vector<int> getPatterns_(const SiteContainer& sites); 
+private:
+  static std::vector<int> getPatterns_(const SiteContainer& sites);
 };
-
-
 } // end of namespace bpp
 
-#endif //_MAFSTATISTICS_H_
-
+#endif//_MAFSTATISTICS_H_

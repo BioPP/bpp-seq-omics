@@ -5,37 +5,37 @@
 //
 
 /*
-Copyright or © or Copr. Bio++ Development Team, (November 17, 2004)
+   Copyright or © or Copr. Bio++ Development Team, (November 17, 2004)
 
-This software is a computer program whose purpose is to provide classes
-for sequences analysis.
+   This software is a computer program whose purpose is to provide classes
+   for sequences analysis.
 
-This software is governed by the CeCILL  license under French law and
-abiding by the rules of distribution of free software.  You can  use, 
-modify and/ or redistribute the software under the terms of the CeCILL
-license as circulated by CEA, CNRS and INRIA at the following URL
-"http://www.cecill.info". 
+   This software is governed by the CeCILL  license under French law and
+   abiding by the rules of distribution of free software.  You can  use,
+   modify and/ or redistribute the software under the terms of the CeCILL
+   license as circulated by CEA, CNRS and INRIA at the following URL
+   "http://www.cecill.info".
 
-As a counterpart to the access to the source code and  rights to copy,
-modify and redistribute granted by the license, users are provided only
-with a limited warranty  and the software's author,  the holder of the
-economic rights,  and the successive licensors  have only  limited
-liability. 
+   As a counterpart to the access to the source code and  rights to copy,
+   modify and redistribute granted by the license, users are provided only
+   with a limited warranty  and the software's author,  the holder of the
+   economic rights,  and the successive licensors  have only  limited
+   liability.
 
-In this respect, the user's attention is drawn to the risks associated
-with loading,  using,  modifying and/or developing or reproducing the
-software by the user in light of its specific status of free software,
-that may mean  that it is complicated to manipulate,  and  that  also
-therefore means  that it is reserved for developers  and  experienced
-professionals having in-depth computer knowledge. Users are therefore
-encouraged to load and test the software's suitability as regards their
-requirements in conditions enabling the security of their systems and/or 
-data to be ensured and,  more generally, to use and operate it in the 
-same conditions as regards security. 
+   In this respect, the user's attention is drawn to the risks associated
+   with loading,  using,  modifying and/or developing or reproducing the
+   software by the user in light of its specific status of free software,
+   that may mean  that it is complicated to manipulate,  and  that  also
+   therefore means  that it is reserved for developers  and  experienced
+   professionals having in-depth computer knowledge. Users are therefore
+   encouraged to load and test the software's suitability as regards their
+   requirements in conditions enabling the security of their systems and/or
+   data to be ensured and,  more generally, to use and operate it in the
+   same conditions as regards security.
 
-The fact that you are presently reading this means that you have had
-knowledge of the CeCILL license and that you accept its terms.
-*/
+   The fact that you are presently reading this means that you have had
+   knowledge of the CeCILL license and that you accept its terms.
+ */
 
 #ifndef _BEDGRAPHFEATUREREADER_H_
 #define _BEDGRAPHFEATUREREADER_H_
@@ -43,15 +43,15 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "../SequenceFeature.h"
 #include "../FeatureReader.h"
 
-//From bpp-core:
+// From bpp-core:
 #include <Bpp/Exceptions.h>
 
-//From the STL:
+// From the STL:
 #include <string>
 #include <vector>
 
-namespace bpp {
-
+namespace bpp
+{
 /**
  * @brief A simple reader for features in the BedGraph format.
  *
@@ -63,87 +63,96 @@ namespace bpp {
  *
  * @author Julien Dutheil
  */
-class BedGraphFeatureReader:
+class BedGraphFeatureReader :
   public virtual FeatureReader
 {
-  public:
-    static const std::string BED_VALUE;
+public:
+  static const std::string BED_VALUE;
 
-  private:
-    std::istream& input_;
-    std::string nextLine_;
-    unsigned int id_;
+private:
+  std::istream& input_;
+  std::string nextLine_;
+  unsigned int id_;
 
-  public:
-    BedGraphFeatureReader(std::istream& input):
-      input_(input), nextLine_(), id_(0)
+public:
+  BedGraphFeatureReader(std::istream& input) :
+    input_(input), nextLine_(), id_(0)
+  {
+    bool start = false;
+    do
     {
-      bool start = false;
-      do {
-        getNextLine_();
-        if (nextLine_.size() >= 5 && nextLine_.substr(0, 5) == "track") {
-          start = true;
-        }
-      } while(!start && !input_.eof());
-      if (input_.eof())
-        throw Exception("BedGraphFeatureReader::constructor: Invalid BedGraph file, missing proper header.");
       getNextLine_();
-    }
-
-  public:
-    bool hasMoreFeature() const { return nextLine_ != ""; }
-    const BasicSequenceFeature nextFeature();
-
-    void getAllFeatures(SequenceFeatureSet& features) {
-      while (hasMoreFeature()) {
-        features.addFeature(nextFeature());
+      if (nextLine_.size() >= 5 && nextLine_.substr(0, 5) == "track")
+      {
+        start = true;
       }
     }
-    void getFeaturesOfType(const std::string& type, SequenceFeatureSet& features) {
-      while (hasMoreFeature()) {
-        BasicSequenceFeature feature = nextFeature();
-        if (feature.getType() == type)
-          features.addFeature(feature);
-      }
-    }
-    void getFeaturesOfSequence(const std::string& seqId, SequenceFeatureSet& features) {
-      while (hasMoreFeature()) {
-        BasicSequenceFeature feature = nextFeature();
-        if (feature.getSequenceId() == seqId)
-          features.addFeature(feature);
-      }
-    }
+    while(!start && !input_.eof());
+    if (input_.eof())
+      throw Exception("BedGraphFeatureReader::constructor: Invalid BedGraph file, missing proper header.");
+    getNextLine_();
+  }
 
-    /**
-     * @param f A sequence feature.
-     * @return A string describing the feature, in GFF format.
-     */
-    static std::string toString(const bpp::SequenceFeature& f);
-    
-    /**
-     * @brief Out put a string description of a feature to a stream.
-     *
-     * A end of line character will be appended after the description.
-     *
-     * @param f A sequence feature.
-     * @param out An output stream.
-     */
-    static void toString(const bpp::SequenceFeature& f, std::ostream& out) {
-      out << toString(f) << std::endl;
+public:
+  bool hasMoreFeature() const { return nextLine_ != ""; }
+  const BasicSequenceFeature nextFeature();
+
+  void getAllFeatures(SequenceFeatureSet& features)
+  {
+    while (hasMoreFeature())
+    {
+      features.addFeature(nextFeature());
     }
-
-    static void toString(const bpp::SequenceFeatureSet& fs, std::ostream& out) {
-      for (unsigned int i = 0; i < fs.getNumberOfFeatures(); ++i) {
-        toString(fs[i], out);
-      }
+  }
+  void getFeaturesOfType(const std::string& type, SequenceFeatureSet& features)
+  {
+    while (hasMoreFeature())
+    {
+      BasicSequenceFeature feature = nextFeature();
+      if (feature.getType() == type)
+        features.addFeature(feature);
     }
+  }
+  void getFeaturesOfSequence(const std::string& seqId, SequenceFeatureSet& features)
+  {
+    while (hasMoreFeature())
+    {
+      BasicSequenceFeature feature = nextFeature();
+      if (feature.getSequenceId() == seqId)
+        features.addFeature(feature);
+    }
+  }
 
-  private:
-    void getNextLine_();
+  /**
+   * @param f A sequence feature.
+   * @return A string describing the feature, in GFF format.
+   */
+  static std::string toString(const bpp::SequenceFeature& f);
 
+  /**
+   * @brief Out put a string description of a feature to a stream.
+   *
+   * A end of line character will be appended after the description.
+   *
+   * @param f A sequence feature.
+   * @param out An output stream.
+   */
+  static void toString(const bpp::SequenceFeature& f, std::ostream& out)
+  {
+    out << toString(f) << std::endl;
+  }
+
+  static void toString(const bpp::SequenceFeatureSet& fs, std::ostream& out)
+  {
+    for (unsigned int i = 0; i < fs.getNumberOfFeatures(); ++i)
+    {
+      toString(fs[i], out);
+    }
+  }
+
+private:
+  void getNextLine_();
 };
+} // end of namespace bpp
 
-} //end of namespace bpp
-
-#endif //_BEDGRAPHFEATUREREADER_H_
-
+#endif//_BEDGRAPHFEATUREREADER_H_

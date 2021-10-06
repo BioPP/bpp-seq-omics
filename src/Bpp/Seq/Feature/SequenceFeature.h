@@ -5,48 +5,48 @@
 //
 
 /*
-Copyright or © or Copr. Bio++ Development Team, (November 17, 2004)
+   Copyright or © or Copr. Bio++ Development Team, (November 17, 2004)
 
-This software is a computer program whose purpose is to provide classes
-for sequences analysis.
+   This software is a computer program whose purpose is to provide classes
+   for sequences analysis.
 
-This software is governed by the CeCILL  license under French law and
-abiding by the rules of distribution of free software.  You can  use, 
-modify and/ or redistribute the software under the terms of the CeCILL
-license as circulated by CEA, CNRS and INRIA at the following URL
-"http://www.cecill.info". 
+   This software is governed by the CeCILL  license under French law and
+   abiding by the rules of distribution of free software.  You can  use,
+   modify and/ or redistribute the software under the terms of the CeCILL
+   license as circulated by CEA, CNRS and INRIA at the following URL
+   "http://www.cecill.info".
 
-As a counterpart to the access to the source code and  rights to copy,
-modify and redistribute granted by the license, users are provided only
-with a limited warranty  and the software's author,  the holder of the
-economic rights,  and the successive licensors  have only  limited
-liability. 
+   As a counterpart to the access to the source code and  rights to copy,
+   modify and redistribute granted by the license, users are provided only
+   with a limited warranty  and the software's author,  the holder of the
+   economic rights,  and the successive licensors  have only  limited
+   liability.
 
-In this respect, the user's attention is drawn to the risks associated
-with loading,  using,  modifying and/or developing or reproducing the
-software by the user in light of its specific status of free software,
-that may mean  that it is complicated to manipulate,  and  that  also
-therefore means  that it is reserved for developers  and  experienced
-professionals having in-depth computer knowledge. Users are therefore
-encouraged to load and test the software's suitability as regards their
-requirements in conditions enabling the security of their systems and/or 
-data to be ensured and,  more generally, to use and operate it in the 
-same conditions as regards security. 
+   In this respect, the user's attention is drawn to the risks associated
+   with loading,  using,  modifying and/or developing or reproducing the
+   software by the user in light of its specific status of free software,
+   that may mean  that it is complicated to manipulate,  and  that  also
+   therefore means  that it is reserved for developers  and  experienced
+   professionals having in-depth computer knowledge. Users are therefore
+   encouraged to load and test the software's suitability as regards their
+   requirements in conditions enabling the security of their systems and/or
+   data to be ensured and,  more generally, to use and operate it in the
+   same conditions as regards security.
 
-The fact that you are presently reading this means that you have had
-knowledge of the CeCILL license and that you accept its terms.
-*/
+   The fact that you are presently reading this means that you have had
+   knowledge of the CeCILL license and that you accept its terms.
+ */
 
 #ifndef _SEQUENCEFEATURE_H_
 #define _SEQUENCEFEATURE_H_
 
-//From the STL:
+// From the STL:
 #include <string>
 #include <map>
 #include <set>
 #include <algorithm>
 
-//From bpp-core:
+// From bpp-core:
 #include <Bpp/Clonable.h>
 #include <Bpp/Numeric/Range.h>
 
@@ -66,57 +66,62 @@ knowledge of the CeCILL license and that you accept its terms.
 
 namespace bpp
 {
-
 /**
  * @brief a coordinate range on a sequence.
  * Stores coordinates as a Range<size_t> object,
  * but also keep the strand information.
  */
-class SeqRange:
+class SeqRange :
   public Range<size_t>
 {
-  private:
-    char strand_;
+private:
+  char strand_;
 
-  public:
-    /**
-     * @param a First position
-     * @param b Second position
-     * @param strand The strand information. Can take one of the four values: '+' for positive strand, '-' for negative, '.' if not stranded or '?' if strandedness is relevant but unknown.
-     */
-    SeqRange(size_t a, size_t b, char strand = '.'):
-      Range<size_t>(a, b), strand_(strand) {
-        if (strand != '+' && strand != '-' && strand != '?' && strand != '.')
-          strand_ = '.';
-    }
+public:
+  /**
+   * @param a First position
+   * @param b Second position
+   * @param strand The strand information. Can take one of the four values: '+' for positive strand, '-' for negative, '.' if not stranded or '?' if strandedness is relevant but unknown.
+   */
+  SeqRange(size_t a, size_t b, char strand = '.') :
+    Range<size_t>(a, b), strand_(strand)
+  {
+    if (strand != '+' && strand != '-' && strand != '?' && strand != '.')
+      strand_ = '.';
+  }
 
-    /**
-     * @param range A range object
-     * @param strand The strand information. Can take one of the four values: '+' for positive strand, '-' for negative, '.' if not stranded or '?' if strandedness is relevant but unknown.
-     */
-    SeqRange(const Range<size_t> range, char strand = '.'):
-      Range<size_t>(range), strand_(strand) {
-        if (strand != '+' && strand != '-' && strand != '?' && strand != '.')
-          strand_ = '.';
-    }
+  /**
+   * @param range A range object
+   * @param strand The strand information. Can take one of the four values: '+' for positive strand, '-' for negative, '.' if not stranded or '?' if strandedness is relevant but unknown.
+   */
+  SeqRange(const Range<size_t> range, char strand = '.') :
+    Range<size_t>(range), strand_(strand)
+  {
+    if (strand != '+' && strand != '-' && strand != '?' && strand != '.')
+      strand_ = '.';
+  }
 
-    SeqRange* clone() const { return new SeqRange(*this); }
+  SeqRange* clone() const { return new SeqRange(*this); }
 
-  public:
-    virtual char getStrand() const { return strand_; }
+public:
+  virtual char getStrand() const { return strand_; }
 
-    virtual bool isNegativeStrand() const { return strand_ == '-'; }
-    virtual bool isStranded() const { return strand_ == '+' || strand_ == '-'; }
-    virtual void invert() {
-      if (isStranded()) {
-        if (isNegativeStrand()) {
-          strand_ = '+';
-        } else {
-          strand_ = '-';
-        }
+  virtual bool isNegativeStrand() const { return strand_ == '-'; }
+  virtual bool isStranded() const { return strand_ == '+' || strand_ == '-'; }
+  virtual void invert()
+  {
+    if (isStranded())
+    {
+      if (isNegativeStrand())
+      {
+        strand_ = '+';
+      }
+      else
+      {
+        strand_ = '-';
       }
     }
-
+  }
 };
 
 /**
@@ -133,158 +138,158 @@ class SeqRange:
  *
  * @author Julien Dutheil
  */
-class SequenceFeature:
+class SequenceFeature :
   public virtual Clonable
 {
-  public:
-    static const std::string NO_ATTRIBUTE_SET;
+public:
+  static const std::string NO_ATTRIBUTE_SET;
 
-  public:
-    virtual SequenceFeature* clone() const = 0;
+public:
+  virtual SequenceFeature* clone() const = 0;
 
-  public:
-    /**
-     * @return The id of this feature.
-     */
-    virtual const std::string& getId() const = 0;
-    /**
-     * @param id A std::string representing the id.
-     */
-    virtual void setId(const std::string& id) = 0;
+public:
+  /**
+   * @return The id of this feature.
+   */
+  virtual const std::string& getId() const = 0;
+  /**
+   * @param id A std::string representing the id.
+   */
+  virtual void setId(const std::string& id) = 0;
 
-    /**
-     * @return The id of the sequence on which this feature is based.
-     */
-    virtual const std::string& getSequenceId() const = 0;
-    /**
-     * @param id A std::string representing the id of the reference.
-     */
-    virtual void setSequenceId(const std::string& id) = 0;
+  /**
+   * @return The id of the sequence on which this feature is based.
+   */
+  virtual const std::string& getSequenceId() const = 0;
+  /**
+   * @param id A std::string representing the id of the reference.
+   */
+  virtual void setSequenceId(const std::string& id) = 0;
 
-    /**
-     * @return A text intended to describe the algorithm or procedure used to generate the feature.
-     */
-    virtual const std::string& getSource() const = 0;
-    /**
-     * @param source A std::string representing the source of the feature.
-     */
-    virtual void setSource(const std::string& source) = 0;
+  /**
+   * @return A text intended to describe the algorithm or procedure used to generate the feature.
+   */
+  virtual const std::string& getSource() const = 0;
+  /**
+   * @param source A std::string representing the source of the feature.
+   */
+  virtual void setSource(const std::string& source) = 0;
 
-    /**
-     * @return A text describing the type of feature. Depending on the format, it can be restricted (for example, mRNA), or any text can be supplied (for example TFXX binding site).
-     */
-    virtual const std::string& getType() const = 0;
-    /**
-     * @param type A std::string representing the type of this feature.
-     */
-    virtual void setType(const std::string& type) = 0;
+  /**
+   * @return A text describing the type of feature. Depending on the format, it can be restricted (for example, mRNA), or any text can be supplied (for example TFXX binding site).
+   */
+  virtual const std::string& getType() const = 0;
+  /**
+   * @param type A std::string representing the type of this feature.
+   */
+  virtual void setType(const std::string& type) = 0;
 
-    /**
-     * @return The starting position of the feature, 0-based, included.
-     */
-    virtual const size_t getStart() const = 0;
+  /**
+   * @return The starting position of the feature, 0-based, included.
+   */
+  virtual const size_t getStart() const = 0;
 
-    /**
-     * @return The ending position of the feature, 0-based, excluded.
-     */
-    virtual const size_t getEnd() const = 0;
+  /**
+   * @return The ending position of the feature, 0-based, excluded.
+   */
+  virtual const size_t getEnd() const = 0;
 
-    /**
-     * @return The size of the feature.
-     */
-    virtual const size_t size() const {
-      return getEnd() - getStart();
-    };
+  /**
+   * @return The size of the feature.
+   */
+  virtual const size_t size() const
+  {
+    return getEnd() - getStart();
+  }
 
-    /**
-     * @return True if the feature is stranded.
-     */
-    virtual bool isStranded() const = 0;
+  /**
+   * @return True if the feature is stranded.
+   */
+  virtual bool isStranded() const = 0;
 
-    /**
-     * @return True if the sequence is coded on the negative strand. False if it is on the positive one or unknown.
-     */
-    virtual bool isNegativeStrand() const = 0;
+  /**
+   * @return True if the sequence is coded on the negative strand. False if it is on the positive one or unknown.
+   */
+  virtual bool isNegativeStrand() const = 0;
 
-    /**
-     * Change the orientation of the feature.
-     */
-    virtual void invert() = 0;
+  /**
+   * Change the orientation of the feature.
+   */
+  virtual void invert() = 0;
 
-    /**
-     * @return Coordinates as a Range object.
-     */
-    virtual SeqRange getRange() const = 0;
+  /**
+   * @return Coordinates as a Range object.
+   */
+  virtual SeqRange getRange() const = 0;
 
-    /**
-     * @return Check if the feature is empty (start == end)
-     */
-    virtual bool isEmpty() const { return size() == 0; }
+  /**
+   * @return Check if the feature is empty (start == end)
+   */
+  virtual bool isEmpty() const { return size() == 0; }
 
-    /**
-     * @return Check if the feature is a point annotation (start + 1 == end)
-     */
-    virtual bool isPoint() const { return size() == 1; }
+  /**
+   * @return Check if the feature is a point annotation (start + 1 == end)
+   */
+  virtual bool isPoint() const { return size() == 1; }
 
-    /**
-     * @return True if the features overlap.
-     */
-    virtual bool overlap(const SequenceFeature& feat) const = 0;
-    
-    /**
-     * @return True if the feature overlap with the given range (non-null intersection).
-     */
-    virtual bool overlap(const SeqRange& range) const = 0;
- 
-    /**
-     * @return True if the feature fully contains the given range.
-     */
-    virtual bool includes(const SeqRange& range) const = 0;
- 
-    /**
-     * @return True if the feature is fully contained in the given range.
-     */
-    virtual bool isIncludedIn(const SeqRange& range) const = 0;
- 
-    /**
-     * @return The score associated to the feature (eg, an E-value or a P-value).
-     */
-    virtual const double& getScore() const = 0;
-    /**
-     * @param score A double representing the score of this feature.
-     */
-    virtual void setScore(double score) = 0;
+  /**
+   * @return True if the features overlap.
+   */
+  virtual bool overlap(const SequenceFeature& feat) const = 0;
 
-    /**
-     * @param  attribute The name of the attribute to retrieve.
-     * @return The attribute with specified name (read only).
-     */
-    virtual const std::string& getAttribute(const std::string& attribute) const = 0;
-    
-    /**
-     * @param  attribute The name of the attribute to retrieve.
-     * @return The attribute with specified name.
-     */
-    virtual std::string& getAttribute(const std::string& attribute) = 0;
+  /**
+   * @return True if the feature overlap with the given range (non-null intersection).
+   */
+  virtual bool overlap(const SeqRange& range) const = 0;
 
-    /**
-     * @return The list of all attributes available.
-     */
-    virtual std::set< std::string > getAttributeList() const = 0;
-    
-    /**
-     * @brief Set the value of an attribute.
-     *
-     * @param attribute The name of the attribute to set.
-     * @param value     The value of the attribute to set.
-     */
-    virtual void setAttribute(const std::string& attribute, const std::string& value) = 0;
+  /**
+   * @return True if the feature fully contains the given range.
+   */
+  virtual bool includes(const SeqRange& range) const = 0;
 
-    /**
-     * @param attribute The name of the attribute to be removed.
-     */
-    virtual void removeAttribute(const std::string& attribute) = 0;
+  /**
+   * @return True if the feature is fully contained in the given range.
+   */
+  virtual bool isIncludedIn(const SeqRange& range) const = 0;
 
+  /**
+   * @return The score associated to the feature (eg, an E-value or a P-value).
+   */
+  virtual const double& getScore() const = 0;
+  /**
+   * @param score A double representing the score of this feature.
+   */
+  virtual void setScore(double score) = 0;
+
+  /**
+   * @param  attribute The name of the attribute to retrieve.
+   * @return The attribute with specified name (read only).
+   */
+  virtual const std::string& getAttribute(const std::string& attribute) const = 0;
+
+  /**
+   * @param  attribute The name of the attribute to retrieve.
+   * @return The attribute with specified name.
+   */
+  virtual std::string& getAttribute(const std::string& attribute) = 0;
+
+  /**
+   * @return The list of all attributes available.
+   */
+  virtual std::set< std::string > getAttributeList() const = 0;
+
+  /**
+   * @brief Set the value of an attribute.
+   *
+   * @param attribute The name of the attribute to set.
+   * @param value     The value of the attribute to set.
+   */
+  virtual void setAttribute(const std::string& attribute, const std::string& value) = 0;
+
+  /**
+   * @param attribute The name of the attribute to be removed.
+   */
+  virtual void removeAttribute(const std::string& attribute) = 0;
 };
 
 /**
@@ -292,115 +297,128 @@ class SequenceFeature:
  *
  * It uses a hash map for storing attributes.
  */
-class BasicSequenceFeature:
+class BasicSequenceFeature :
   public SequenceFeature
 {
-  protected:
-    std::string id_;
-    std::string sequenceId_;
-    std::string source_;
-    std::string type_;
-    SeqRange range_;
-    double score_;
-    mutable std::map<std::string, std::string> attributes_;
-    //SequenceFeatureSet subFeatures_;
+protected:
+  std::string id_;
+  std::string sequenceId_;
+  std::string source_;
+  std::string type_;
+  SeqRange range_;
+  double score_;
+  mutable std::map<std::string, std::string> attributes_;
+  // SequenceFeatureSet subFeatures_;
 
-  public:
-    BasicSequenceFeature(): id_(""), sequenceId_(""), source_(""), type_(""), range_(0, 0, '.'), score_(-1), attributes_() {}
+public:
+  BasicSequenceFeature() : id_(""), sequenceId_(""), source_(""), type_(""), range_(0, 0, '.'), score_(-1), attributes_() {}
 
-    BasicSequenceFeature(
-        const std::string& id,
-        const std::string& seqId,
-        const std::string& source,
-        const std::string& type,
-        size_t start,
-        size_t end,
-        char strand,
-        double score = -1):
-      id_(id), sequenceId_(seqId), source_(source),
-      type_(type), range_(start, end, strand), score_(score),
-      attributes_()
-      //attributes_(), subFeatures_()
-    {}
+  BasicSequenceFeature(
+    const std::string& id,
+    const std::string& seqId,
+    const std::string& source,
+    const std::string& type,
+    size_t start,
+    size_t end,
+    char strand,
+    double score = -1) :
+    id_(id), sequenceId_(seqId), source_(source),
+    type_(type), range_(start, end, strand), score_(score),
+    attributes_()
+  // attributes_(), subFeatures_()
+  {}
 
-    virtual BasicSequenceFeature* clone() const { return new BasicSequenceFeature(*this); }
+  virtual BasicSequenceFeature* clone() const { return new BasicSequenceFeature(*this); }
 
-  public:
-    const std::string& getId() const { return id_; }
-    void setId(const std::string& id) { id_ = id; }
-    const std::string& getSequenceId() const { return sequenceId_; }
-    void setSequenceId(const std::string& sid) { sequenceId_ = sid; }
-    const std::string& getSource() const { return source_; }
-    void setSource(const std::string& source) { source_ = source; }
-    const std::string& getType() const { return type_; }
-    void setType(const std::string& type) { type_ = type; }
-    const size_t getStart() const { return range_.begin(); }
-    const size_t getEnd() const { return range_.end(); }
-    bool isStranded() const { return range_.isStranded(); }
-    bool isNegativeStrand() const { return range_.isNegativeStrand(); }
-    void invert() {
-      range_.invert();
+public:
+  const std::string& getId() const { return id_; }
+  void setId(const std::string& id) { id_ = id; }
+  const std::string& getSequenceId() const { return sequenceId_; }
+  void setSequenceId(const std::string& sid) { sequenceId_ = sid; }
+  const std::string& getSource() const { return source_; }
+  void setSource(const std::string& source) { source_ = source; }
+  const std::string& getType() const { return type_; }
+  void setType(const std::string& type) { type_ = type; }
+  const size_t getStart() const { return range_.begin(); }
+  const size_t getEnd() const { return range_.end(); }
+  bool isStranded() const { return range_.isStranded(); }
+  bool isNegativeStrand() const { return range_.isNegativeStrand(); }
+  void invert()
+  {
+    range_.invert();
+  }
+  const double& getScore() const { return score_; }
+  void setScore(double score) { score_ = score; }
+
+  const std::string& getAttribute(const std::string& attribute) const
+  {
+    std::map<std::string, std::string>::iterator it = attributes_.find(attribute);
+    if (it != attributes_.end())
+      return it->second;
+    else
+      return NO_ATTRIBUTE_SET;
+  }
+
+  std::string& getAttribute(const std::string& attribute)
+  {
+    return attributes_[attribute];
+  }
+
+  void setAttribute(const std::string& attribute, const std::string& value)
+  {
+    attributes_[attribute] = value;
+  }
+
+  std::set< std::string > getAttributeList() const
+  {
+    std::set< std::string > d;
+    for (std::map<std::string, std::string>::iterator it = attributes_.begin(); it != attributes_.end(); it++)
+    {
+      d.insert(it->first);
     }
-    const double& getScore() const { return score_; }
-    void setScore(double score) { score_ = score; }
+    return d;
+  }
 
-    const std::string& getAttribute(const std::string& attribute) const {
-      std::map<std::string, std::string>::iterator it = attributes_.find(attribute);
-      if (it != attributes_.end())
-        return it->second;
-      else
-        return NO_ATTRIBUTE_SET;
+  void removeAttribute(const std::string& attribute)
+  {
+    std::map<std::string, std::string>::iterator it = attributes_.find(attribute);
+    if (it != attributes_.end())
+    {
+      attributes_.erase(it);
     }
-    
-    std::string& getAttribute(const std::string& attribute) {
-      return attributes_[attribute];
-    }
-    
-    void setAttribute(const std::string& attribute, const std::string& value) {
-      attributes_[attribute] = value;
-    }
+  }
 
-    std::set< std::string > getAttributeList() const {
-      std::set< std::string > d;
-      for (std::map<std::string, std::string>::iterator it = attributes_.begin() ; it != attributes_.end() ; it++) {
-        d.insert(it->first);
-      }
-      return d;
-    }
+  SeqRange getRange() const
+  {
+    return SeqRange(range_);
+  }
 
-    void removeAttribute(const std::string& attribute) {
-      std::map<std::string, std::string>::iterator it = attributes_.find(attribute);
-      if (it != attributes_.end()) {
-        attributes_.erase(it);
-      }
+  bool overlap(const SequenceFeature& feat) const
+  {
+    if (feat.getSequenceId() == sequenceId_)
+    {
+      return range_.overlap(feat.getRange());
     }
+    return false;
+  }
 
-    SeqRange getRange() const {
-      return SeqRange(range_);
-    }
+  bool overlap(const SeqRange& range) const
+  {
+    return range_.overlap(range);
+  }
 
-    bool overlap(const SequenceFeature& feat) const {
-      if (feat.getSequenceId() == sequenceId_) {
-        return range_.overlap(feat.getRange());
-      }
-      return false;
-    }
+  virtual bool includes(const SeqRange& range) const
+  {
+    return range_.contains(range);
+  }
 
-    bool overlap(const SeqRange& range) const {
-      return range_.overlap(range);
-    }
+  virtual bool isIncludedIn(const SeqRange& range) const
+  {
+    return range.contains(range_);
+  }
 
-    virtual bool includes(const SeqRange& range) const {
-      return range_.contains(range);
-    }
- 
-    virtual bool isIncludedIn(const SeqRange& range) const {
-      return range.contains(range_);
-    }
-
-     //const SequenceFeatureSet& getSubFeatures() const { return subFeatures; }
-    //SequenceFeatureSet& getSubFeatures() { return subFeatures; }
-
+  // const SequenceFeatureSet& getSubFeatures() const { return subFeatures; }
+  // SequenceFeatureSet& getSubFeatures() { return subFeatures; }
 };
 
 /**
@@ -416,228 +434,257 @@ class BasicSequenceFeature:
  */
 class SequenceFeatureSet
 {
-  private:
-    std::vector<SequenceFeature*> features_;
+private:
+  std::vector<SequenceFeature*> features_;
 
-  public:
-    SequenceFeatureSet(): features_() {};
+public:
+  SequenceFeatureSet() : features_() {}
 
-    virtual ~SequenceFeatureSet() { clear(); }
+  virtual ~SequenceFeatureSet() { clear(); }
 
-    SequenceFeatureSet(const SequenceFeatureSet& sfs):
-      features_()
+  SequenceFeatureSet(const SequenceFeatureSet& sfs) :
+    features_()
+  {
+    for (std::vector<SequenceFeature*>::const_iterator it = sfs.features_.begin();
+         it != sfs.features_.end();
+         ++it)
     {
-      for (std::vector<SequenceFeature*>::const_iterator it = sfs.features_.begin();
-          it != sfs.features_.end();
-          ++it) {
-        features_.push_back((**it).clone());
-      }
+      features_.push_back((**it).clone());
     }
-    SequenceFeatureSet& operator=(const SequenceFeatureSet& sfs)
+  }
+  SequenceFeatureSet& operator=(const SequenceFeatureSet& sfs)
+  {
+    clear();
+    for (std::vector<SequenceFeature*>::const_iterator it = sfs.features_.begin();
+         it != sfs.features_.end();
+         ++it)
     {
-      clear();
-      for (std::vector<SequenceFeature*>::const_iterator it = sfs.features_.begin();
-          it != sfs.features_.end();
-          ++it) {
-        features_.push_back((**it).clone());
-      }
-      return *this;
+      features_.push_back((**it).clone());
     }
+    return *this;
+  }
 
-  public:
-    /**
-     * @brief Delete all features in this set.
-     */
-    void clear()
+public:
+  /**
+   * @brief Delete all features in this set.
+   */
+  void clear()
+  {
+    for (std::vector<SequenceFeature*>::iterator it = features_.begin();
+         it != features_.end();
+         ++it)
     {
-      for (std::vector<SequenceFeature*>::iterator it = features_.begin();
-          it != features_.end();
-          ++it) {
-        delete *it;
-      }
-      features_.clear();
+      delete *it;
     }
+    features_.clear();
+  }
 
-    /**
-     * @param i The index of the feature.
-     * @return A reference toward the feature.
-     */
-    const SequenceFeature& getFeature(size_t i) const {
-      return *features_[i];
+  /**
+   * @param i The index of the feature.
+   * @return A reference toward the feature.
+   */
+  const SequenceFeature& getFeature(size_t i) const
+  {
+    return *features_[i];
+  }
+
+  /**
+   * @param i The index of the feature.
+   * @return A reference toward the feature.
+   * @see getFeature(size_t i)
+   */
+  const SequenceFeature& operator[](size_t i) const
+  {
+    return *features_[i];
+  }
+
+  /**
+   * @return The number of features in this set.
+   */
+  size_t getNumberOfFeatures() const { return features_.size(); }
+
+  /**
+   * @return True if the set contains no feature.
+   */
+  bool isEmpty() const { return features_.size() == 0; }
+
+  /**
+   * @brief Add a feature to the container. The feature will be copied and the copy owned by the container.
+   *
+   * @param feature The feature to add to the container.
+   */
+  void addFeature(const SequenceFeature& feature)
+  {
+    features_.push_back(feature.clone());
+  }
+
+  /**
+   * @return A set containing all sequences ids in this set.
+   */
+  std::set<std::string> getSequences() const
+  {
+    std::set<std::string> seqIds;
+    for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
+         it != features_.end();
+         ++it)
+    {
+      seqIds.insert((**it).getSequenceId());
     }
+    return seqIds;
+  }
 
-    /**
-     * @param i The index of the feature.
-     * @return A reference toward the feature.
-     * @see getFeature(size_t i)
-     */
-    const SequenceFeature& operator[](size_t i) const {
-      return *features_[i];
+  /**
+   * @return A set containing all feature type in this set.
+   */
+  std::set<std::string> getTypes() const
+  {
+    std::set<std::string> types;
+    for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
+         it != features_.end();
+         ++it)
+    {
+      types.insert((**it).getType());
     }
+    return types;
+  }
 
-    /**
-     * @return The number of features in this set.
-     */
-    size_t getNumberOfFeatures() const { return features_.size(); }
-
-    /**
-     * @return True if the set contains no feature.
-     */
-    bool isEmpty() const { return features_.size() == 0; }
-
-    /**
-     * @brief Add a feature to the container. The feature will be copied and the copy owned by the container.
-     *
-     * @param feature The feature to add to the container.
-     */
-    void addFeature(const SequenceFeature& feature) {
-      features_.push_back(feature.clone());
+  /**
+   * @brief Get all coordinates of features.
+   * All ranges are added to a RangeCollection container, as SeqRange objects.
+   * @param coords [out] a container where to add the coordinates of each feature.
+   */
+  void fillRangeCollection(RangeCollection<size_t>& coords) const
+  {
+    for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
+         it != features_.end();
+         ++it)
+    {
+      coords.addRange((**it).getRange());
     }
+  }
 
-    /**
-     * @return A set containing all sequences ids in this set.
-     */
-    std::set<std::string> getSequences() const {
-      std::set<std::string> seqIds;
-      for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
-          it != features_.end();
-          ++it) {
-        seqIds.insert((**it).getSequenceId());
-      }
-      return seqIds;
-    }
-
-    /**
-     * @return A set containing all feature type in this set.
-     */
-    std::set<std::string> getTypes() const {
-      std::set<std::string> types;
-      for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
-          it != features_.end();
-          ++it) {
-        types.insert((**it).getType());
-      }
-      return types;
-    }
-
-    /**
-     * @brief Get all coordinates of features.
-     * All ranges are added to a RangeCollection container, as SeqRange objects.
-     * @param coords [out] a container where to add the coordinates of each feature.
-     */
-    void fillRangeCollection(RangeCollection<size_t>& coords) const {
-      for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
-          it != features_.end();
-          ++it) {
+  /**
+   * @brief Get all coordinates of features for a given source.
+   * All ranges are added to a RangeCollection container, as SeqRange objects.
+   * @param seqId The name of the sequence id to consider.
+   * @param coords [out] a container where to add the coordinates of each feature.
+   */
+  void fillRangeCollectionForSequence(const std::string& seqId, RangeCollection<size_t>& coords) const
+  {
+    for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
+         it != features_.end();
+         ++it)
+    {
+      if ((**it).getSequenceId() == seqId)
+      {
         coords.addRange((**it).getRange());
       }
     }
+  }
 
-    /**
-     * @brief Get all coordinates of features for a given source.
-     * All ranges are added to a RangeCollection container, as SeqRange objects.
-     * @param seqId The name of the sequence id to consider.
-     * @param coords [out] a container where to add the coordinates of each feature.
-     */
-    void fillRangeCollectionForSequence(const std::string& seqId, RangeCollection<size_t>& coords) const {
-      for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
-          it != features_.end();
-          ++it) {
-        if ((**it).getSequenceId() == seqId) {
-          coords.addRange((**it).getRange());
-        }
+  /**
+   * @param type The feature type.
+   * @return A new set with all features of a given type.
+   */
+  SequenceFeatureSet* getSubsetForType(const std::string& type) const
+  {
+    SequenceFeatureSet* subset = new SequenceFeatureSet();
+    for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
+         it != features_.end();
+         ++it)
+    {
+      if ((**it).getType() == type)
+      {
+        subset->addFeature(**it);
       }
     }
+    return subset;
+  }
 
-    /**
-     * @param type The feature type.
-     * @return A new set with all features of a given type.
-     */
-    SequenceFeatureSet* getSubsetForType(const std::string& type) const {
-      SequenceFeatureSet* subset = new SequenceFeatureSet();
-      for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
-          it != features_.end();
-          ++it) {
-        if ((**it).getType() == type) {
+  /**
+   * @param types The feature types.
+   * @return A new set with all features of given types.
+   */
+  SequenceFeatureSet* getSubsetForTypes(const std::vector<std::string>& types) const
+  {
+    SequenceFeatureSet* subset = new SequenceFeatureSet();
+    for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
+         it != features_.end();
+         ++it)
+    {
+      if (std::find(types.begin(), types.end(), (**it).getType()) != types.end())
+      {
+        subset->addFeature(**it);
+      }
+    }
+    return subset;
+  }
+
+  /**
+   * @param id The sequence id to look for.
+   * @return A new set with all features for a given sequence id.
+   */
+  SequenceFeatureSet* getSubsetForSequence(const std::string& id) const
+  {
+    SequenceFeatureSet* subset = new SequenceFeatureSet();
+    for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
+         it != features_.end();
+         ++it)
+    {
+      if ((**it).getSequenceId() == id)
+      {
+        subset->addFeature(**it);
+      }
+    }
+    return subset;
+  }
+
+  /**
+   * @param ids The sequence ids to look for.
+   * @return A new set with all features of given sequence ids.
+   */
+  SequenceFeatureSet* getSubsetForSequences(const std::vector<std::string>& ids) const
+  {
+    SequenceFeatureSet* subset = new SequenceFeatureSet();
+    for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
+         it != features_.end();
+         ++it)
+    {
+      if (std::find(ids.begin(), ids.end(), (**it).getSequenceId()) != ids.end())
+      {
+        subset->addFeature(**it);
+      }
+    }
+    return subset;
+  }
+
+  /**
+   * @param range    The range of features to look for.
+   * @param complete If true, only return features fully included in the given range.
+   *                 Otherwise returns features overlapping with the range.
+   * @return A new set with all features included in the given range.
+   */
+  SequenceFeatureSet* getSubsetForRange(const SeqRange& range, bool complete) const
+  {
+    SequenceFeatureSet* subset = new SequenceFeatureSet();
+    for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
+         it != features_.end();
+         ++it)
+    {
+      if (complete)
+      {
+        if ((**it).isIncludedIn(range))
           subset->addFeature(**it);
-        }
       }
-      return subset;
-    }
-
-    /**
-     * @param types The feature types.
-     * @return A new set with all features of given types.
-     */
-    SequenceFeatureSet* getSubsetForTypes(const std::vector<std::string>& types) const {
-      SequenceFeatureSet* subset = new SequenceFeatureSet();
-      for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
-          it != features_.end();
-          ++it) {
-        if (std::find(types.begin(), types.end(), (**it).getType()) != types.end()) {
+      else
+      {
+        if ((**it).overlap(range))
           subset->addFeature(**it);
-        }
       }
-      return subset;
     }
-
-    /**
-     * @param id The sequence id to look for.
-     * @return A new set with all features for a given sequence id.
-     */
-    SequenceFeatureSet* getSubsetForSequence(const std::string& id) const {
-      SequenceFeatureSet* subset = new SequenceFeatureSet();
-      for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
-          it != features_.end();
-          ++it) {
-        if ((**it).getSequenceId() == id) {
-          subset->addFeature(**it);
-        }
-      }
-      return subset;
-    }
-
-    /**
-     * @param ids The sequence ids to look for.
-     * @return A new set with all features of given sequence ids.
-     */
-    SequenceFeatureSet* getSubsetForSequences(const std::vector<std::string>& ids) const {
-      SequenceFeatureSet* subset = new SequenceFeatureSet();
-      for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
-          it != features_.end();
-          ++it) {
-        if (std::find(ids.begin(), ids.end(), (**it).getSequenceId()) != ids.end()) {
-          subset->addFeature(**it);
-        }
-      }
-      return subset;
-    }
-
-    /**
-     * @param range    The range of features to look for.
-     * @param complete If true, only return features fully included in the given range.
-     *                 Otherwise returns features overlapping with the range.
-     * @return A new set with all features included in the given range.
-     */
-    SequenceFeatureSet* getSubsetForRange(const SeqRange& range, bool complete) const {
-      SequenceFeatureSet* subset = new SequenceFeatureSet();
-      for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
-          it != features_.end();
-          ++it) {
-        if (complete) {
-          if ((**it).isIncludedIn(range))
-            subset->addFeature(**it);
-        } else {
-          if ((**it).overlap(range))
-            subset->addFeature(**it);
-        }
-      }
-      return subset;
-    }
-
+    return subset;
+  }
 };
+} // end of namespace bpp
 
-} //end of namespace bpp
-
-#endif //_SEQUENCEFEATURE_H_
-
+#endif//_SEQUENCEFEATURE_H_

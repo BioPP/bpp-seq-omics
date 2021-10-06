@@ -5,37 +5,37 @@
 //
 
 /*
-Copyright or © or Copr. Bio++ Development Team, (2010)
+   Copyright or © or Copr. Bio++ Development Team, (2010)
 
-This software is a computer program whose purpose is to provide classes
-for sequences analysis.
+   This software is a computer program whose purpose is to provide classes
+   for sequences analysis.
 
-This software is governed by the CeCILL  license under French law and
-abiding by the rules of distribution of free software.  You can  use, 
-modify and/ or redistribute the software under the terms of the CeCILL
-license as circulated by CEA, CNRS and INRIA at the following URL
-"http://www.cecill.info". 
+   This software is governed by the CeCILL  license under French law and
+   abiding by the rules of distribution of free software.  You can  use,
+   modify and/ or redistribute the software under the terms of the CeCILL
+   license as circulated by CEA, CNRS and INRIA at the following URL
+   "http://www.cecill.info".
 
-As a counterpart to the access to the source code and  rights to copy,
-modify and redistribute granted by the license, users are provided only
-with a limited warranty  and the software's author,  the holder of the
-economic rights,  and the successive licensors  have only  limited
-liability. 
+   As a counterpart to the access to the source code and  rights to copy,
+   modify and redistribute granted by the license, users are provided only
+   with a limited warranty  and the software's author,  the holder of the
+   economic rights,  and the successive licensors  have only  limited
+   liability.
 
-In this respect, the user's attention is drawn to the risks associated
-with loading,  using,  modifying and/or developing or reproducing the
-software by the user in light of its specific status of free software,
-that may mean  that it is complicated to manipulate,  and  that  also
-therefore means  that it is reserved for developers  and  experienced
-professionals having in-depth computer knowledge. Users are therefore
-encouraged to load and test the software's suitability as regards their
-requirements in conditions enabling the security of their systems and/or 
-data to be ensured and,  more generally, to use and operate it in the 
-same conditions as regards security. 
+   In this respect, the user's attention is drawn to the risks associated
+   with loading,  using,  modifying and/or developing or reproducing the
+   software by the user in light of its specific status of free software,
+   that may mean  that it is complicated to manipulate,  and  that  also
+   therefore means  that it is reserved for developers  and  experienced
+   professionals having in-depth computer knowledge. Users are therefore
+   encouraged to load and test the software's suitability as regards their
+   requirements in conditions enabling the security of their systems and/or
+   data to be ensured and,  more generally, to use and operate it in the
+   same conditions as regards security.
 
-The fact that you are presently reading this means that you have had
-knowledge of the CeCILL license and that you accept its terms.
-*/
+   The fact that you are presently reading this means that you have had
+   knowledge of the CeCILL license and that you accept its terms.
+ */
 
 #ifndef _MAFSEQUENCE_H_
 #define _MAFSEQUENCE_H_
@@ -46,11 +46,11 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <Bpp/Seq/Alphabet/AlphabetTools.h>
 #include <Bpp/Seq/SequenceTools.h>
 
-namespace bpp {
-
+namespace bpp
+{
 /**
  * @brief A sequence class which is used to store data from MAF files.
- * 
+ *
  * It extends the SequenceWithAnnotation class to store MAF-specific features,
  * like the chromosome position. The sequence is its own listener,
  * and recomputes its "genomic" site by using the SequenceTools::getNumberOfSites
@@ -59,154 +59,172 @@ namespace bpp {
  *
  * A MAF sequence is necessarily a DNA sequence.
  */
-class MafSequence:
+class MafSequence :
   public SequenceWithAnnotation
 {
-  private:
-    bool         hasCoordinates_;
-    size_t       begin_;
-    std::string  species_;
-    std::string  chromosome_;
-    char         strand_;
-    size_t       size_;
-    size_t       srcSize_;
+private:
+  bool hasCoordinates_;
+  size_t begin_;
+  std::string species_;
+  std::string chromosome_;
+  char strand_;
+  size_t size_;
+  size_t srcSize_;
 
-  public:
-    MafSequence(const Alphabet* alphabet = &AlphabetTools::DNA_ALPHABET):
-      EdSymbolList<int>(alphabet),
-      EdIntSymbolList(alphabet),
-      SequenceWithAnnotation(alphabet), hasCoordinates_(false), begin_(0), species_(""), chromosome_(""), strand_(0), size_(0), srcSize_(0)
-    {}
+public:
+  MafSequence(const Alphabet* alphabet = & AlphabetTools::DNA_ALPHABET) :
+    EdSymbolList<int>(alphabet),
+    EdIntSymbolList(alphabet),
+    SequenceWithAnnotation(alphabet), hasCoordinates_(false), begin_(0), species_(""), chromosome_(""), strand_(0), size_(0), srcSize_(0)
+  {}
 
-    MafSequence(const std::string& name, const std::string& sequence, bool parseName = true, const Alphabet* alphabet = &AlphabetTools::DNA_ALPHABET):
-      EdSymbolList<int>(alphabet),
-      EdIntSymbolList(alphabet),
-      SequenceWithAnnotation(name, sequence, alphabet), hasCoordinates_(false), begin_(0), species_(""), chromosome_(""), strand_(0), size_(0), srcSize_(0)
+  MafSequence(const std::string& name, const std::string& sequence, bool parseName = true, const Alphabet* alphabet = & AlphabetTools::DNA_ALPHABET) :
+    EdSymbolList<int>(alphabet),
+    EdIntSymbolList(alphabet),
+    SequenceWithAnnotation(name, sequence, alphabet), hasCoordinates_(false), begin_(0), species_(""), chromosome_(""), strand_(0), size_(0), srcSize_(0)
+  {
+    size_ = SequenceTools::getNumberOfSites(*this);
+    if (parseName)
+      splitNameIntoSpeciesAndChromosome(name, species_, chromosome_);
+  }
+
+  MafSequence(const std::string& name, const std::string& sequence, size_t begin, char strand, size_t srcSize, bool parseName = true, const Alphabet* alphabet = & AlphabetTools::DNA_ALPHABET) :
+    EdSymbolList<int>(alphabet),
+    EdIntSymbolList(alphabet),
+    SequenceWithAnnotation(name, sequence, alphabet), hasCoordinates_(true), begin_(begin), species_(""), chromosome_(""), strand_(strand), size_(0), srcSize_(srcSize)
+  {
+    size_ = SequenceTools::getNumberOfSites(*this);
+    if (parseName)
+      splitNameIntoSpeciesAndChromosome(name, species_, chromosome_);
+  }
+
+  MafSequence* clone() const
+  {
+    return new MafSequence(*this);
+  }
+
+  MafSequence* cloneMeta() const
+  {
+    return new MafSequence(getName(), std::string(), begin_, strand_, srcSize_, true);
+  }
+
+  ~MafSequence() {}
+
+public:
+  bool hasCoordinates() const { return hasCoordinates_; }
+
+  void removeCoordinates() { hasCoordinates_ = false; begin_ = 0; }
+
+  size_t start() const
+  {
+    if (hasCoordinates_) return begin_;
+    else throw Exception("MafSequence::start(). Sequence " + getName() + " does not have coordinates.");
+  }
+
+  size_t stop() const
+  {
+    if (hasCoordinates_) return begin_ + size_;
+    else throw Exception("MafSequence::stop(). Sequence " + getName() + " does not have coordinates.");
+  }
+
+  /**
+   * @return A range with coordinates from this sequence.
+   * @param origin Tell if coordinates according to original sequence should be used.
+   * If 'yes' and the sequence is on the negative strand, the returned range will be computed as [SrcSize-Stop, SrcSize-Start[
+   */
+  Range<size_t> getRange(bool origin = true) const
+  {
+    if (hasCoordinates_)
     {
-      size_ = SequenceTools::getNumberOfSites(*this);
-      if (parseName)
-        splitNameIntoSpeciesAndChromosome(name, species_, chromosome_);
+      if (origin && strand_ == '-')
+      {
+        return Range<size_t>(srcSize_ - stop(), srcSize_ - start());
+      }
+      else
+      {
+        return Range<size_t>(start(), stop());
+      }
     }
+    else throw Exception("MafSequence::getRange(). Sequence " + getName() + " does not have coordinates.");
+  }
 
-    MafSequence(const std::string& name, const std::string& sequence, size_t begin, char strand, size_t srcSize, bool parseName = true, const Alphabet* alphabet = &AlphabetTools::DNA_ALPHABET) :
-      EdSymbolList<int>(alphabet),
-      EdIntSymbolList(alphabet),
-      SequenceWithAnnotation(name, sequence, alphabet), hasCoordinates_(true), begin_(begin), species_(""), chromosome_(""), strand_(strand), size_(0), srcSize_(srcSize)
+  void setName(const std::string& name)
+  {
+    try
     {
-      size_ = SequenceTools::getNumberOfSites(*this);
-      if (parseName)
-        splitNameIntoSpeciesAndChromosome(name, species_, chromosome_);
+      splitNameIntoSpeciesAndChromosome(name, species_, chromosome_);
     }
+    catch (Exception& e)
+    {
+      species_ = "";
+      chromosome_ = "";
+    }
+    SequenceWithAnnotation::setName(name);
+  }
 
-    MafSequence* clone() const { 
-      return new MafSequence(*this);
+  static void splitNameIntoSpeciesAndChromosome(const std::string& name, std::string& species, std::string& chr)
+  {
+    size_t pos = name.find(".");
+    if (pos != std::string::npos)
+    {
+      chr     = name.substr(pos + 1);
+      species = name.substr(0, pos);
     }
- 
-    MafSequence* cloneMeta() const { 
-      return new MafSequence(getName(), std::string(), begin_, strand_, srcSize_, true);
+    else
+    {
+      throw Exception("MafSequence::splitNameIntospeciesAndChromosome(). Invalid sequence name: " + name);
     }
-    
-    ~MafSequence() {}
+  }
 
-  public:
-    bool hasCoordinates() const { return hasCoordinates_; }
+  const std::string& getSpecies() const { return species_; }
 
-    void removeCoordinates() { hasCoordinates_ = false; begin_ = 0; }
+  const std::string& getChromosome() const { return chromosome_; }
 
-    size_t start() const {
-      if (hasCoordinates_) return begin_;
-      else throw Exception("MafSequence::start(). Sequence " + getName() + " does not have coordinates.");
-    }
+  char getStrand() const { return strand_; }
 
-    size_t stop() const { 
-      if (hasCoordinates_) return begin_ + size_;
-      else throw Exception("MafSequence::stop(). Sequence " + getName() + " does not have coordinates.");
-    }
+  size_t getGenomicSize() const { return size_; }
 
-    /**
-     * @return A range with coordinates from this sequence.
-     * @param origin Tell if coordinates according to original sequence should be used.
-     * If 'yes' and the sequence is on the negative strand, the returned range will be computed as [SrcSize-Stop, SrcSize-Start[
-     */
-    Range<size_t> getRange(bool origin = true) const {
-      if (hasCoordinates_) {
-        if (origin && strand_ == '-') {
-          return Range<size_t>(srcSize_ - stop(), srcSize_ - start());
-        } else {
-          return Range<size_t>(start(), stop());
-        }
-      }
-      else throw Exception("MafSequence::getRange(). Sequence " + getName() + " does not have coordinates.");
-    }
+  size_t getSrcSize() const { return srcSize_; }
 
-    void setName(const std::string& name) {
-      try {
-        splitNameIntoSpeciesAndChromosome(name, species_, chromosome_);
-      } catch (Exception& e) {
-        species_ = "";
-        chromosome_ = "";
-      }
-      SequenceWithAnnotation::setName(name);
-    }
+  void setStart(size_t begin) { begin_ = begin; hasCoordinates_ = true; }
 
-    static void splitNameIntoSpeciesAndChromosome(const std::string& name, std::string& species, std::string& chr) {
-      size_t pos = name.find(".");
-      if (pos != std::string::npos) {
-        chr     = name.substr(pos + 1);
-        species = name.substr(0, pos);
-      } else {
-        throw Exception("MafSequence::splitNameIntospeciesAndChromosome(). Invalid sequence name: " + name);
-      }
-    }
+  void setChromosome(const std::string& chr)
+  {
+    chromosome_ = chr;
+    SequenceWithAnnotation::setName(species_ + "." + chromosome_);
+  }
 
-    const std::string& getSpecies() const { return species_; }
-    
-    const std::string& getChromosome() const { return chromosome_; }
-    
-    char getStrand() const { return strand_; }
-    
-    size_t getGenomicSize() const { return size_; }
-    
-    size_t getSrcSize() const { return srcSize_; }
-    
-    void setStart(size_t begin) { begin_ = begin; hasCoordinates_ = true; }
-    
-    void setChromosome(const std::string& chr) {
-      chromosome_ = chr;
-      SequenceWithAnnotation::setName(species_ + "." + chromosome_);
-    }
-    
-    void setSpecies(const std::string& species) {
-      species_ = species;
-      SequenceWithAnnotation::setName(species_ + "." + chromosome_);
-    }
-    
-    void setStrand(char s) { strand_ = s; }
-    
-    void setSrcSize(size_t srcSize) { srcSize_ = srcSize; }
-  
-    std::string getDescription() const { return getName() + strand_ + ":" + (hasCoordinates_ ? TextTools::toString(start()) + "-" + TextTools::toString(stop()) : "?-?"); }
-  
-    /**
-     * @brief Extract a sub-sequence.
-     *
-     * @return A subsequence.
-     * @param startAt Begining of sub-sequence.
-     * @param length  the length of the sub-sequence.
-     */
-    MafSequence* subSequence(size_t startAt, size_t length) const;
-    
-  private:
-    void beforeSequenceChanged(const IntSymbolListEditionEvent& event) {}
-    void afterSequenceChanged(const IntSymbolListEditionEvent& event) { size_ = SequenceTools::getNumberOfSites(*this); }
-    void beforeSequenceInserted(const IntSymbolListInsertionEvent& event) {}
-    void afterSequenceInserted(const IntSymbolListInsertionEvent& event) { size_ = SequenceTools::getNumberOfSites(*this); }
-    void beforeSequenceDeleted(const IntSymbolListDeletionEvent& event) {}
-    void afterSequenceDeleted(const IntSymbolListDeletionEvent& event) { size_ = SequenceTools::getNumberOfSites(*this); }
-    void beforeSequenceSubstituted(const IntSymbolListSubstitutionEvent& event) {}
-    void afterSequenceSubstituted(const IntSymbolListSubstitutionEvent& event) {}
+  void setSpecies(const std::string& species)
+  {
+    species_ = species;
+    SequenceWithAnnotation::setName(species_ + "." + chromosome_);
+  }
+
+  void setStrand(char s) { strand_ = s; }
+
+  void setSrcSize(size_t srcSize) { srcSize_ = srcSize; }
+
+  std::string getDescription() const { return getName() + strand_ + ":" + (hasCoordinates_ ? TextTools::toString(start()) + "-" + TextTools::toString(stop()) : "?-?"); }
+
+  /**
+   * @brief Extract a sub-sequence.
+   *
+   * @return A subsequence.
+   * @param startAt Begining of sub-sequence.
+   * @param length  the length of the sub-sequence.
+   */
+  MafSequence* subSequence(size_t startAt, size_t length) const;
+
+private:
+  void beforeSequenceChanged(const IntSymbolListEditionEvent& event) {}
+  void afterSequenceChanged(const IntSymbolListEditionEvent& event) { size_ = SequenceTools::getNumberOfSites(*this); }
+  void beforeSequenceInserted(const IntSymbolListInsertionEvent& event) {}
+  void afterSequenceInserted(const IntSymbolListInsertionEvent& event) { size_ = SequenceTools::getNumberOfSites(*this); }
+  void beforeSequenceDeleted(const IntSymbolListDeletionEvent& event) {}
+  void afterSequenceDeleted(const IntSymbolListDeletionEvent& event) { size_ = SequenceTools::getNumberOfSites(*this); }
+  void beforeSequenceSubstituted(const IntSymbolListSubstitutionEvent& event) {}
+  void afterSequenceSubstituted(const IntSymbolListSubstitutionEvent& event) {}
 };
-
 } // end of namespace bpp.
 
-#endif //_MAFSEQUENCE_H_
+#endif//_MAFSEQUENCE_H_

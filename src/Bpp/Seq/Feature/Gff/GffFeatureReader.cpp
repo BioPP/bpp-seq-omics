@@ -5,47 +5,47 @@
 //
 
 /*
-Copyright or © or Copr. Bio++ Development Team, (November 17, 2004)
+   Copyright or © or Copr. Bio++ Development Team, (November 17, 2004)
 
-This software is a computer program whose purpose is to provide classes
-for sequences analysis.
+   This software is a computer program whose purpose is to provide classes
+   for sequences analysis.
 
-This software is governed by the CeCILL  license under French law and
-abiding by the rules of distribution of free software.  You can  use, 
-modify and/ or redistribute the software under the terms of the CeCILL
-license as circulated by CEA, CNRS and INRIA at the following URL
-"http://www.cecill.info". 
+   This software is governed by the CeCILL  license under French law and
+   abiding by the rules of distribution of free software.  You can  use,
+   modify and/ or redistribute the software under the terms of the CeCILL
+   license as circulated by CEA, CNRS and INRIA at the following URL
+   "http://www.cecill.info".
 
-As a counterpart to the access to the source code and  rights to copy,
-modify and redistribute granted by the license, users are provided only
-with a limited warranty  and the software's author,  the holder of the
-economic rights,  and the successive licensors  have only  limited
-liability. 
+   As a counterpart to the access to the source code and  rights to copy,
+   modify and redistribute granted by the license, users are provided only
+   with a limited warranty  and the software's author,  the holder of the
+   economic rights,  and the successive licensors  have only  limited
+   liability.
 
-In this respect, the user's attention is drawn to the risks associated
-with loading,  using,  modifying and/or developing or reproducing the
-software by the user in light of its specific status of free software,
-that may mean  that it is complicated to manipulate,  and  that  also
-therefore means  that it is reserved for developers  and  experienced
-professionals having in-depth computer knowledge. Users are therefore
-encouraged to load and test the software's suitability as regards their
-requirements in conditions enabling the security of their systems and/or 
-data to be ensured and,  more generally, to use and operate it in the 
-same conditions as regards security. 
+   In this respect, the user's attention is drawn to the risks associated
+   with loading,  using,  modifying and/or developing or reproducing the
+   software by the user in light of its specific status of free software,
+   that may mean  that it is complicated to manipulate,  and  that  also
+   therefore means  that it is reserved for developers  and  experienced
+   professionals having in-depth computer knowledge. Users are therefore
+   encouraged to load and test the software's suitability as regards their
+   requirements in conditions enabling the security of their systems and/or
+   data to be ensured and,  more generally, to use and operate it in the
+   same conditions as regards security.
 
-The fact that you are presently reading this means that you have had
-knowledge of the CeCILL license and that you accept its terms.
-*/
+   The fact that you are presently reading this means that you have had
+   knowledge of the CeCILL license and that you accept its terms.
+ */
 
 #include "GffFeatureReader.h"
 
-//From bpp-core:
+// From bpp-core:
 #include <Bpp/Text/StringTokenizer.h>
 #include <Bpp/Text/TextTools.h>
 #include <Bpp/Text/KeyvalTools.h>
 #include <Bpp/Numeric/VectorTools.h>
 
-//From the STL:
+// From the STL:
 #include <string>
 #include <iostream>
 
@@ -65,10 +65,13 @@ const std::string GffFeatureReader::GFF_ONTOLOGY_TERM = "Ontology_term";
 const std::string GffFeatureReader::GFF_IS_CIRCULAR = "Is_circular";
 
 
-void GffFeatureReader::getNextLine_() {
+void GffFeatureReader::getNextLine_()
+{
   nextLine_ = "";
-  while (TextTools::isEmpty(nextLine_) || nextLine_.size() < 2 || nextLine_[0] == '#') {
-    if (input_.eof()) {
+  while (TextTools::isEmpty(nextLine_) || nextLine_.size() < 2 || nextLine_[0] == '#')
+  {
+    if (input_.eof())
+    {
       nextLine_ = "";
       return;
     }
@@ -80,13 +83,13 @@ const BasicSequenceFeature GffFeatureReader::nextFeature()
 {
   if (!hasMoreFeature())
     throw Exception("GffFeatureReader::nextFeature(). No more feature in file.");
-  
-  //Parse current line:
+
+  // Parse current line:
   StringTokenizer st(nextLine_, "\t");
   if (st.numberOfRemainingTokens() != 9)
     throw Exception("GffFeatureReader::nextFeature(). Wrong GFF3 file format: should have 9 tab delimited columns.");
-  
-  //if ok, we can parse each column:
+
+  // if ok, we can parse each column:
   string seqId       = st.nextToken();
   string source      = st.nextToken();
   string type        = st.nextToken();
@@ -100,23 +103,26 @@ const BasicSequenceFeature GffFeatureReader::nextFeature()
   KeyvalTools::multipleKeyvals(attrDesc, attributes, ";", false);
   string id = attributes["ID"];
   BasicSequenceFeature feature(id, seqId, source, type, start, end, strand[0], score);
-  
-  //Set phase attributes:
-  if (phase != ".") feature.setAttribute(GFF_PHASE, phase);
 
-  //now check additional attributes:
-  for (map<string, string>::iterator it = attributes.begin(); it != attributes.end(); ++it) {
+  // Set phase attributes:
+  if (phase != ".")
+    feature.setAttribute(GFF_PHASE, phase);
+
+  // now check additional attributes:
+  for (map<string, string>::iterator it = attributes.begin(); it != attributes.end(); ++it)
+  {
     if (it->first != "ID")
-      feature.setAttribute(it->first, it->second); //We accept all attributes, even if they are not standard.
+      feature.setAttribute(it->first, it->second); // We accept all attributes, even if they are not standard.
   }
-  
-  //Read the next line:
+
+  // Read the next line:
   getNextLine_();
 
   return feature;
 }
 
-std::string GffFeatureReader::toString(const bpp::SequenceFeature& f) {
+std::string GffFeatureReader::toString(const bpp::SequenceFeature& f)
+{
   std::vector< std::string > v;
   std::vector< std::string > attr;
   std::set< std::string > attrNames = f.getAttributeList();
@@ -126,25 +132,36 @@ std::string GffFeatureReader::toString(const bpp::SequenceFeature& f) {
   v.push_back(bpp::TextTools::toString(f.getStart() + 1));
   v.push_back(bpp::TextTools::toString(f.getEnd()));
   v.push_back(bpp::TextTools::toString(f.getScore()));
-  if (f.isStranded()) {
-    if (f.isNegativeStrand()) {
-    v.push_back("-");
-    } else {
-    v.push_back("+");
+  if (f.isStranded())
+  {
+    if (f.isNegativeStrand())
+    {
+      v.push_back("-");
     }
-  } else {
+    else
+    {
+      v.push_back("+");
+    }
+  }
+  else
+  {
     v.push_back(".");
   }
-  if (f.getAttribute(GFF_PHASE) == "") {
+  if (f.getAttribute(GFF_PHASE) == "")
+  {
     v.push_back(".");
-  } else {
+  }
+  else
+  {
     v.push_back(f.getAttribute(GFF_PHASE));
   }
-  
-  if (f.getId() != "") {
+
+  if (f.getId() != "")
+  {
     attr.push_back("ID=" + f.getId());
   }
-  for (std::set< std::string >::iterator it = attrNames.begin() ; it != attrNames.end() ; it++) {
+  for (std::set< std::string >::iterator it = attrNames.begin(); it != attrNames.end(); it++)
+  {
     attr.push_back(*it + "=" + f.getAttribute(*it));
   }
   v.push_back(bpp::VectorTools::paste(attr, ";"));

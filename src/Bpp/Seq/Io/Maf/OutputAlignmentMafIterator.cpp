@@ -5,46 +5,46 @@
 //
 
 /*
-Copyright or © or Copr. Bio++ Development Team, (2010)
+   Copyright or © or Copr. Bio++ Development Team, (2010)
 
-This software is a computer program whose purpose is to provide classes
-for sequences analysis.
+   This software is a computer program whose purpose is to provide classes
+   for sequences analysis.
 
-This software is governed by the CeCILL  license under French law and
-abiding by the rules of distribution of free software.  You can  use, 
-modify and/ or redistribute the software under the terms of the CeCILL
-license as circulated by CEA, CNRS and INRIA at the following URL
-"http://www.cecill.info". 
+   This software is governed by the CeCILL  license under French law and
+   abiding by the rules of distribution of free software.  You can  use,
+   modify and/ or redistribute the software under the terms of the CeCILL
+   license as circulated by CEA, CNRS and INRIA at the following URL
+   "http://www.cecill.info".
 
-As a counterpart to the access to the source code and  rights to copy,
-modify and redistribute granted by the license, users are provided only
-with a limited warranty  and the software's author,  the holder of the
-economic rights,  and the successive licensors  have only  limited
-liability. 
+   As a counterpart to the access to the source code and  rights to copy,
+   modify and redistribute granted by the license, users are provided only
+   with a limited warranty  and the software's author,  the holder of the
+   economic rights,  and the successive licensors  have only  limited
+   liability.
 
-In this respect, the user's attention is drawn to the risks associated
-with loading,  using,  modifying and/or developing or reproducing the
-software by the user in light of its specific status of free software,
-that may mean  that it is complicated to manipulate,  and  that  also
-therefore means  that it is reserved for developers  and  experienced
-professionals having in-depth computer knowledge. Users are therefore
-encouraged to load and test the software's suitability as regards their
-requirements in conditions enabling the security of their systems and/or 
-data to be ensured and,  more generally, to use and operate it in the 
-same conditions as regards security. 
+   In this respect, the user's attention is drawn to the risks associated
+   with loading,  using,  modifying and/or developing or reproducing the
+   software by the user in light of its specific status of free software,
+   that may mean  that it is complicated to manipulate,  and  that  also
+   therefore means  that it is reserved for developers  and  experienced
+   professionals having in-depth computer knowledge. Users are therefore
+   encouraged to load and test the software's suitability as regards their
+   requirements in conditions enabling the security of their systems and/or
+   data to be ensured and,  more generally, to use and operate it in the
+   same conditions as regards security.
 
-The fact that you are presently reading this means that you have had
-knowledge of the CeCILL license and that you accept its terms.
-*/
+   The fact that you are presently reading this means that you have had
+   knowledge of the CeCILL license and that you accept its terms.
+ */
 
 #include "OutputAlignmentMafIterator.h"
 
-//From bpp-seq:
+// From bpp-seq:
 #include <Bpp/Seq/Container/SequenceContainerTools.h>
 
 using namespace bpp;
 
-//From the STL:
+// From the STL:
 #include <string>
 #include <numeric>
 
@@ -53,14 +53,19 @@ using namespace std;
 MafBlock* OutputAlignmentMafIterator::analyseCurrentBlock_()
 {
   MafBlock* block = iterator_->nextBlock();
-  if (block) {
-    if (output_) {
+  if (block)
+  {
+    if (output_)
+    {
       writeBlock(*output_, *block);
-    } else {
+    }
+    else
+    {
       string chr   = "ChrNA";
       string start = "StartNA";
       string stop  = "StopNA";
-      if (block->hasSequenceForSpecies(refSpecies_)) {
+      if (block->hasSequenceForSpecies(refSpecies_))
+      {
         const MafSequence& refseq = block->getSequenceForSpecies(refSpecies_);
         chr   = refseq.getChromosome();
         start = TextTools::toString(refseq.start());
@@ -79,14 +84,16 @@ MafBlock* OutputAlignmentMafIterator::analyseCurrentBlock_()
   return block;
 }
 
-void OutputAlignmentMafIterator::writeBlock(std::ostream& out, const MafBlock& block) const {
-  //First get alignment:
+void OutputAlignmentMafIterator::writeBlock(std::ostream& out, const MafBlock& block) const
+{
+  // First get alignment:
   AlignedSequenceContainer aln(&AlphabetTools::DNA_ALPHABET);
-  //We cannot copy directly the container because we want to convert from MafSequence to BasicSequence (needed for renaming):
+  // We cannot copy directly the container because we want to convert from MafSequence to BasicSequence (needed for renaming):
   SequenceContainerTools::convertContainer<AlignedSequenceContainer, AlignedSequenceContainer, BasicSequence>(block.getAlignment(), aln);
-  //Format sequence names:
+  // Format sequence names:
   vector<string> names(aln.getNumberOfSequences());
-  for (size_t i = 0; i < aln.getNumberOfSequences(); ++i) {
+  for (size_t i = 0; i < aln.getNumberOfSequences(); ++i)
+  {
     const MafSequence& mafseq = block.getSequence(i);
     if (mafseq.hasCoordinates() && outputCoordinates_)
       names[i] = mafseq.getSpecies() + "-" + mafseq.getChromosome() + "(" + mafseq.getStrand() + ")/" + TextTools::toString(mafseq.start() + 1) + "-" + TextTools::toString(mafseq.stop() + 1);
@@ -95,7 +102,6 @@ void OutputAlignmentMafIterator::writeBlock(std::ostream& out, const MafBlock& b
   }
   aln.setSequencesNames(names);
   if (addLDHatHeader_)
-    out << aln.getNumberOfSequences() << " " << aln.getNumberOfSites() << " 1" << endl; //We here assume sequences are haploid.
+    out << aln.getNumberOfSequences() << " " << aln.getNumberOfSites() << " 1" << endl; // We here assume sequences are haploid.
   writer_->writeAlignment(out, aln);
 }
-

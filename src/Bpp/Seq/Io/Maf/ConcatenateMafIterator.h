@@ -5,50 +5,50 @@
 //
 
 /*
-Copyright or © or Copr. Bio++ Development Team, (2010)
+   Copyright or © or Copr. Bio++ Development Team, (2010)
 
-This software is a computer program whose purpose is to provide classes
-for sequences analysis.
+   This software is a computer program whose purpose is to provide classes
+   for sequences analysis.
 
-This software is governed by the CeCILL  license under French law and
-abiding by the rules of distribution of free software.  You can  use, 
-modify and/ or redistribute the software under the terms of the CeCILL
-license as circulated by CEA, CNRS and INRIA at the following URL
-"http://www.cecill.info". 
+   This software is governed by the CeCILL  license under French law and
+   abiding by the rules of distribution of free software.  You can  use,
+   modify and/ or redistribute the software under the terms of the CeCILL
+   license as circulated by CEA, CNRS and INRIA at the following URL
+   "http://www.cecill.info".
 
-As a counterpart to the access to the source code and  rights to copy,
-modify and redistribute granted by the license, users are provided only
-with a limited warranty  and the software's author,  the holder of the
-economic rights,  and the successive licensors  have only  limited
-liability. 
+   As a counterpart to the access to the source code and  rights to copy,
+   modify and redistribute granted by the license, users are provided only
+   with a limited warranty  and the software's author,  the holder of the
+   economic rights,  and the successive licensors  have only  limited
+   liability.
 
-In this respect, the user's attention is drawn to the risks associated
-with loading,  using,  modifying and/or developing or reproducing the
-software by the user in light of its specific status of free software,
-that may mean  that it is complicated to manipulate,  and  that  also
-therefore means  that it is reserved for developers  and  experienced
-professionals having in-depth computer knowledge. Users are therefore
-encouraged to load and test the software's suitability as regards their
-requirements in conditions enabling the security of their systems and/or 
-data to be ensured and,  more generally, to use and operate it in the 
-same conditions as regards security. 
+   In this respect, the user's attention is drawn to the risks associated
+   with loading,  using,  modifying and/or developing or reproducing the
+   software by the user in light of its specific status of free software,
+   that may mean  that it is complicated to manipulate,  and  that  also
+   therefore means  that it is reserved for developers  and  experienced
+   professionals having in-depth computer knowledge. Users are therefore
+   encouraged to load and test the software's suitability as regards their
+   requirements in conditions enabling the security of their systems and/or
+   data to be ensured and,  more generally, to use and operate it in the
+   same conditions as regards security.
 
-The fact that you are presently reading this means that you have had
-knowledge of the CeCILL license and that you accept its terms.
-*/
+   The fact that you are presently reading this means that you have had
+   knowledge of the CeCILL license and that you accept its terms.
+ */
 
 #ifndef _CONCATENATEMAFITERATOR_H_
 #define _CONCATENATEMAFITERATOR_H_
 
 #include "MafIterator.h"
 
-//From the STL:
+// From the STL:
 #include <iostream>
 #include <string>
 #include <deque>
 
-namespace bpp {
-
+namespace bpp
+{
 /**
  * @brief Concatenate blocks up to a certain size.
  *
@@ -57,45 +57,43 @@ namespace bpp {
  * The pass value will be removed if it is different for the blocks.
  * If a reference species is given, only block with identical chr tag will be concatenated.
  */
-class ConcatenateMafIterator:
+class ConcatenateMafIterator :
   public AbstractFilterMafIterator
 {
-  private:
-    MafBlock* incomingBlock_;
-    unsigned int minimumSize_;
-    std::string refSpecies_;
+private:
+  MafBlock* incomingBlock_;
+  unsigned int minimumSize_;
+  std::string refSpecies_;
 
-  public:
-    ConcatenateMafIterator(MafIterator* iterator, unsigned int minimumSize, std::string refSpecies = "") :
-      AbstractFilterMafIterator(iterator),
-      incomingBlock_(0),
-      minimumSize_(minimumSize),
-      refSpecies_(refSpecies)
-    {
-      incomingBlock_ = iterator->nextBlock();
-    }
+public:
+  ConcatenateMafIterator(MafIterator* iterator, unsigned int minimumSize, std::string refSpecies = "") :
+    AbstractFilterMafIterator(iterator),
+    incomingBlock_(0),
+    minimumSize_(minimumSize),
+    refSpecies_(refSpecies)
+  {
+    incomingBlock_ = iterator->nextBlock();
+  }
 
-  private:
-    ConcatenateMafIterator(const ConcatenateMafIterator& iterator) :
-      AbstractFilterMafIterator(0),
-      incomingBlock_(iterator.incomingBlock_),
-      minimumSize_(iterator.minimumSize_),
-      refSpecies_(iterator.refSpecies_)
-    {}
-    
-    ConcatenateMafIterator& operator=(const ConcatenateMafIterator& iterator)
-    {
-      incomingBlock_ = iterator.incomingBlock_;
-      minimumSize_ = iterator.minimumSize_;
-      refSpecies_ = iterator.refSpecies_;
-      return *this;
-    }
+private:
+  ConcatenateMafIterator(const ConcatenateMafIterator& iterator) :
+    AbstractFilterMafIterator(0),
+    incomingBlock_(iterator.incomingBlock_),
+    minimumSize_(iterator.minimumSize_),
+    refSpecies_(iterator.refSpecies_)
+  {}
 
-  private:
-    MafBlock* analyseCurrentBlock_();
+  ConcatenateMafIterator& operator=(const ConcatenateMafIterator& iterator)
+  {
+    incomingBlock_ = iterator.incomingBlock_;
+    minimumSize_ = iterator.minimumSize_;
+    refSpecies_ = iterator.refSpecies_;
+    return *this;
+  }
 
+private:
+  MafBlock* analyseCurrentBlock_();
 };
-
 } // end of namespace bpp.
 
-#endif //_CONCATENATEMAFITERATOR_H_
+#endif//_CONCATENATEMAFITERATOR_H_

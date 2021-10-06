@@ -5,37 +5,37 @@
 //
 
 /*
-Copyright or © or Copr. Bio++ Development Team, (January 27, 2012)
+   Copyright or © or Copr. Bio++ Development Team, (January 27, 2012)
 
-This software is a computer program whose purpose is to provide classes
-for sequences analysis.
+   This software is a computer program whose purpose is to provide classes
+   for sequences analysis.
 
-This software is governed by the CeCILL  license under French law and
-abiding by the rules of distribution of free software.  You can  use, 
-modify and/ or redistribute the software under the terms of the CeCILL
-license as circulated by CEA, CNRS and INRIA at the following URL
-"http://www.cecill.info". 
+   This software is governed by the CeCILL  license under French law and
+   abiding by the rules of distribution of free software.  You can  use,
+   modify and/ or redistribute the software under the terms of the CeCILL
+   license as circulated by CEA, CNRS and INRIA at the following URL
+   "http://www.cecill.info".
 
-As a counterpart to the access to the source code and  rights to copy,
-modify and redistribute granted by the license, users are provided only
-with a limited warranty  and the software's author,  the holder of the
-economic rights,  and the successive licensors  have only  limited
-liability. 
+   As a counterpart to the access to the source code and  rights to copy,
+   modify and redistribute granted by the license, users are provided only
+   with a limited warranty  and the software's author,  the holder of the
+   economic rights,  and the successive licensors  have only  limited
+   liability.
 
-In this respect, the user's attention is drawn to the risks associated
-with loading,  using,  modifying and/or developing or reproducing the
-software by the user in light of its specific status of free software,
-that may mean  that it is complicated to manipulate,  and  that  also
-therefore means  that it is reserved for developers  and  experienced
-professionals having in-depth computer knowledge. Users are therefore
-encouraged to load and test the software's suitability as regards their
-requirements in conditions enabling the security of their systems and/or 
-data to be ensured and,  more generally, to use and operate it in the 
-same conditions as regards security. 
+   In this respect, the user's attention is drawn to the risks associated
+   with loading,  using,  modifying and/or developing or reproducing the
+   software by the user in light of its specific status of free software,
+   that may mean  that it is complicated to manipulate,  and  that  also
+   therefore means  that it is reserved for developers  and  experienced
+   professionals having in-depth computer knowledge. Users are therefore
+   encouraged to load and test the software's suitability as regards their
+   requirements in conditions enabling the security of their systems and/or
+   data to be ensured and,  more generally, to use and operate it in the
+   same conditions as regards security.
 
-The fact that you are presently reading this means that you have had
-knowledge of the CeCILL license and that you accept its terms.
-*/
+   The fact that you are presently reading this means that you have had
+   knowledge of the CeCILL license and that you accept its terms.
+ */
 
 #ifndef _GTFFEATUREREADER_H_
 #define _GTFFEATUREREADER_H_
@@ -43,15 +43,15 @@ knowledge of the CeCILL license and that you accept its terms.
 #include "../SequenceFeature.h"
 #include "../FeatureReader.h"
 
-//From bpp-core:
+// From bpp-core:
 #include <Bpp/Exceptions.h>
 
-//From the STL:
+// From the STL:
 #include <string>
 #include <vector>
 
-namespace bpp {
-
+namespace bpp
+{
 /**
  * @brief A simple reader implementing the Gene Transfer Format.
  *
@@ -63,55 +63,58 @@ namespace bpp {
  *
  * @author Sylvain Gaillard
  */
-class GtfFeatureReader:
+class GtfFeatureReader :
   public virtual FeatureReader
 {
-  public:
-    static const std::string GTF_PHASE;
-    static const std::string GTF_GENE_ID;
-    static const std::string GTF_TRANSCRIPT_ID;
+public:
+  static const std::string GTF_PHASE;
+  static const std::string GTF_GENE_ID;
+  static const std::string GTF_TRANSCRIPT_ID;
 
-  private:
-    std::istream& input_;
-    std::string nextLine_;
+private:
+  std::istream& input_;
+  std::string nextLine_;
 
-  public:
-    GtfFeatureReader(std::istream& input):
-      input_(input), nextLine_()
+public:
+  GtfFeatureReader(std::istream& input) :
+    input_(input), nextLine_()
+  {
+    getNextLine_();
+  }
+
+public:
+  bool hasMoreFeature() const { return nextLine_ != ""; }
+  const BasicSequenceFeature nextFeature();
+
+  void getAllFeatures(SequenceFeatureSet& features)
+  {
+    while (hasMoreFeature())
     {
-      getNextLine_();
+      features.addFeature(nextFeature());
     }
-
-  public:
-    bool hasMoreFeature() const { return nextLine_ != ""; }
-    const BasicSequenceFeature nextFeature();
-
-    void getAllFeatures(SequenceFeatureSet& features) {
-      while (hasMoreFeature()) {
-        features.addFeature(nextFeature());
-      }
+  }
+  void getFeaturesOfType(const std::string& type, SequenceFeatureSet& features)
+  {
+    while (hasMoreFeature())
+    {
+      BasicSequenceFeature feature = nextFeature();
+      if (feature.getType() == type)
+        features.addFeature(feature);
     }
-    void getFeaturesOfType(const std::string& type, SequenceFeatureSet& features) {
-      while (hasMoreFeature()) {
-        BasicSequenceFeature feature = nextFeature();
-        if (feature.getType() == type)
-          features.addFeature(feature);
-      }
+  }
+  void getFeaturesOfSequence(const std::string& seqId, SequenceFeatureSet& features)
+  {
+    while (hasMoreFeature())
+    {
+      BasicSequenceFeature feature = nextFeature();
+      if (feature.getSequenceId() == seqId)
+        features.addFeature(feature);
     }
-    void getFeaturesOfSequence(const std::string& seqId, SequenceFeatureSet& features) {
-      while (hasMoreFeature()) {
-        BasicSequenceFeature feature = nextFeature();
-        if (feature.getSequenceId() == seqId)
-          features.addFeature(feature);
-      }
-    }
+  }
 
-  private:
-    void getNextLine_();
-
+private:
+  void getNextLine_();
 };
+} // end of namespace bpp
 
-} //end of namespace bpp
-
-#endif //_GTFFEATUREREADER_H_
-
+#endif//_GTFFEATUREREADER_H_
