@@ -74,28 +74,83 @@ private:
 public:
   MafSequence(const Alphabet* alphabet = & AlphabetTools::DNA_ALPHABET) :
     EdSymbolList<int>(alphabet),
-    EdIntSymbolList(alphabet),
-    SequenceWithAnnotation(alphabet), hasCoordinates_(false), begin_(0), species_(""), chromosome_(""), strand_(0), size_(0), srcSize_(0)
+    SequenceWithAnnotation(alphabet),
+    hasCoordinates_(false),
+    begin_(0),
+    species_(""),
+    chromosome_(""),
+    strand_(0),
+    size_(0),
+    srcSize_(0)
   {}
 
-  MafSequence(const std::string& name, const std::string& sequence, bool parseName = true, const Alphabet* alphabet = & AlphabetTools::DNA_ALPHABET) :
+  MafSequence(
+      const std::string& name,
+      const std::string& sequence,
+      bool parseName = true,
+      const Alphabet* alphabet = & AlphabetTools::DNA_ALPHABET) :
     EdSymbolList<int>(alphabet),
-    EdIntSymbolList(alphabet),
-    SequenceWithAnnotation(name, sequence, alphabet), hasCoordinates_(false), begin_(0), species_(""), chromosome_(""), strand_(0), size_(0), srcSize_(0)
+    SequenceWithAnnotation(name, sequence, alphabet),
+    hasCoordinates_(false),
+    begin_(0),
+    species_(""),
+    chromosome_(""),
+    strand_(0),
+    size_(0),
+    srcSize_(0)
   {
     size_ = SequenceTools::getNumberOfSites(*this);
     if (parseName)
       splitNameIntoSpeciesAndChromosome(name, species_, chromosome_);
   }
 
-  MafSequence(const std::string& name, const std::string& sequence, size_t begin, char strand, size_t srcSize, bool parseName = true, const Alphabet* alphabet = & AlphabetTools::DNA_ALPHABET) :
+  MafSequence(
+      const std::string& name,
+      const std::string& sequence,
+      size_t begin,
+      char strand,
+      size_t srcSize,
+      bool parseName = true,
+      const Alphabet* alphabet = & AlphabetTools::DNA_ALPHABET) :
     EdSymbolList<int>(alphabet),
-    EdIntSymbolList(alphabet),
-    SequenceWithAnnotation(name, sequence, alphabet), hasCoordinates_(true), begin_(begin), species_(""), chromosome_(""), strand_(strand), size_(0), srcSize_(srcSize)
+    SequenceWithAnnotation(name, sequence, alphabet),
+    hasCoordinates_(true),
+    begin_(begin),
+    species_(""),
+    chromosome_(""),
+    strand_(strand),
+    size_(0),
+    srcSize_(srcSize)
   {
     size_ = SequenceTools::getNumberOfSites(*this);
     if (parseName)
       splitNameIntoSpeciesAndChromosome(name, species_, chromosome_);
+  }
+
+  MafSequence(const MafSequence& mafSeq):
+    EdSymbolList<int>(mafSeq),
+    SequenceWithAnnotation(mafSeq),
+    hasCoordinates_(mafSeq.hasCoordinates_),
+    begin_(mafSeq.begin_),
+    species_(mafSeq.species_),
+    chromosome_(mafSeq.chromosome_),
+    strand_(mafSeq.strand_),
+    size_(mafSeq.size_),
+    srcSize_(mafSeq.srcSize_)
+  {}
+
+  MafSequence& operator=(const MafSequence& mafSeq)
+  {
+    EdSymbolList<int>::operator=(mafSeq);
+    SequenceWithAnnotation::operator=(mafSeq);
+    hasCoordinates_ = mafSeq.hasCoordinates_;
+    begin_ = mafSeq.begin_;
+    species_ = mafSeq.species_;
+    chromosome_ = mafSeq.chromosome_;
+    strand_ = mafSeq.strand_;
+    size_ = mafSeq.size_;
+    srcSize_ = mafSeq.srcSize_;
+    return *this;
   }
 
   MafSequence* clone() const
@@ -172,7 +227,7 @@ public:
     }
     else
     {
-      throw Exception("MafSequence::splitNameIntospeciesAndChromosome(). Invalid sequence name: " + name);
+      throw Exception("MafSequence::splitNameIntoSpeciesAndChromosome(). Invalid sequence name: " + name);
     }
   }
 
