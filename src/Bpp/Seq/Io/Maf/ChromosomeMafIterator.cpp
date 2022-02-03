@@ -71,7 +71,7 @@ MafBlock* ChromosomeMafIterator::analyseCurrentBlock_()
       }
       delete currentBlock_;
     }
-    else if (chr_.find(chr) != chr_.end())
+    else if (chr_.find(chr) == chr_.end())
     {
       if (logstream_)
       {

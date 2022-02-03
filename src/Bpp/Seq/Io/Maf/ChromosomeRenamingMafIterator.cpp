@@ -58,10 +58,10 @@ MafBlock* ChromosomeRenamingMafIterator::analyseCurrentBlock_()
       auto tln = chrTranslation_.find(chr);
       if (tln != chrTranslation_.end()) {
         currentBlock_->getMafSequence(i).setChromosome(tln->second);
-      }
-      if (logstream_)
-      {
-        (*logstream_ << "CHROMOSOME RENAMING: renamed " << chr << " to " << tln->second << ".").endLine();
+        if (logstream_)
+        {
+          (*logstream_ << "CHROMOSOME RENAMING: renamed " << chr << " to " << tln->second << ".").endLine();
+        }
       }
     }
   }
