@@ -59,9 +59,9 @@ void CsvStatisticsOutputIterationListener::iterationStarts()
 void CsvStatisticsOutputIterationListener::iterationMoves(const MafBlock& currentBlock)
 {
   const vector<const BppNumberI*>& values = statsIterator_->getResults();
-  if (currentBlock.hasSequenceForSpecies(refSpecies_))
+  if (currentBlock.hasMafSequenceForSpecies(refSpecies_))
   {
-    const MafSequence& refSeq = currentBlock.getSequenceForSpecies(refSpecies_);
+    const MafSequence& refSeq = currentBlock.getMafSequenceForSpecies(refSpecies_);
     if (refSeq.hasCoordinates())
       *output_ << refSeq.getChromosome() << sep_ << refSeq.start() << sep_ << refSeq.stop();
     else

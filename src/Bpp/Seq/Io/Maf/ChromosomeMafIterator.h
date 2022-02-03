@@ -45,21 +45,33 @@
 // From the STL:
 #include <iostream>
 #include <string>
-#include <deque>
+#include <set>
 
 namespace bpp
 {
 /**
- * @brief Filter maf blocks to keep only the block corresponding to one chromosome (of a reference sequence).
+ * @brief Filter maf blocks to keep only blocks corresponding to a selection of chromosomes (of a reference sequence).
  */
 class ChromosomeMafIterator :
   public AbstractFilterMafIterator
 {
 private:
   std::string ref_;
-  std::string chr_;
+  std::set<std::string> chr_;
 
 public:
+  /**
+   * @param iterator The input iterator.
+   * @param reference The reference species name.
+   * @param chr the set of chromosome names to filter.
+   */
+  ChromosomeMafIterator(MafIterator* iterator, const std::string& reference, const std::set<std::string>& chr) :
+    AbstractFilterMafIterator(iterator),
+    ref_(reference),
+    chr_(chr)
+  {
+  }
+
   /**
    * @param iterator The input iterator.
    * @param reference The reference species name.
@@ -68,8 +80,10 @@ public:
   ChromosomeMafIterator(MafIterator* iterator, const std::string& reference, const std::string& chr) :
     AbstractFilterMafIterator(iterator),
     ref_(reference),
-    chr_(chr)
-  {}
+    chr_()
+  {
+    chr_.insert(chr);
+  }
 
 private:
   ChromosomeMafIterator(const ChromosomeMafIterator& iterator) :

@@ -58,14 +58,14 @@ MafBlock* CoordinateTranslatorMafIterator::analyseCurrentBlock_()
     return 0; // No more block.
 
   // Check if the block contains the reference and target species:
-  if (!block->hasSequenceForSpecies(referenceSpecies_))
+  if (!block->hasMafSequenceForSpecies(referenceSpecies_))
     return block.release();
-  if (!block->hasSequenceForSpecies(targetSpecies_))
+  if (!block->hasMafSequenceForSpecies(targetSpecies_))
     return block.release();
 
   // Get the feature ranges for this block:
-  const MafSequence& refSeq = block->getSequenceForSpecies(referenceSpecies_);
-  const MafSequence& targetSeq = block->getSequenceForSpecies(targetSpecies_);
+  const MafSequence& refSeq = block->getMafSequenceForSpecies(referenceSpecies_);
+  const MafSequence& targetSeq = block->getMafSequenceForSpecies(targetSpecies_);
 
   // first check if there is one (for now we assume that features refer to the chromosome or contig name, with implicit species):
   std::map<std::string, SequenceFeatureSet*>::iterator mr = inputFeaturesPerChr_.find(refSeq.getChromosome());

@@ -59,7 +59,7 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_()
         return 0; // No more block.
 
       // Check if the block contains the reference species:
-      if (!block->hasSequenceForSpecies(refSpecies_))
+      if (!block->hasMafSequenceForSpecies(refSpecies_))
       {
         if (logstream_)
         {
@@ -69,7 +69,7 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_()
       }
 
       // Get the feature ranges for this block:
-      const MafSequence& refSeq = block->getSequenceForSpecies(refSpecies_);
+      const MafSequence& refSeq = block->getMafSequenceForSpecies(refSpecies_);
       // first check if there is one (for now we assume that features refer to the chromosome or contig name, with implicit species):
       std::map<std::string, MultiRange<size_t> >::iterator mr = ranges_.find(refSeq.getChromosome());
       if (mr == ranges_.end())
@@ -189,13 +189,13 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_()
               MafSequence* subseq;
               if (i == 0)
               {
-                subseq = block->getSequence(j).subSequence(0, pos[i]);
+                subseq = block->getMafSequence(j).subSequence(0, pos[i]);
               }
               else
               {
-                subseq = block->getSequence(j).subSequence(pos[i - 1], pos[i] - pos[i - 1]);
+                subseq = block->getMafSequence(j).subSequence(pos[i - 1], pos[i] - pos[i - 1]);
               }
-              newBlock->addSequence(*subseq);
+              newBlock->addMafSequence(*subseq);
               delete subseq;
             }
             if (newBlock->getNumberOfSites() > 0)
@@ -211,8 +211,8 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_()
             outBlock->setPass(block->getPass());
             for (size_t j = 0; j < block->getNumberOfSequences(); ++j)
             {
-              MafSequence* outseq = block->getSequence(j).subSequence(pos[i], pos[i + 1] - pos[i]);
-              outBlock->addSequence(*outseq);
+              MafSequence* outseq = block->getMafSequence(j).subSequence(pos[i], pos[i + 1] - pos[i]);
+              outBlock->addMafSequence(*outseq);
               delete outseq;
             }
             trashBuffer_.push_back(outBlock);
@@ -227,8 +227,8 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_()
           for (size_t j = 0; j < block->getNumberOfSequences(); ++j)
           {
             MafSequence* subseq;
-            subseq = block->getSequence(j).subSequence(pos[pos.size() - 1], block->getNumberOfSites() - pos[pos.size() - 1]);
-            newBlock->addSequence(*subseq);
+            subseq = block->getMafSequence(j).subSequence(pos[pos.size() - 1], block->getNumberOfSites() - pos[pos.size() - 1]);
+            newBlock->addMafSequence(*subseq);
             delete subseq;
           }
           blockBuffer_.push_back(newBlock);

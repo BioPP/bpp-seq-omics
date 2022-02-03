@@ -65,7 +65,7 @@ MafBlock* QualityFilterMafIterator::analyseCurrentBlock_()
       vector< vector<int> > aln;
       for (size_t i = 0; i < species_.size(); ++i)
       {
-        const MafSequence* seq = &block->getSequenceForSpecies(species_[i]);
+        const MafSequence* seq = &block->getMafSequenceForSpecies(species_[i]);
         if (seq->hasAnnotation(SequenceQuality::QUALITY_SCORE))
         {
           aln.push_back(dynamic_cast<const SequenceQuality&>(seq->getAnnotation(SequenceQuality::QUALITY_SCORE)).getScores());
@@ -236,13 +236,13 @@ MafBlock* QualityFilterMafIterator::analyseCurrentBlock_()
                 MafSequence* subseq;
                 if (i == 0)
                 {
-                  subseq = block->getSequence(j).subSequence(0, pos[i]);
+                  subseq = block->getMafSequence(j).subSequence(0, pos[i]);
                 }
                 else
                 {
-                  subseq = block->getSequence(j).subSequence(pos[i - 1], pos[i] - pos[i - 1]);
+                  subseq = block->getMafSequence(j).subSequence(pos[i - 1], pos[i] - pos[i - 1]);
                 }
-                newBlock->addSequence(*subseq);
+                newBlock->addMafSequence(*subseq);
                 delete subseq;
               }
               blockBuffer_.push_back(newBlock);
@@ -255,8 +255,8 @@ MafBlock* QualityFilterMafIterator::analyseCurrentBlock_()
               outBlock->setPass(block->getPass());
               for (size_t j = 0; j < block->getNumberOfSequences(); ++j)
               {
-                MafSequence* outseq = block->getSequence(j).subSequence(pos[i], pos[i + 1] - pos[i]);
-                outBlock->addSequence(*outseq);
+                MafSequence* outseq = block->getMafSequence(j).subSequence(pos[i], pos[i + 1] - pos[i]);
+                outBlock->addMafSequence(*outseq);
                 delete outseq;
               }
               trashBuffer_.push_back(outBlock);
@@ -271,8 +271,8 @@ MafBlock* QualityFilterMafIterator::analyseCurrentBlock_()
             for (size_t j = 0; j < block->getNumberOfSequences(); ++j)
             {
               MafSequence* subseq;
-              subseq = block->getSequence(j).subSequence(pos[pos.size() - 1], block->getNumberOfSites() - pos[pos.size() - 1]);
-              newBlock->addSequence(*subseq);
+              subseq = block->getMafSequence(j).subSequence(pos[pos.size() - 1], block->getNumberOfSites() - pos[pos.size() - 1]);
+              newBlock->addMafSequence(*subseq);
               delete subseq;
             }
             blockBuffer_.push_back(newBlock);

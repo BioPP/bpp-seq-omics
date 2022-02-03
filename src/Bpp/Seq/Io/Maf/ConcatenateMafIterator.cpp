@@ -61,10 +61,10 @@ MafBlock* ConcatenateMafIterator::analyseCurrentBlock_()
     ApplicationTools::displayMessage("Concatenating new block...");
   while (incomingBlock_ &&
          (refSpecies_ == "" ||
-          (incomingBlock_->hasSequenceForSpecies(refSpecies_) &&
-           currentBlock_->hasSequenceForSpecies(refSpecies_) &&
-           incomingBlock_->getSequenceForSpecies(refSpecies_).getChromosome() ==
-           currentBlock_->getSequenceForSpecies(refSpecies_).getChromosome()
+          (incomingBlock_->hasMafSequenceForSpecies(refSpecies_) &&
+           currentBlock_->hasMafSequenceForSpecies(refSpecies_) &&
+           incomingBlock_->getMafSequenceForSpecies(refSpecies_).getChromosome() ==
+           currentBlock_->getMafSequenceForSpecies(refSpecies_).getChromosome()
           )
          )
          )
@@ -101,12 +101,12 @@ MafBlock* ConcatenateMafIterator::analyseCurrentBlock_()
       unique_ptr<MafSequence> seq;
       try
       {
-        seq.reset(new MafSequence(currentBlock_->getSequenceForSpecies(allSp[i])));
+        seq.reset(new MafSequence(currentBlock_->getMafSequenceForSpecies(allSp[i])));
 
         // Check is there is a second sequence:
         try
         {
-          unique_ptr<MafSequence> tmp(new MafSequence(incomingBlock_->getSequenceForSpecies(allSp[i])));
+          unique_ptr<MafSequence> tmp(new MafSequence(incomingBlock_->getMafSequenceForSpecies(allSp[i])));
           string ref1 = seq->getDescription(), ref2 = tmp->getDescription();
           if (seq->getChromosome() != tmp->getChromosome())
           {
@@ -140,7 +140,7 @@ MafBlock* ConcatenateMafIterator::analyseCurrentBlock_()
       catch (SequenceNotFoundException& snfe1)
       {
         // There must be a second sequence then:
-        seq.reset(new MafSequence(incomingBlock_->getSequenceForSpecies(allSp[i])));
+        seq.reset(new MafSequence(incomingBlock_->getMafSequenceForSpecies(allSp[i])));
         string ref2 = seq->getDescription();
         seq->setToSizeL(seq->size() + currentBlock_->getNumberOfSites());
         if (logstream_)
@@ -148,7 +148,7 @@ MafBlock* ConcatenateMafIterator::analyseCurrentBlock_()
           (*logstream_ << "BLOCK CONCATENATE: adding " << ref2 << " and extend it with " << currentBlock_->getNumberOfSites() << " gaps on the left.").endLine();
         }
       }
-      mergedBlock->addSequence(*seq);
+      mergedBlock->addMafSequence(*seq);
     }
     // Cleaning stuff:
     delete currentBlock_;

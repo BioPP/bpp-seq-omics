@@ -74,8 +74,8 @@ MafBlock* EntropyFilterMafIterator::analyseCurrentBlock_()
         aln.resize(nr);
         for (size_t i = 0; i < nr; ++i)
         {
-          if (block->hasSequenceForSpecies(species_[i]))
-            aln[i] = block->getSequenceForSpecies(species_[i]).getContent();
+          if (block->hasMafSequenceForSpecies(species_[i]))
+            aln[i] = block->getMafSequenceForSpecies(species_[i]).getContent();
           else
           {
             aln[i].resize(nc);
@@ -90,7 +90,7 @@ MafBlock* EntropyFilterMafIterator::analyseCurrentBlock_()
         aln.resize(nr);
         for (size_t i = 0; i < nr; ++i)
         {
-          aln[i] = block->getSequenceForSpecies(species_[i]).getContent();
+          aln[i] = block->getMafSequenceForSpecies(species_[i]).getContent();
         }
       }
       // First we create a mask:
@@ -232,13 +232,13 @@ MafBlock* EntropyFilterMafIterator::analyseCurrentBlock_()
               MafSequence* subseq;
               if (i == 0)
               {
-                subseq = block->getSequence(j).subSequence(0, pos[i]);
+                subseq = block->getMafSequence(j).subSequence(0, pos[i]);
               }
               else
               {
-                subseq = block->getSequence(j).subSequence(pos[i - 1], pos[i] - pos[i - 1]);
+                subseq = block->getMafSequence(j).subSequence(pos[i - 1], pos[i] - pos[i - 1]);
               }
-              newBlock->addSequence(*subseq);
+              newBlock->addMafSequence(*subseq);
               delete subseq;
             }
             blockBuffer_.push_back(newBlock);
@@ -251,8 +251,8 @@ MafBlock* EntropyFilterMafIterator::analyseCurrentBlock_()
             outBlock->setPass(block->getPass());
             for (size_t j = 0; j < block->getNumberOfSequences(); ++j)
             {
-              MafSequence* outseq = block->getSequence(j).subSequence(pos[i], pos[i + 1] - pos[i]);
-              outBlock->addSequence(*outseq);
+              MafSequence* outseq = block->getMafSequence(j).subSequence(pos[i], pos[i + 1] - pos[i]);
+              outBlock->addMafSequence(*outseq);
               delete outseq;
             }
             trashBuffer_.push_back(outBlock);
@@ -267,8 +267,8 @@ MafBlock* EntropyFilterMafIterator::analyseCurrentBlock_()
           for (size_t j = 0; j < block->getNumberOfSequences(); ++j)
           {
             MafSequence* subseq;
-            subseq = block->getSequence(j).subSequence(pos[pos.size() - 1], block->getNumberOfSites() - pos[pos.size() - 1]);
-            newBlock->addSequence(*subseq);
+            subseq = block->getMafSequence(j).subSequence(pos[pos.size() - 1], block->getNumberOfSites() - pos[pos.size() - 1]);
+            newBlock->addMafSequence(*subseq);
             delete subseq;
           }
           blockBuffer_.push_back(newBlock);

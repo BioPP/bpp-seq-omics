@@ -70,7 +70,7 @@ MafBlock* MafParser::analyseCurrentBlock_()
       if (currentSequence)
       {
         // Add previous sequence:
-        block->addSequence(*currentSequence); // The sequence is copied in the container.
+        block->addMafSequence(*currentSequence); // The sequence is copied in the container.
         currentSequence.reset();
       }
 
@@ -82,7 +82,7 @@ MafBlock* MafParser::analyseCurrentBlock_()
       if (currentSequence)
       {
         // Add previous sequence:
-        block->addSequence(*currentSequence); // The sequence is copied in the container.
+        block->addMafSequence(*currentSequence); // The sequence is copied in the container.
         currentSequence.reset();
       }
 
@@ -129,7 +129,7 @@ MafBlock* MafParser::analyseCurrentBlock_()
       if (currentSequence)
       {
         // Add previous sequence:
-        block->addSequence(*currentSequence); // The sequence is copied in the container.
+        block->addMafSequence(*currentSequence); // The sequence is copied in the container.
         currentSequence.reset();
       }
       if (!st.hasMoreToken())
@@ -212,7 +212,7 @@ MafBlock* MafParser::analyseCurrentBlock_()
   if (currentSequence)
   {
     // Add previous sequence:
-    block->addSequence(*currentSequence); // The sequence is copied in the container.
+    block->addMafSequence(*currentSequence); // The sequence is copied in the container.
     currentSequence.reset();
   }
 

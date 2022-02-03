@@ -57,9 +57,9 @@ using namespace std;
 bool OrderFilterMafIterator::parseBlock_(const MafBlock& block)
 {
   // Get the reference species for coordinates:
-  if (!block.hasSequenceForSpecies(refSpecies_))
+  if (!block.hasMafSequenceForSpecies(refSpecies_))
     return true; // We consider a block with no reference sequence as ordered
-  const MafSequence& refSeq = block.getSequenceForSpecies(refSpecies_);
+  const MafSequence& refSeq = block.getMafSequenceForSpecies(refSpecies_);
   string chr = refSeq.getChromosome();
   if (chr != currentChr_)
   {

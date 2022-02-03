@@ -55,7 +55,7 @@ MafBlock* SequenceFilterMafIterator::analyseCurrentBlock_()
     map<string, unsigned int> counts;
     for (size_t i = currentBlock_->getNumberOfSequences(); i > 0; --i)
     {
-      string species = currentBlock_->getSequence(i - 1).getSpecies();
+      string species = currentBlock_->getMafSequence(i - 1).getSpecies();
       if (!VectorTools::contains(species_, species))
       {
         if (logstream_)

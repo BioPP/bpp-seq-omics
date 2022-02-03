@@ -49,7 +49,7 @@ MafBlock* RemoveEmptySequencesMafIterator::analyseCurrentBlock_()
   {
     for (size_t i = currentBlock_->getNumberOfSequences(); i > 0; --i)
     {
-      const MafSequence& seq = currentBlock_->getSequence(i - 1);
+      const MafSequence& seq = currentBlock_->getMafSequence(i - 1);
       bool isEmpty = true;
       if (unresolvedAsGaps_)
       {

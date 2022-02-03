@@ -53,26 +53,29 @@ namespace bpp
  * This class basically contains a AlignedSequenceContainer made of MafSequence objects.
  */
 class MafBlock :
-  public virtual Clonable
+  protected AlignedSequenceContainer
 {
 private:
   double score_;
   unsigned int pass_;
-  AlignedSequenceContainer alignment_;
   std::map<std::string, Clonable*> properties_;
 
 public:
   MafBlock() :
+    AbstractSequenceContainer(&AlphabetTools::DNA_ALPHABET),
+    VectorSequenceContainer(&AlphabetTools::DNA_ALPHABET),
+    AlignedSequenceContainer(&AlphabetTools::DNA_ALPHABET),
     score_(log(0)),
     pass_(0),
-    alignment_(&AlphabetTools::DNA_ALPHABET),
     properties_()
   {}
 
   MafBlock(const MafBlock& block) :
+    AbstractSequenceContainer(block),
+    VectorSequenceContainer(block),
+    AlignedSequenceContainer(block),
     score_(block.score_),
     pass_(block.pass_),
-    alignment_(block.alignment_),
     properties_()
   {
     std::map<std::string, Clonable*>::const_iterator it;
@@ -84,9 +87,9 @@ public:
 
   MafBlock& operator=(const MafBlock& block)
   {
+    AlignedSequenceContainer::operator=(block),
     score_     = block.score_;
     pass_      = block.pass_;
-    alignment_ = block.alignment_;
     deleteProperties_();
     std::map<std::string, Clonable*>::const_iterator it;
     for (it = block.properties_.begin(); it != block.properties_.end(); ++it)
@@ -107,35 +110,46 @@ public:
   double getScore() const { return score_; }
   unsigned int getPass() const { return pass_; }
 
-  AlignedSequenceContainer& getAlignment() { return alignment_; }
-  const AlignedSequenceContainer& getAlignment() const { return alignment_; }
+  AlignedSequenceContainer& getAlignment() { return *this; }
+  const AlignedSequenceContainer& getAlignment() const { return *this; }
 
-  size_t getNumberOfSequences() const { return alignment_.getNumberOfSequences(); }
+  size_t getNumberOfSequences() const { return AlignedSequenceContainer::getNumberOfSequences(); }
 
-  size_t getNumberOfSites() const { return alignment_.getNumberOfSites(); }
+  size_t getNumberOfSites() const { return AlignedSequenceContainer::getNumberOfSites(); }
 
-  void addSequence(const MafSequence& sequence) { alignment_.addSequence(sequence, false); }
+  void addMafSequence(const MafSequence& sequence) { AlignedSequenceContainer::addSequence(sequence, false); }
 
-  bool hasSequence(const std::string& name) const
+  bool hasMafSequence(const std::string& name) const
   {
-    return getAlignment().hasSequence(name);
+    return AlignedSequenceContainer::hasSequence(name);
   }
 
-  const MafSequence& getSequence(const std::string& name) const
+  const MafSequence& getMafSequence(const std::string& name) const
   {
-    return dynamic_cast<const MafSequence&>(getAlignment().getSequence(name));
+    return dynamic_cast<const MafSequence&>(AlignedSequenceContainer::getSequence(name));
   }
 
-  const MafSequence& getSequence(size_t i) const
+  const MafSequence& getMafSequence(size_t i) const
   {
-    return dynamic_cast<const MafSequence&>(getAlignment().getSequence(i));
+    return dynamic_cast<const MafSequence&>(AlignedSequenceContainer::getSequence(i));
   }
 
-  bool hasSequenceForSpecies(const std::string& species) const
+  MafSequence& getMafSequence(const std::string& name)
+  {
+    return dynamic_cast<MafSequence&>(AlignedSequenceContainer::getSequence_(name));
+  }
+
+  MafSequence& getMafSequence(size_t i)
+  {
+    return dynamic_cast<MafSequence&>(AlignedSequenceContainer::getSequence_(i));
+  }
+
+
+  bool hasMafSequenceForSpecies(const std::string& species) const
   {
     for (size_t i = 0; i < getNumberOfSequences(); ++i)
     {
-      const MafSequence& seq = getSequence(i);
+      const MafSequence& seq = getMafSequence(i);
       if (seq.getSpecies() == species)
         return true;
     }
@@ -143,11 +157,11 @@ public:
   }
 
   // Return the first sequence with the species name.
-  const MafSequence& getSequenceForSpecies(const std::string& species) const
+  const MafSequence& getMafSequenceForSpecies(const std::string& species) const
   {
     for (size_t i = 0; i < getNumberOfSequences(); ++i)
     {
-      const MafSequence& seq = getSequence(i);
+      const MafSequence& seq = getMafSequence(i);
       if (seq.getSpecies() == species)
         return seq;
     }
@@ -155,12 +169,12 @@ public:
   }
 
   // Return all sequences with the species name.
-  std::vector<const MafSequence*> getSequencesForSpecies(const std::string& species) const
+  std::vector<const MafSequence*> getMafSequencesForSpecies(const std::string& species) const
   {
     std::vector<const MafSequence*> selection;
     for (size_t i = 0; i < getNumberOfSequences(); ++i)
     {
-      const MafSequence* seq = &getSequence(i);
+      const MafSequence* seq = &getMafSequence(i);
       if (seq->getSpecies() == species)
         selection.push_back(seq);
     }
@@ -175,7 +189,7 @@ public:
     std::vector<std::string> lst;
     for (size_t i = 0; i < getNumberOfSequences(); ++i)
     {
-      lst.push_back(getSequence(i).getSpecies());
+      lst.push_back(getMafSequence(i).getSpecies());
     }
     return lst;
   }
@@ -185,7 +199,7 @@ public:
     // This is a bit of a trick, but avoid useless recopies.
     // It is safe here because the AlignedSequenceContainer is fully encapsulated.
     // It would not work if a VectorSiteContainer was used.
-    const_cast<MafSequence&>(getSequence(i)).removeCoordinates();
+    const_cast<MafSequence&>(getMafSequence(i)).removeCoordinates();
   }
 
   std::string getDescription() const

@@ -59,14 +59,14 @@ MafBlock* DuplicateFilterMafIterator::analyseCurrentBlock_()
     size_t stop  = 0;
     for (size_t i = 0; i < currentBlock_->getNumberOfSequences() && !foundRef; ++i)
     {
-      string species = currentBlock_->getSequence(i).getSpecies();
+      string species = currentBlock_->getMafSequence(i).getSpecies();
       if (species == ref_)
       {
         foundRef = true;
-        chr    = currentBlock_->getSequence(i).getChromosome();
-        strand = currentBlock_->getSequence(i).getStrand();
-        start  = currentBlock_->getSequence(i).start();
-        stop   = currentBlock_->getSequence(i).stop();
+        chr    = currentBlock_->getMafSequence(i).getChromosome();
+        strand = currentBlock_->getMafSequence(i).getStrand();
+        start  = currentBlock_->getMafSequence(i).start();
+        stop   = currentBlock_->getMafSequence(i).stop();
       }
     }
     if (!foundRef)

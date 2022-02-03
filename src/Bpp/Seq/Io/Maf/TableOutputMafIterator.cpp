@@ -58,12 +58,12 @@ void TableOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& bloc
 {
   // Check for reference species for coordinates:
   unique_ptr<SequenceWalker> walker;
-  bool hasCoordinates = block.hasSequenceForSpecies(refSpecies_);
+  bool hasCoordinates = block.hasMafSequenceForSpecies(refSpecies_);
   string chr = "NA";
   string pos = "NA";
   if (hasCoordinates)
   {
-    const MafSequence& refSeq = block.getSequenceForSpecies(refSpecies_);
+    const MafSequence& refSeq = block.getMafSequenceForSpecies(refSpecies_);
     walker.reset(new SequenceWalker(refSeq));
     chr = refSeq.getChromosome();
   }
@@ -72,7 +72,7 @@ void TableOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& bloc
   vector<string> seqs;
   for (const string& sp : species_)
   {
-    seqs.push_back(block.getSequenceForSpecies(sp).toString());
+    seqs.push_back(block.getMafSequenceForSpecies(sp).toString());
   }
   // Loop over all alignment columns:
   for (size_t i = 0; i < block.getNumberOfSites(); ++i)

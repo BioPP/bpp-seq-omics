@@ -71,7 +71,7 @@ MafBlock* SequenceStreamToMafIterator::analyseCurrentBlock_()
     if (mafSeq.size() != length)
       throw Exception("SequenceStreamToMafIterator::analyseCurrentBlock_. Sequence size does not match its header specification: expected " + TextTools::toString(length) + " and found " + TextTools::toString(mafSeq.size()));
   }
-  block->addSequence(mafSeq);
+  block->addMafSequence(mafSeq);
 
   return block.release();
 }

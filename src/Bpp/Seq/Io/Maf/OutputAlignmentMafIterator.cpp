@@ -64,9 +64,9 @@ MafBlock* OutputAlignmentMafIterator::analyseCurrentBlock_()
       string chr   = "ChrNA";
       string start = "StartNA";
       string stop  = "StopNA";
-      if (block->hasSequenceForSpecies(refSpecies_))
+      if (block->hasMafSequenceForSpecies(refSpecies_))
       {
-        const MafSequence& refseq = block->getSequenceForSpecies(refSpecies_);
+        const MafSequence& refseq = block->getMafSequenceForSpecies(refSpecies_);
         chr   = refseq.getChromosome();
         start = TextTools::toString(refseq.start());
         stop  = TextTools::toString(refseq.stop());
@@ -94,7 +94,7 @@ void OutputAlignmentMafIterator::writeBlock(std::ostream& out, const MafBlock& b
   vector<string> names(aln.getNumberOfSequences());
   for (size_t i = 0; i < aln.getNumberOfSequences(); ++i)
   {
-    const MafSequence& mafseq = block.getSequence(i);
+    const MafSequence& mafseq = block.getMafSequence(i);
     if (mafseq.hasCoordinates() && outputCoordinates_)
       names[i] = mafseq.getSpecies() + "-" + mafseq.getChromosome() + "(" + mafseq.getStrand() + ")/" + TextTools::toString(mafseq.start() + 1) + "-" + TextTools::toString(mafseq.stop() + 1);
     else

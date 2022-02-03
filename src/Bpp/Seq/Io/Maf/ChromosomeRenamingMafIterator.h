@@ -1,11 +1,11 @@
 //
-// File: OrphanSequenceFilterMafIterator.cpp
+// File: ChromosomeRenamingMafIterator.h
 // Authors: Julien Dutheil
-// Created: Mon Mar 11 2013
+// Created: Thu Feb 03 2022
 //
 
 /*
-   Copyright or © or Copr. Bio++ Development Team, (2013)
+   Copyright or © or Copr. Bio++ Development Team, (2022)
 
    This software is a computer program whose purpose is to provide classes
    for sequences analysis.
@@ -37,60 +37,54 @@
    knowledge of the CeCILL license and that you accept its terms.
  */
 
-#include "OrphanSequenceFilterMafIterator.h"
+#ifndef _CHROMOSOMERENAMINGMAFITERATOR_H_
+#define _CHROMOSOMERENAMINGMAFITERATOR_H_
 
-using namespace bpp;
+#include "MafIterator.h"
 
 // From the STL:
+#include <iostream>
 #include <string>
-#include <numeric>
+#include <map>
 
-using namespace std;
-
-MafBlock* OrphanSequenceFilterMafIterator::analyseCurrentBlock_()
+namespace bpp
 {
-  currentBlock_ = iterator_->nextBlock();
-  while (currentBlock_)
+/**
+ * @brief Rename chromosomes according to a translation table.
+ */
+class ChromosomeRenamingMafIterator :
+  public AbstractFilterMafIterator
+{
+private:
+  std::map<std::string, std::string> chrTranslation_;
+
+public:
+  /**
+   * @param iterator The input iterator.
+   * @param chrTranslation a map with original chromosome names as keys and translations as values. Only chromosomes matching one of the key will be translated, without further checking of the new name.
+   */
+  ChromosomeRenamingMafIterator(MafIterator* iterator, const std::map<std::string, std::string>& chrTranslation) :
+    AbstractFilterMafIterator(iterator),
+    chrTranslation_(chrTranslation)
   {
-    map<string, unsigned int> counts;
-    for (size_t i = 0; i < currentBlock_->getNumberOfSequences(); ++i)
-    {
-      string species = currentBlock_->getMafSequence(i).getSpecies();
-      counts[species]++;
-    }
-    bool test = counts.size() <= species_.size();
-    if (test)
-    {
-      // We have to check that the species are the right one:
-      bool loseCrit = false;
-      bool strictCrit = true;
-      bool duplicate = false;
-      for (size_t i = 0; i < species_.size() && !duplicate; ++i)
-      {
-        map<string, unsigned int>::iterator it = counts.find(species_[i]);
-        if (it != counts.end())
-        {
-          loseCrit = true;
-          if (rmDuplicates_ && it->second > 1)
-          {
-            // Duplicated sequences, block is discarded if asked to...
-            duplicate = true;
-          }
-        }
-        else
-        {
-          strictCrit = false;
-        }
-      }
-      if (!duplicate)  // No duplicate found or duplicates are kept
-      {
-        if (strictCrit || (!strict_ && loseCrit))
-          return currentBlock_;
-      }
-    }
-    // Otherwise there is at least one extra species, we get the next block...
-    currentBlock_ = iterator_->nextBlock();
   }
 
-  return currentBlock_;
-}
+
+private:
+  ChromosomeRenamingMafIterator(const ChromosomeRenamingMafIterator& iterator) :
+    AbstractFilterMafIterator(0),
+    chrTranslation_(iterator.chrTranslation_)
+  {}
+
+  ChromosomeRenamingMafIterator& operator=(const ChromosomeRenamingMafIterator& iterator)
+  {
+    chrTranslation_ = iterator.chrTranslation_;
+    return *this;
+  }
+
+private:
+  MafBlock* analyseCurrentBlock_();
+};
+} // end of namespace bpp.
+
+#endif//_CHROMOSOMERENAMINGMAFITERATOR_H_

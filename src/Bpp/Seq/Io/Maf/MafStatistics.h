@@ -355,7 +355,7 @@ public:
   std::string getFullName() const { return "Sequence length for species " + species_; }
   void compute(const MafBlock& block)
   {
-    std::vector<const MafSequence*> seqs = block.getSequencesForSpecies(species_);
+    std::vector<const MafSequence*> seqs = block.getMafSequencesForSpecies(species_);
     if (seqs.size() == 0)
       result_.setValue(0.);
     else if (seqs.size() == 1)

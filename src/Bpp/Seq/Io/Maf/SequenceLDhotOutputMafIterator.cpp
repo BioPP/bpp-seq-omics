@@ -60,9 +60,9 @@ MafBlock* SequenceLDhotOutputMafIterator::analyseCurrentBlock_()
     string chr   = "ChrNA";
     string start = "StartNA";
     string stop  = "StopNA";
-    if (block->hasSequenceForSpecies(refSpecies_))
+    if (block->hasMafSequenceForSpecies(refSpecies_))
     {
-      const MafSequence& refseq = block->getSequenceForSpecies(refSpecies_);
+      const MafSequence& refseq = block->getMafSequenceForSpecies(refSpecies_);
       chr   = refseq.getChromosome();
       start = TextTools::toString(refseq.start());
       stop  = TextTools::toString(refseq.stop());

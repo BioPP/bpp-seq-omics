@@ -65,7 +65,7 @@ MafBlock* CoordinatesOutputMafIterator::analyseCurrentBlock_()
     {
       if (i > 0)
         *output_ << "\t";
-      vector<const MafSequence*> seqs = currentBlock_->getSequencesForSpecies(species_[i]);
+      vector<const MafSequence*> seqs = currentBlock_->getMafSequencesForSpecies(species_[i]);
       if (seqs.size() > 1)
         throw Exception("CoordinatesOutputMafIterator::analyseCurrentBlock_(). There is more than one sequence for species '" + species_[i] + "' in current block.");
       else if (seqs.size() == 0)

@@ -62,11 +62,11 @@ START:
       return 0; // No more block.
 
     // Check if the block contains the reference species:
-    if (!block->hasSequenceForSpecies(refSpecies_))
+    if (!block->hasMafSequenceForSpecies(refSpecies_))
       goto START;
 
     // Get the feature ranges for this block:
-    const MafSequence& refSeq = block->getSequenceForSpecies(refSpecies_);
+    const MafSequence& refSeq = block->getMafSequenceForSpecies(refSpecies_);
     // first check if there is one (for now we assume that features refer to the chromosome or contig name, with implicit species):
     std::map<std::string, RangeSet<size_t> >::iterator mr = ranges_.find(refSeq.getChromosome());
     if (mr == ranges_.end())
@@ -126,7 +126,7 @@ START:
       for (size_t j = 0; j < block->getNumberOfSequences(); ++j)
       {
         unique_ptr<MafSequence> subseq;
-        subseq.reset(block->getSequence(j).subSequence(a, b - a + 1));
+        subseq.reset(block->getMafSequence(j).subSequence(a, b - a + 1));
         if (!ignoreStrand_)
         {
           if ((dynamic_cast<SeqRange*>(*it)->isNegativeStrand() && refSeq.getStrand() == '+') ||
@@ -136,7 +136,7 @@ START:
           }
         }
         (*logstream_ << subseq->getName()).endLine();
-        newBlock->addSequence(*subseq);
+        newBlock->addMafSequence(*subseq);
       }
       blockBuffer_.push_back(newBlock);
     }

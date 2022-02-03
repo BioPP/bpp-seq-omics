@@ -97,8 +97,8 @@ MafBlock* WindowSplitMafIterator::analyseCurrentBlock_()
       }
       for (size_t j = 0; j < block->getNumberOfSequences(); ++j)
       {
-        unique_ptr<MafSequence> subseq(block->getSequence(j).subSequence(i, size));
-        newBlock->addSequence(*subseq);
+        unique_ptr<MafSequence> subseq(block->getMafSequence(j).subSequence(i, size));
+        newBlock->addMafSequence(*subseq);
       }
       blockBuffer_.push_back(newBlock);
     }

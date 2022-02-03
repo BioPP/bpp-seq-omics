@@ -61,9 +61,9 @@ MafBlock* FullGapFilterMafIterator::analyseCurrentBlock_()
   VectorSiteContainer vsc(&AlphabetTools::DNA_ALPHABET);
   for (size_t i = 0; i < species_.size(); ++i)
   {
-    if (block->hasSequenceForSpecies(species_[i]))
+    if (block->hasMafSequenceForSpecies(species_[i]))
     {
-      vsc.addSequence(block->getSequenceForSpecies(species_[i]));
+      vsc.addSequence(block->getMafSequenceForSpecies(species_[i]));
     }
   }
   if (vsc.getNumberOfSequences() == 0)
@@ -117,7 +117,7 @@ MafBlock* FullGapFilterMafIterator::analyseCurrentBlock_()
   {
     for (size_t i = 0; i < block->getNumberOfSequences(); ++i)
     {
-      const MafSequence* seq = &block->getSequence(i);
+      const MafSequence* seq = &block->getMafSequence(i);
       if (!VectorTools::contains(species_, seq->getSpecies()))
       {
         block->removeCoordinatesFromSequence(i);

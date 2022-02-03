@@ -70,7 +70,7 @@ void OutputMafIterator::writeBlock(std::ostream& out, const MafBlock& block) con
   size_t mxcSrc = 0, mxcStart = 0, mxcSize = 0, mxcSrcSize = 0;
   for (size_t i = 0; i < block.getNumberOfSequences(); i++)
   {
-    const MafSequence* seq = &block.getSequence(i);
+    const MafSequence* seq = &block.getMafSequence(i);
     size_t start = 0; // Maybe we should output sthg else here?
     if (seq->hasCoordinates())
       start = seq->start();
@@ -82,7 +82,7 @@ void OutputMafIterator::writeBlock(std::ostream& out, const MafBlock& block) con
   // Now print each sequence:
   for (size_t i = 0; i < block.getNumberOfSequences(); i++)
   {
-    const MafSequence* seq = &block.getSequence(i);
+    const MafSequence* seq = &block.getMafSequence(i);
     out << "s ";
     out << TextTools::resizeRight(seq->getName(), mxcSrc, ' ') << " ";
     size_t start = 0; // Maybe we should output sthg else here?

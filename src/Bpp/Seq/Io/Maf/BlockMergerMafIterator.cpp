@@ -60,8 +60,8 @@ MafBlock* BlockMergerMafIterator::analyseCurrentBlock_()
     {
       try
       {
-        const MafSequence* seq1 = &currentBlock_->getSequenceForSpecies(species_[i]);
-        const MafSequence* seq2 = &incomingBlock_->getSequenceForSpecies(species_[i]);
+        const MafSequence* seq1 = &currentBlock_->getMafSequenceForSpecies(species_[i]);
+        const MafSequence* seq2 = &incomingBlock_->getMafSequenceForSpecies(species_[i]);
         if (!seq1->hasCoordinates() || !seq2->hasCoordinates())
           throw Exception("BlockMergerMafIterator::nextBlock. Species '" + species_[i] + "' is missing coordinates in at least one block.");
 
@@ -121,12 +121,12 @@ MafBlock* BlockMergerMafIterator::analyseCurrentBlock_()
       unique_ptr<MafSequence> seq;
       try
       {
-        seq.reset(new MafSequence(currentBlock_->getSequenceForSpecies(allSp[i])));
+        seq.reset(new MafSequence(currentBlock_->getMafSequenceForSpecies(allSp[i])));
 
         // Check is there is a second sequence:
         try
         {
-          unique_ptr<MafSequence> tmp(new MafSequence(incomingBlock_->getSequenceForSpecies(allSp[i])));
+          unique_ptr<MafSequence> tmp(new MafSequence(incomingBlock_->getMafSequenceForSpecies(allSp[i])));
           string ref1 = seq->getDescription(), ref2 = tmp->getDescription();
           // Add spacer if needed:
           if (globalSpace > 0)
@@ -181,7 +181,7 @@ MafBlock* BlockMergerMafIterator::analyseCurrentBlock_()
       catch (SequenceNotFoundException& snfe1)
       {
         // There must be a second sequence then:
-        seq.reset(new MafSequence(incomingBlock_->getSequenceForSpecies(allSp[i])));
+        seq.reset(new MafSequence(incomingBlock_->getMafSequenceForSpecies(allSp[i])));
         string ref2 = seq->getDescription();
         seq->setToSizeL(seq->size() + currentBlock_->getNumberOfSites() + globalSpace);
         if (logstream_)
@@ -189,7 +189,7 @@ MafBlock* BlockMergerMafIterator::analyseCurrentBlock_()
           (*logstream_ << "BLOCK MERGER: adding " << ref2 << " and extend it with " << currentBlock_->getNumberOfSites() << " gaps on the left.").endLine();
         }
       }
-      mergedBlock->addSequence(*seq);
+      mergedBlock->addMafSequence(*seq);
     }
     // Cleaning stuff:
     delete currentBlock_;

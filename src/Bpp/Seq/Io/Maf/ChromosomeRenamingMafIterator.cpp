@@ -1,11 +1,11 @@
 //
-// File: OrphanSequenceFilterMafIterator.cpp
+// File: ChromosomeRenamingMafIterator.cpp
 // Authors: Julien Dutheil
-// Created: Mon Mar 11 2013
+// Created: Thu Feb 03 2022
 //
 
 /*
-   Copyright or © or Copr. Bio++ Development Team, (2013)
+   Copyright or © or Copr. Bio++ Development Team, (2022)
 
    This software is a computer program whose purpose is to provide classes
    for sequences analysis.
@@ -37,7 +37,7 @@
    knowledge of the CeCILL license and that you accept its terms.
  */
 
-#include "OrphanSequenceFilterMafIterator.h"
+#include "ChromosomeRenamingMafIterator.h"
 
 using namespace bpp;
 
@@ -47,50 +47,25 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* OrphanSequenceFilterMafIterator::analyseCurrentBlock_()
+MafBlock* ChromosomeRenamingMafIterator::analyseCurrentBlock_()
 {
   currentBlock_ = iterator_->nextBlock();
-  while (currentBlock_)
+  if (currentBlock_)
   {
-    map<string, unsigned int> counts;
     for (size_t i = 0; i < currentBlock_->getNumberOfSequences(); ++i)
     {
-      string species = currentBlock_->getMafSequence(i).getSpecies();
-      counts[species]++;
-    }
-    bool test = counts.size() <= species_.size();
-    if (test)
-    {
-      // We have to check that the species are the right one:
-      bool loseCrit = false;
-      bool strictCrit = true;
-      bool duplicate = false;
-      for (size_t i = 0; i < species_.size() && !duplicate; ++i)
-      {
-        map<string, unsigned int>::iterator it = counts.find(species_[i]);
-        if (it != counts.end())
-        {
-          loseCrit = true;
-          if (rmDuplicates_ && it->second > 1)
-          {
-            // Duplicated sequences, block is discarded if asked to...
-            duplicate = true;
-          }
-        }
-        else
-        {
-          strictCrit = false;
-        }
+      string chr = currentBlock_->getMafSequence(i).getChromosome();
+      auto tln = chrTranslation_.find(chr);
+      if (tln != chrTranslation_.end()) {
+        currentBlock_->getMafSequence(i).setChromosome(tln->second);
       }
-      if (!duplicate)  // No duplicate found or duplicates are kept
+      if (logstream_)
       {
-        if (strictCrit || (!strict_ && loseCrit))
-          return currentBlock_;
+        (*logstream_ << "CHROMOSOME RENAMING: renamed " << chr << " to " << tln->second << ".").endLine();
       }
     }
-    // Otherwise there is at least one extra species, we get the next block...
-    currentBlock_ = iterator_->nextBlock();
   }
 
   return currentBlock_;
 }
+

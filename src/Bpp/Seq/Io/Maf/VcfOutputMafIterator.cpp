@@ -93,7 +93,7 @@ void VcfOutputMafIterator::writeHeader_(std::ostream& out) const
 
 void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block) const
 {
-  const MafSequence& refSeq = block.getSequenceForSpecies(refSpecies_);
+  const MafSequence& refSeq = block.getMafSequenceForSpecies(refSpecies_);
   string chr = refSeq.getChromosome();
   SequenceWalker walker(refSeq);
   size_t offset = refSeq.start();
@@ -173,7 +173,7 @@ void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
           {
             if (geno != "")
               geno += "|"; // Polyploid
-            vector<const MafSequence*> sequences = block.getSequencesForSpecies(x);
+            vector<const MafSequence*> sequences = block.getMafSequencesForSpecies(x);
             if (sequences.size() == 0)
               geno += (generateDiploids_ ? ".|." : ".");
             else if (sequences.size() > 1)

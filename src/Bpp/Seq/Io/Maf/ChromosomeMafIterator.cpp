@@ -56,11 +56,11 @@ MafBlock* ChromosomeMafIterator::analyseCurrentBlock_()
     string chr = "";
     for (size_t i = 0; i < currentBlock_->getNumberOfSequences() && !foundRef; ++i)
     {
-      string species = currentBlock_->getSequence(i).getSpecies();
+      string species = currentBlock_->getMafSequence(i).getSpecies();
       if (species == ref_)
       {
         foundRef = true;
-        chr = currentBlock_->getSequence(i).getChromosome();
+        chr = currentBlock_->getMafSequence(i).getChromosome();
       }
     }
     if (!foundRef)
@@ -71,7 +71,7 @@ MafBlock* ChromosomeMafIterator::analyseCurrentBlock_()
       }
       delete currentBlock_;
     }
-    else if (chr != chr_)
+    else if (chr_.find(chr) != chr_.end())
     {
       if (logstream_)
       {

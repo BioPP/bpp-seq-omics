@@ -55,8 +55,8 @@ using namespace std;
 
 void PairwiseDivergenceMafStatistics::compute(const MafBlock& block)
 {
-  vector<const MafSequence*> seqs1 = block.getSequencesForSpecies(species1_);
-  vector<const MafSequence*> seqs2 = block.getSequencesForSpecies(species2_);
+  vector<const MafSequence*> seqs1 = block.getMafSequencesForSpecies(species1_);
+  vector<const MafSequence*> seqs2 = block.getMafSequencesForSpecies(species2_);
   if (seqs1.size() > 1 || seqs2.size() > 1)
     throw Exception("PairwiseDivergenceMafStatistics::compute. Duplicated sequence for species " + species1_ + "or " + species2_ + ".");
   if (seqs1.size() == 0 || seqs2.size() == 0)
@@ -75,9 +75,9 @@ SiteContainer* AbstractSpeciesSelectionMafStatistics::getSiteContainer_(const Ma
   VectorSiteContainer* alignment = new VectorSiteContainer(block.getAlignment().getAlphabet());
   for (size_t i = 0; i < species_.size(); ++i)
   {
-    if (block.hasSequenceForSpecies(species_[i]))
+    if (block.hasMafSequenceForSpecies(species_[i]))
     {
-      vector<const MafSequence*> selection = block.getSequencesForSpecies(species_[i]);
+      vector<const MafSequence*> selection = block.getMafSequencesForSpecies(species_[i]);
       for (size_t j = 0; j < selection.size(); ++j)
       {
         alignment->addSequence(*selection[j]);
@@ -108,9 +108,9 @@ vector<SiteContainer*> AbstractSpeciesMultipleSelectionMafStatistics::getSiteCon
     VectorSiteContainer* alignment = new VectorSiteContainer(block.getAlignment().getAlphabet());
     for (size_t i = 0; i < species_[k].size(); ++i)
     {
-      if (block.hasSequenceForSpecies(species_[k][i]))
+      if (block.hasMafSequenceForSpecies(species_[k][i]))
       {
-        vector<const MafSequence*> selection = block.getSequencesForSpecies(species_[k][i]);
+        vector<const MafSequence*> selection = block.getMafSequencesForSpecies(species_[k][i]);
         for (size_t j = 0; j < selection.size(); ++j)
         {
           alignment->addSequence(*selection[j]);
@@ -180,11 +180,11 @@ void SiteFrequencySpectrumMafStatistics::compute(const MafBlock& block)
   const Sequence* outgroupSeq = 0;
   if (hasOutgroup)
   {
-    isAnalyzable = (block.hasSequenceForSpecies(outgroup_) && block.getNumberOfSequences() > 1);
+    isAnalyzable = (block.hasMafSequenceForSpecies(outgroup_) && block.getNumberOfSequences() > 1);
     if (isAnalyzable)
     {
       // We need to extract the outgroup sequence:
-      outgroupSeq = &block.getSequenceForSpecies(outgroup_); // Here we assume there is only one! Otherwise we take the first one...
+      outgroupSeq = &block.getMafSequenceForSpecies(outgroup_); // Here we assume there is only one! Otherwise we take the first one...
       alignment.reset(getSiteContainer_(block));
     }
   }

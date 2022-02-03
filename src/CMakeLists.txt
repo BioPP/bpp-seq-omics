@@ -16,6 +16,7 @@ set (CPP_FILES
   Bpp/Seq/Io/Maf/AlignmentFilterMafIterator.cpp
   Bpp/Seq/Io/Maf/BlockMergerMafIterator.cpp
   Bpp/Seq/Io/Maf/ChromosomeMafIterator.cpp
+  Bpp/Seq/Io/Maf/ChromosomeRenamingMafIterator.cpp
   Bpp/Seq/Io/Maf/ConcatenateMafIterator.cpp
   Bpp/Seq/Io/Maf/CoordinateTranslatorMafIterator.cpp
   Bpp/Seq/Io/Maf/CoordinatesOutputMafIterator.cpp

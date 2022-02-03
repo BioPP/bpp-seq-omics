@@ -69,9 +69,9 @@ void PlinkOutputMafIterator::parseBlock_(std::ostream& out, const MafBlock& bloc
   VectorSiteContainer sites(&AlphabetTools::DNA_ALPHABET);
   for (size_t i = 0; i < species_.size(); ++i)
   {
-    if (block.hasSequenceForSpecies(species_[i]))
+    if (block.hasMafSequenceForSpecies(species_[i]))
     {
-      sites.addSequence(block.getSequenceForSpecies(species_[i]));
+      sites.addSequence(block.getMafSequenceForSpecies(species_[i]));
       // Note: in case of duplicates, this takes the first sequence.
     }
     else
@@ -81,9 +81,9 @@ void PlinkOutputMafIterator::parseBlock_(std::ostream& out, const MafBlock& bloc
     }
   }
   // Get the reference species for coordinates:
-  if (!block.hasSequenceForSpecies(refSpecies_))
+  if (!block.hasMafSequenceForSpecies(refSpecies_))
     return;
-  const MafSequence& refSeq = block.getSequenceForSpecies(refSpecies_);
+  const MafSequence& refSeq = block.getMafSequenceForSpecies(refSpecies_);
   string chr = refSeq.getChromosome();
   if (chr != currentChr_)
   {
