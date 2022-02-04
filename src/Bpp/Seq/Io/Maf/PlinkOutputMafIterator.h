@@ -102,7 +102,7 @@ public:
 			 char columnSeparator = '\t') :
     AbstractFilterMafIterator(iterator),
     outputPed_(outPed), outputMap_(outMap), species_(species), refSpecies_(reference), map3_(map3),
-    ped_(species.size()), currentChr_(""), lastPosition_(0), recodeChr_(recodeChr), chrCodes_(), currentCode_(1), phenotype_(0), colSeparator_(TextTools::toString(columnSeparator))
+    ped_(species.size()), currentChr_(""), lastPosition_(0), recodeChr_(recodeChr), chrCodes_(), currentCode_(1), phenotype_(phenotype), colSeparator_(TextTools::toString(columnSeparator))
   {
     init_();
   }
