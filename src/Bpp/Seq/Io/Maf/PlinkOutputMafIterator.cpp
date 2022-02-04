@@ -58,7 +58,7 @@ void PlinkOutputMafIterator::init_()
 {
   for (size_t i = 0; i < species_.size(); ++i)
   {
-    ped_[i] = "FAM001\t" + TextTools::toString(i + 1) + "\t0\t0\t0\t0";
+    ped_[i] = "FAM001" + colSeparator_ + TextTools::toString(i + 1) + colSeparator_ + "0" + colSeparator_ + "0" + colSeparator_ + "0" + colSeparator_ + TextTools::toString(phenotype_);
   }
 }
 
@@ -135,12 +135,12 @@ void PlinkOutputMafIterator::parseBlock_(std::ostream& out, const MafBlock& bloc
       string alleles = sites.getSite(i).toString();
       for (size_t j = 0; j < alleles.size(); ++j)
       {
-        ped_[j] += "\t" + TextTools::toString(alleles[j]) + " " + alleles[j];
+        ped_[j] += colSeparator_ + TextTools::toString(alleles[j]) + " " + alleles[j];
       }
       // SNP identifier are built as <chr>.<pos>
-      out << chrStr << "\t" << chr << "." << pos << "\t";
+      out << chrStr << colSeparator_ << chr << "." << pos << colSeparator_;
       if (!map3_)
-        out << "0\t"; // Add null genetic distance
+        out << "0" << colSeparator_; // Add null genetic distance
       out << pos << endl;
     }
   }

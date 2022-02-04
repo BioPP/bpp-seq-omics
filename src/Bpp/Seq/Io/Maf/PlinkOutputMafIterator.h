@@ -67,6 +67,8 @@ private:
   bool recodeChr_;
   std::map<std::string, unsigned int> chrCodes_;
   unsigned int currentCode_;
+  int phenotype_;
+  std::string colSeparator_; //Stored as a string to facilitate concatenation.
 
 public:
   /**
@@ -86,6 +88,8 @@ public:
    * It does not have to be one of the selected species on which SNPs are computed.
    * @param map3 Tell if genetic distance column should be ommited in the map file. Otherwise set to 0.
    * @param recodeChr Tell if chromosomes should be recoded to numbers.
+   * @param phenotype Phenotype value to set in the map file.
+   * @param columnSeparator Character used to separate columns (PLINK officially supports space and tab).
    */
   PlinkOutputMafIterator(MafIterator* iterator,
                          std::ostream* outPed,
@@ -93,10 +97,12 @@ public:
                          const std::vector<std::string>& species,
                          const std::string& reference,
                          bool map3 = false,
-                         bool recodeChr = false) :
+                         bool recodeChr = false,
+			 int phenotype = 0,
+			 char columnSeparator = '\t') :
     AbstractFilterMafIterator(iterator),
     outputPed_(outPed), outputMap_(outMap), species_(species), refSpecies_(reference), map3_(map3),
-    ped_(species.size()), currentChr_(""), lastPosition_(0), recodeChr_(recodeChr), chrCodes_(), currentCode_(1)
+    ped_(species.size()), currentChr_(""), lastPosition_(0), recodeChr_(recodeChr), chrCodes_(), currentCode_(1), phenotype_(0), colSeparator_(TextTools::toString(columnSeparator))
   {
     init_();
   }
@@ -114,7 +120,9 @@ private:
     lastPosition_(iterator.lastPosition_),
     recodeChr_(iterator.recodeChr_),
     chrCodes_(iterator.chrCodes_),
-    currentCode_(iterator.currentCode_)
+    currentCode_(iterator.currentCode_),
+    phenotype_(iterator.phenotype_),
+    colSeparator_(iterator.colSeparator_)
   {}
 
   PlinkOutputMafIterator& operator=(const PlinkOutputMafIterator& iterator)
@@ -130,6 +138,8 @@ private:
     recodeChr_       = iterator.recodeChr_;
     chrCodes_        = iterator.chrCodes_;
     currentCode_     = iterator.currentCode_;
+    phenotype_       = iterator.phenotype_;
+    colSeparator_    = iterator.colSeparator_;
     return *this;
   }
 
