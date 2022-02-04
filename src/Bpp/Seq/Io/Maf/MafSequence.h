@@ -74,6 +74,7 @@ private:
 public:
   MafSequence(const Alphabet* alphabet = & AlphabetTools::DNA_ALPHABET) :
     EdSymbolList<int>(alphabet),
+    EdIntSymbolList(alphabet),
     SequenceWithAnnotation(alphabet),
     hasCoordinates_(false),
     begin_(0),
@@ -90,6 +91,7 @@ public:
       bool parseName = true,
       const Alphabet* alphabet = & AlphabetTools::DNA_ALPHABET) :
     EdSymbolList<int>(alphabet),
+    EdIntSymbolList(alphabet),
     SequenceWithAnnotation(name, sequence, alphabet),
     hasCoordinates_(false),
     begin_(0),
@@ -113,6 +115,7 @@ public:
       bool parseName = true,
       const Alphabet* alphabet = & AlphabetTools::DNA_ALPHABET) :
     EdSymbolList<int>(alphabet),
+    EdIntSymbolList(alphabet),
     SequenceWithAnnotation(name, sequence, alphabet),
     hasCoordinates_(true),
     begin_(begin),
@@ -129,6 +132,7 @@ public:
 
   MafSequence(const MafSequence& mafSeq):
     EdSymbolList<int>(mafSeq),
+    EdIntSymbolList(mafSeq),
     SequenceWithAnnotation(mafSeq),
     hasCoordinates_(mafSeq.hasCoordinates_),
     begin_(mafSeq.begin_),
@@ -141,8 +145,8 @@ public:
 
   MafSequence& operator=(const MafSequence& mafSeq)
   {
-    EdSymbolList<int>::operator=(mafSeq);
     SequenceWithAnnotation::operator=(mafSeq);
+    EdSymbolList<int>::operator=(mafSeq);
     hasCoordinates_ = mafSeq.hasCoordinates_;
     begin_ = mafSeq.begin_;
     species_ = mafSeq.species_;
