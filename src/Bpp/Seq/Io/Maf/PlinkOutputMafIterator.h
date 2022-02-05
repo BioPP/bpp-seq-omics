@@ -70,6 +70,7 @@ private:
   bool makeDiploids_;
   int phenotype_;
   std::string colSeparator_; //Stored as a string to facilitate concatenation.
+  size_t nbIndividuals_;
 
 public:
   /**
@@ -105,8 +106,8 @@ public:
 			 char columnSeparator = '\t') :
     AbstractFilterMafIterator(iterator),
     outputPed_(outPed), outputMap_(outMap), species_(species), refSpecies_(reference), map3_(map3),
-    ped_(species.size()), currentChr_(""), lastPosition_(0), recodeChr_(recodeChr), chrCodes_(), currentCode_(1),
-    makeDiploids_(makeDiploids), phenotype_(phenotype), colSeparator_(TextTools::toString(columnSeparator))
+    ped_(), currentChr_(""), lastPosition_(0), recodeChr_(recodeChr), chrCodes_(), currentCode_(1),
+    makeDiploids_(makeDiploids), phenotype_(phenotype), colSeparator_(TextTools::toString(columnSeparator)), nbIndividuals_(0)
   {
     init_();
   }
@@ -127,7 +128,8 @@ private:
     currentCode_(iterator.currentCode_),
     makeDiploids_(iterator.makeDiploids_),
     phenotype_(iterator.phenotype_),
-    colSeparator_(iterator.colSeparator_)
+    colSeparator_(iterator.colSeparator_),
+    nbIndividuals_(iterator.nbIndividuals_)
   {}
 
   PlinkOutputMafIterator& operator=(const PlinkOutputMafIterator& iterator)
@@ -146,6 +148,7 @@ private:
     makeDiploids_    = iterator.makeDiploids_;
     phenotype_       = iterator.phenotype_;
     colSeparator_    = iterator.colSeparator_;
+    nbIndividuals_   = iterator.nbIndividuals_;
     return *this;
   }
 

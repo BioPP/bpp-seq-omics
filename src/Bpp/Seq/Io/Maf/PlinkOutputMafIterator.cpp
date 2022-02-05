@@ -56,7 +56,9 @@ using namespace std;
 
 void PlinkOutputMafIterator::init_()
 {
-  for (size_t i = 0; i < species_.size(); ++i)
+  nbIndividuals_ = makeDiploids_ ? species_.size() / 2 : species_.size();
+  ped_.resize(nbIndividuals_);
+  for (size_t i = 0; i < nbIndividuals_; ++i)
   {
     ped_[i] = "FAM001" + colSeparator_ + TextTools::toString(i + 1) + colSeparator_ + "0" + colSeparator_ + "0" + colSeparator_ + "0" + colSeparator_ + TextTools::toString(phenotype_);
   }
@@ -67,11 +69,11 @@ void PlinkOutputMafIterator::parseBlock_(std::ostream& out, const MafBlock& bloc
 {
   // Preliminary stuff...
   VectorSiteContainer sites(&AlphabetTools::DNA_ALPHABET);
-  for (size_t i = 0; i < species_.size(); ++i)
+  for (auto species: species_)
   {
-    if (block.hasMafSequenceForSpecies(species_[i]))
+    if (block.hasMafSequenceForSpecies(species))
     {
-      sites.addSequence(block.getMafSequenceForSpecies(species_[i]));
+      sites.addSequence(block.getMafSequenceForSpecies(species));
       // Note: in case of duplicates, this takes the first sequence.
     }
     else
@@ -134,14 +136,14 @@ void PlinkOutputMafIterator::parseBlock_(std::ostream& out, const MafBlock& bloc
       }
       string alleles = sites.getSite(i).toString();
       if (makeDiploids_) {
+        for (size_t j = 0; j < nbIndividuals_; ++j)
+        {
+          ped_[j] += colSeparator_ + TextTools::toString(alleles[2 * j]) + " " + alleles[2 * j + 1];
+        }
+      } else {
         for (size_t j = 0; j < alleles.size(); ++j)
         {
           ped_[j] += colSeparator_ + TextTools::toString(alleles[j]) + " " + alleles[j];
-        }
-      } else {
-        for (size_t j = 0; j < alleles.size(); j+=2)
-        {
-          ped_[j] += colSeparator_ + TextTools::toString(alleles[j]) + " " + alleles[j + 1];
         }
       }
       // SNP identifier are built as <chr>.<pos>
@@ -155,8 +157,8 @@ void PlinkOutputMafIterator::parseBlock_(std::ostream& out, const MafBlock& bloc
 
 void PlinkOutputMafIterator::writePedToFile_(ostream& out)
 {
-  for (size_t i = 0; i < ped_.size(); ++i)
+  for (auto ped: ped_)
   {
-    out << ped_[i] << endl;
+    out << ped << endl;
   }
 }
