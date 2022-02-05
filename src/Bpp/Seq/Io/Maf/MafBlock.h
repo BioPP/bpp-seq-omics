@@ -63,7 +63,6 @@ private:
 public:
   MafBlock() :
     AbstractSequenceContainer(&AlphabetTools::DNA_ALPHABET),
-    VectorSequenceContainer(&AlphabetTools::DNA_ALPHABET),
     AlignedSequenceContainer(&AlphabetTools::DNA_ALPHABET),
     score_(log(0)),
     pass_(0),
@@ -72,7 +71,6 @@ public:
 
   MafBlock(const MafBlock& block) :
     AbstractSequenceContainer(block),
-    VectorSequenceContainer(block),
     AlignedSequenceContainer(block),
     score_(block.score_),
     pass_(block.pass_),

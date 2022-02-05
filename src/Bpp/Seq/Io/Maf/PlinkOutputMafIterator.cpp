@@ -133,9 +133,16 @@ void PlinkOutputMafIterator::parseBlock_(std::ostream& out, const MafBlock& bloc
         pos = TextTools::toString(offset + walker.getSequencePosition(i) + 1);
       }
       string alleles = sites.getSite(i).toString();
-      for (size_t j = 0; j < alleles.size(); ++j)
-      {
-        ped_[j] += colSeparator_ + TextTools::toString(alleles[j]) + " " + alleles[j];
+      if (makeDiploids_) {
+        for (size_t j = 0; j < alleles.size(); ++j)
+        {
+          ped_[j] += colSeparator_ + TextTools::toString(alleles[j]) + " " + alleles[j];
+        }
+      } else {
+        for (size_t j = 0; j < alleles.size(); j+=2)
+        {
+          ped_[j] += colSeparator_ + TextTools::toString(alleles[j]) + " " + alleles[j + 1];
+        }
       }
       // SNP identifier are built as <chr>.<pos>
       out << chrStr << colSeparator_ << chr << "." << pos << colSeparator_;

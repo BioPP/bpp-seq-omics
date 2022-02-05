@@ -67,6 +67,7 @@ private:
   bool recodeChr_;
   std::map<std::string, unsigned int> chrCodes_;
   unsigned int currentCode_;
+  bool makeDiploids_;
   int phenotype_;
   std::string colSeparator_; //Stored as a string to facilitate concatenation.
 
@@ -88,6 +89,7 @@ public:
    * It does not have to be one of the selected species on which SNPs are computed.
    * @param map3 Tell if genetic distance column should be ommited in the map file. Otherwise set to 0.
    * @param recodeChr Tell if chromosomes should be recoded to numbers.
+   * @param makeDiploids If true, combines genomes into diploids. In case of odd numbers, the last genome will be ignored. If false, each genome will be output as a homozygous diploid.
    * @param phenotype Phenotype value to set in the map file.
    * @param columnSeparator Character used to separate columns (PLINK officially supports space and tab).
    */
@@ -98,11 +100,13 @@ public:
                          const std::string& reference,
                          bool map3 = false,
                          bool recodeChr = false,
+			 bool makeDiploids = false,
 			 int phenotype = 0,
 			 char columnSeparator = '\t') :
     AbstractFilterMafIterator(iterator),
     outputPed_(outPed), outputMap_(outMap), species_(species), refSpecies_(reference), map3_(map3),
-    ped_(species.size()), currentChr_(""), lastPosition_(0), recodeChr_(recodeChr), chrCodes_(), currentCode_(1), phenotype_(phenotype), colSeparator_(TextTools::toString(columnSeparator))
+    ped_(species.size()), currentChr_(""), lastPosition_(0), recodeChr_(recodeChr), chrCodes_(), currentCode_(1),
+    makeDiploids_(makeDiploids), phenotype_(phenotype), colSeparator_(TextTools::toString(columnSeparator))
   {
     init_();
   }
@@ -121,6 +125,7 @@ private:
     recodeChr_(iterator.recodeChr_),
     chrCodes_(iterator.chrCodes_),
     currentCode_(iterator.currentCode_),
+    makeDiploids_(iterator.makeDiploids_),
     phenotype_(iterator.phenotype_),
     colSeparator_(iterator.colSeparator_)
   {}
@@ -138,6 +143,7 @@ private:
     recodeChr_       = iterator.recodeChr_;
     chrCodes_        = iterator.chrCodes_;
     currentCode_     = iterator.currentCode_;
+    makeDiploids_    = iterator.makeDiploids_;
     phenotype_       = iterator.phenotype_;
     colSeparator_    = iterator.colSeparator_;
     return *this;
