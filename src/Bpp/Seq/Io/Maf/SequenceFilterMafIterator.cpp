@@ -64,7 +64,7 @@ MafBlock* SequenceFilterMafIterator::analyseCurrentBlock_()
         }
         if (!keep_)
         {
-          currentBlock_->getAlignment().removeSequence(i - 1);
+          currentBlock_->removeMafSequence(i - 1);
         }
       }
       else

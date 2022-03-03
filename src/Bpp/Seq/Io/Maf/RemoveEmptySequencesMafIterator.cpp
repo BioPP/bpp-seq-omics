@@ -69,7 +69,7 @@ MafBlock* RemoveEmptySequencesMafIterator::analyseCurrentBlock_()
       }
       if (isEmpty)
       {
-        currentBlock_->getAlignment().removeSequence(i - 1);
+        currentBlock_->removeMafSequence(i - 1);
       }
     }
   }

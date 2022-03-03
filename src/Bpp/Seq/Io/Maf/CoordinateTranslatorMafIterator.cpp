@@ -87,11 +87,9 @@ MafBlock* CoordinateTranslatorMafIterator::analyseCurrentBlock_()
   if (refSeq.getStrand() == '-')
   {
     RangeSet<size_t> cRanges;
-    for (set<Range<size_t>*>::iterator it = ranges.getSet().begin();
-         it != ranges.getSet().end();
-         ++it)
+    for (const auto& it : ranges.getSet())
     {
-      cRanges.addRange(SeqRange(refSeq.getSrcSize() - (**it).end(), refSeq.getSrcSize() - (**it).begin(), dynamic_cast<SeqRange*>(*it)->getStrand()));
+      cRanges.addRange(SeqRange(refSeq.getSrcSize() - it->end(), refSeq.getSrcSize() - it->begin(), dynamic_cast<const SeqRange *>(it)->getStrand()));
     }
     ranges = cRanges;
   }
@@ -113,16 +111,14 @@ MafBlock* CoordinateTranslatorMafIterator::analyseCurrentBlock_()
 
   const Alphabet* alphabet = refSeq.getAlphabet();
   size_t i = 0;
-  for (set<Range<size_t>*>::iterator it = ranges.getSet().begin();
-       it !=  ranges.getSet().end();
-       ++it)
+  for (const auto& it : ranges.getSet())
   {
     if (verbose_)
     {
       ApplicationTools::displayGauge(i++, ranges.getSet().size() - 1, '=');
     }
-    size_t a = referenceWalker.getAlignmentPosition((**it).begin() - refSeq.start());
-    size_t b = referenceWalker.getAlignmentPosition((**it).end() - refSeq.start() - 1);
+    size_t a = referenceWalker.getAlignmentPosition(it->begin() - refSeq.start());
+    size_t b = referenceWalker.getAlignmentPosition(it->end() - refSeq.start() - 1);
     string targetPos1 = "NA", targetPos2 = "NA";
     if (!alphabet->isGap(targetSeq[a]) || outputClosestCoordinate_)
     {
@@ -142,7 +138,7 @@ MafBlock* CoordinateTranslatorMafIterator::analyseCurrentBlock_()
       }
       targetPos2 = TextTools::toString(b2);
     }
-    output_ << refSeq.getChromosome() << "\t" << refSeq.getStrand() << "\t" << (**it).begin() << "\t" << (**it).end() << "\t";
+    output_ << refSeq.getChromosome() << "\t" << refSeq.getStrand() << "\t" << it->begin() << "\t" << it->end() << "\t";
     output_ << targetSeq.getChromosome() << "\t" << targetSeq.getStrand() << "\t" << targetPos1 << "\t" << targetPos2 << endl;
   }
 

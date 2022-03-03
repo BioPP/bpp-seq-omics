@@ -108,14 +108,21 @@ public:
   double getScore() const { return score_; }
   unsigned int getPass() const { return pass_; }
 
-  AlignedSequenceContainer& getAlignment() { return *this; }
   const AlignedSequenceContainer& getAlignment() const { return *this; }
 
-  size_t getNumberOfSequences() const { return AlignedSequenceContainer::getNumberOfSequences(); }
+  using AlignedSequenceContainer::getNumberOfSequences;
 
-  size_t getNumberOfSites() const { return AlignedSequenceContainer::getNumberOfSites(); }
+  using AlignedSequenceContainer::getNumberOfSites;
+  
+  using AlignedSequenceContainer::deleteSite;
+  
+  using AlignedSequenceContainer::deleteSites;
+  
+  using AlignedSequenceContainer::clear;
 
-  void addMafSequence(const MafSequence& sequence) { AlignedSequenceContainer::addSequence(sequence, false); }
+  void addMafSequence(const MafSequence& sequence) { 
+    addSequence(sequence, false);
+  }
 
   bool hasMafSequence(const std::string& name) const
   {
@@ -124,24 +131,28 @@ public:
 
   const MafSequence& getMafSequence(const std::string& name) const
   {
-    return dynamic_cast<const MafSequence&>(AlignedSequenceContainer::getSequence(name));
+    return dynamic_cast<const MafSequence&>(getSequence(name));
   }
 
   const MafSequence& getMafSequence(size_t i) const
   {
-    return dynamic_cast<const MafSequence&>(AlignedSequenceContainer::getSequence(i));
+    return dynamic_cast<const MafSequence&>(getSequence(i));
   }
 
   MafSequence& getMafSequence(const std::string& name)
   {
-    return dynamic_cast<MafSequence&>(AlignedSequenceContainer::getSequence_(name));
+    return dynamic_cast<MafSequence&>(getSequence_(name));
   }
 
   MafSequence& getMafSequence(size_t i)
   {
-    return dynamic_cast<MafSequence&>(AlignedSequenceContainer::getSequence_(i));
+    return dynamic_cast<MafSequence&>(getSequence_(i));
   }
 
+  std::shared_ptr<MafSequence> removeMafSequence(size_t i)
+  {
+    return std::dynamic_pointer_cast<MafSequence>(removeSequence(i));
+  }
 
   bool hasMafSequenceForSpecies(const std::string& species) const
   {

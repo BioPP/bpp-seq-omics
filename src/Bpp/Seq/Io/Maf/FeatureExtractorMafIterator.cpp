@@ -85,11 +85,9 @@ START:
     if (refSeq.getStrand() == '-')
     {
       RangeSet<size_t> cRanges;
-      for (set<Range<size_t>*>::iterator it = ranges.getSet().begin();
-           it != ranges.getSet().end();
-           ++it)
+      for (const auto& it : ranges.getSet())
       {
-        cRanges.addRange(SeqRange(refSeq.getSrcSize() - (**it).end(), refSeq.getSrcSize() - (**it).begin(), dynamic_cast<SeqRange*>(*it)->getStrand()));
+        cRanges.addRange(SeqRange(refSeq.getSrcSize() - it->end(), refSeq.getSrcSize() - it->begin(), dynamic_cast<const SeqRange*>(it)->getStrand()));
       }
       ranges = cRanges;
     }
@@ -109,9 +107,7 @@ START:
     }
 
     size_t i = 0;
-    for (set<Range<size_t>*>::iterator it = ranges.getSet().begin();
-         it !=  ranges.getSet().end();
-         ++it)
+    for (const auto& it : ranges.getSet())
     {
       if (verbose_)
       {
@@ -121,16 +117,16 @@ START:
       MafBlock* newBlock = new MafBlock();
       newBlock->setScore(block->getScore());
       newBlock->setPass(block->getPass());
-      size_t a = walker.getAlignmentPosition((**it).begin() - refSeq.start());
-      size_t b = walker.getAlignmentPosition((**it).end() - refSeq.start() - 1);
+      size_t a = walker.getAlignmentPosition(it->begin() - refSeq.start());
+      size_t b = walker.getAlignmentPosition(it->end() - refSeq.start() - 1);
       for (size_t j = 0; j < block->getNumberOfSequences(); ++j)
       {
         unique_ptr<MafSequence> subseq;
         subseq.reset(block->getMafSequence(j).subSequence(a, b - a + 1));
         if (!ignoreStrand_)
         {
-          if ((dynamic_cast<SeqRange*>(*it)->isNegativeStrand() && refSeq.getStrand() == '+') ||
-              (!dynamic_cast<SeqRange*>(*it)->isNegativeStrand() && refSeq.getStrand() == '-'))
+          if ((dynamic_cast<const SeqRange*>(it)->isNegativeStrand() && refSeq.getStrand() == '+') ||
+              (!dynamic_cast<const SeqRange*>(it)->isNegativeStrand() && refSeq.getStrand() == '-'))
           {
             SequenceTools::invertComplement(*subseq);
           }

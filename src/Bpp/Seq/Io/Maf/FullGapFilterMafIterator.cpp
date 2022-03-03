@@ -106,7 +106,7 @@ MafBlock* FullGapFilterMafIterator::analyseCurrentBlock_()
   {
     if (verbose_)
       ApplicationTools::displayGauge(start.size() - i, start.size() - 1, '=');
-    block->getAlignment().deleteSites(start[i - 1], count[i - 1]);
+    block->deleteSites(start[i - 1], count[i - 1]);
     totalRemoved += count[i - 1];
   }
   if (verbose_)
