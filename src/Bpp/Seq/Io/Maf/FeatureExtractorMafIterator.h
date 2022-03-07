@@ -77,7 +77,12 @@ public:
    * @param features The set of features to extract
    * @param ignoreStrand If true, features will be extracted 'as is', without being reversed in case they are on the negative strand.
    */
-  FeatureExtractorMafIterator(MafIterator* iterator, const std::string& refSpecies, const SequenceFeatureSet& features, bool complete = false, bool ignoreStrand = false) :
+  FeatureExtractorMafIterator(
+      MafIterator* iterator,
+      const std::string& refSpecies,
+      const SequenceFeatureSet& features,
+      bool complete = false,
+      bool ignoreStrand = false) :
     AbstractFilterMafIterator(iterator),
     refSpecies_(refSpecies),
     completeOnly_(complete),
@@ -87,13 +92,9 @@ public:
   {
     // Build ranges:
     std::set<std::string> seqIds = features.getSequences();
-    for (std::set<std::string>::iterator it = seqIds.begin();
-         it != seqIds.end();
-         ++it)
+    for (auto it : seqIds)
     {
-      {
-        features.fillRangeCollectionForSequence(*it, ranges_[*it]);
-      }
+      features.fillRangeCollectionForSequence(it, ranges_[it]);
     }
   }
 

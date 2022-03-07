@@ -555,11 +555,9 @@ public:
    */
   void fillRangeCollection(RangeCollection<size_t>& coords) const
   {
-    for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
-         it != features_.end();
-         ++it)
+    for (const auto it : features_)
     {
-      coords.addRange((**it).getRange());
+      coords.addRange(it->getRange());
     }
   }
 
@@ -571,13 +569,11 @@ public:
    */
   void fillRangeCollectionForSequence(const std::string& seqId, RangeCollection<size_t>& coords) const
   {
-    for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
-         it != features_.end();
-         ++it)
+    for (const auto it : features_)
     {
-      if ((**it).getSequenceId() == seqId)
+      if (it->getSequenceId() == seqId)
       {
-        coords.addRange((**it).getRange());
+        coords.addRange(it->getRange());
       }
     }
   }

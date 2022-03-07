@@ -62,23 +62,27 @@ START:
       return 0; // No more block.
 
     // Check if the block contains the reference species:
-    if (!block->hasMafSequenceForSpecies(refSpecies_))
+    if (!block->hasMafSequenceForSpecies(refSpecies_)) {
       goto START;
+    }
 
     // Get the feature ranges for this block:
     const MafSequence& refSeq = block->getMafSequenceForSpecies(refSpecies_);
     // first check if there is one (for now we assume that features refer to the chromosome or contig name, with implicit species):
-    std::map<std::string, RangeSet<size_t> >::iterator mr = ranges_.find(refSeq.getChromosome());
-    if (mr == ranges_.end())
+
+    auto mr = ranges_.find(refSeq.getChromosome());
+    if (mr == ranges_.end()) {
       goto START;
+    }
 
     RangeSet<size_t> ranges = mr->second;
     if (completeOnly_)
       ranges.filterWithin(refSeq.getRange(true));
     else
       ranges.restrictTo(refSeq.getRange(true));
-    if (ranges.isEmpty())
+    if (ranges.isEmpty()) {
       goto START;
+    }
 
     // If the reference sequence is on the negative strand, then we have to correct the coordinates:
     (*logstream_ << "Strand: " << refSeq.getStrand()).endLine();
