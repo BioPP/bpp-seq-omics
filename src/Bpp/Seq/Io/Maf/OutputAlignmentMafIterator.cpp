@@ -100,7 +100,7 @@ void OutputAlignmentMafIterator::writeBlock(std::ostream& out, const MafBlock& b
     else
       names[i] = mafseq.getSpecies();
   }
-  aln.setSequencesNames(names);
+  aln.setSequenceNames(names);
   if (addLDHatHeader_)
     out << aln.getNumberOfSequences() << " " << aln.getNumberOfSites() << " 1" << endl; // We here assume sequences are haploid.
   writer_->writeAlignment(out, aln);

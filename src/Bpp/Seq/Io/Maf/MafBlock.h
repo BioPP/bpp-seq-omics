@@ -48,7 +48,7 @@
 namespace bpp
 {
 /**
- * @brief A synteny block data structure, the basic unit of a MAF alignement file.
+ * @brief A synteny block data structure, the basic unit of a MAF alignment file.
  *
  * This class basically contains a AlignedSequenceContainer made of MafSequence objects.
  */

@@ -82,7 +82,7 @@ void SequenceLDhotOutputMafIterator::writeBlock(std::ostream& out, const MafBloc
 {
   // First get alignment:
   const SiteContainer& aln = block.getAlignment();
-  unique_ptr<VectorSiteContainer> variableSites(new VectorSiteContainer(aln.getSequencesNames(), &AlphabetTools::DNA_ALPHABET));
+  unique_ptr<VectorSiteContainer> variableSites(new VectorSiteContainer(aln.getSequenceNames(), &AlphabetTools::DNA_ALPHABET));
 
   // We first preparse the data:
   // We assume all sequences are distinct:
