@@ -87,12 +87,10 @@ unique_ptr<MafBlock> OutputAlignmentMafIterator::analyseCurrentBlock_()
 void OutputAlignmentMafIterator::writeBlock(std::ostream& out, const MafBlock& block) const
 {
   // First get alignment:
-  AlignedSequenceContainer aln(AlphabetTools::DNA_ALPHABET);
-  // We cannot copy directly the container because we want to convert from MafSequence to BasicSequence (needed for renaming):
-  SequenceContainerTools::convertContainer<TemplateAlignedSequenceContainer<MafSequence, Site>, AlignedSequenceContainer, Sequence>(block.alignment(), aln);
+  auto aln = block.getAlignment();
   // Format sequence names:
-  vector<string> names(aln.getNumberOfSequences());
-  for (size_t i = 0; i < aln.getNumberOfSequences(); ++i)
+  vector<string> names(aln->getNumberOfSequences());
+  for (size_t i = 0; i < aln->getNumberOfSequences(); ++i)
   {
     const MafSequence& mafseq = block.sequence(i);
     if (mafseq.hasCoordinates() && outputCoordinates_)
@@ -100,8 +98,8 @@ void OutputAlignmentMafIterator::writeBlock(std::ostream& out, const MafBlock& b
     else
       names[i] = mafseq.getSpecies();
   }
-  aln.setSequenceNames(names, true);
+  aln->setSequenceNames(names, true);
   if (addLDHatHeader_)
-    out << aln.getNumberOfSequences() << " " << aln.getNumberOfSites() << " 1" << endl; // We here assume sequences are haploid.
-  writer_->writeAlignment(out, aln);
+    out << aln->getNumberOfSequences() << " " << aln->getNumberOfSites() << " 1" << endl; // We here assume sequences are haploid.
+  writer_->writeAlignment(out, *aln);
 }

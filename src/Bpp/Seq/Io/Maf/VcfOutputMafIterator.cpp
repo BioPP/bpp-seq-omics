@@ -103,20 +103,19 @@ void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
   {
     chars[i] = AlphabetTools::DNA_ALPHABET->intToChar(i);
   }
-  const auto& sites = block.alignment();
   // Where to store genotype information, if any:
   vector<int> gt(genotypes_.size());
   // Now we look all sites for SNPs:
-  for (size_t i = 0; i < sites.getNumberOfSites(); ++i)
+  for (size_t i = 0; i < block.getNumberOfSites(); ++i)
   {
     if (refSeq[i] == gap)
       continue;
     string filter = "";
-    if (SiteTools::hasGap(sites.site(i)))
+    if (SiteTools::hasGap(block.site(i)))
     {
       filter = "gap";
     }
-    if (SymbolListTools::hasUnresolved(sites.site(i)))
+    if (SymbolListTools::hasUnresolved(block.site(i)))
     {
       if (filter != "")
         filter += ";";
@@ -126,7 +125,7 @@ void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
       filter = "PASS";
 
     map<int, size_t> counts;
-    SiteTools::getCounts(sites.site(i), counts);
+    SiteTools::getCounts(block.site(i), counts);
     int ref = refSeq[i];
     string alt = "";
     string ac = "";

@@ -67,7 +67,7 @@ void PairwiseDivergenceMafStatistics::compute(const MafBlock& block)
 
 unique_ptr<SiteContainerInterface> AbstractSpeciesSelectionMafStatistics::getSiteContainer_(const MafBlock& block)
 {
-  auto alignment = make_unique<VectorSiteContainer>(block.alignment().getAlphabet());
+  auto alignment = make_unique<VectorSiteContainer>(block.getAlphabet());
   if (noSpeciesMeansAllSpecies_ && species_.size() == 0)
   {
     for (size_t i = 0; i < block.getNumberOfSequences(); ++i)
@@ -110,7 +110,7 @@ vector<unique_ptr<SiteContainerInterface>> AbstractSpeciesMultipleSelectionMafSt
   vector<unique_ptr<SiteContainerInterface>> alignments;
   for (size_t k = 0; k < species_.size(); ++k)
   {
-    auto alignment = make_unique<VectorSiteContainer>(block.alignment().getAlphabet());
+    auto alignment = make_unique<VectorSiteContainer>(block.getAlphabet());
     for (size_t i = 0; i < species_[k].size(); ++i)
     {
       if (block.hasSequenceForSpecies(species_[k][i]))

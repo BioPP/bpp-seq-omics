@@ -42,6 +42,7 @@
 
 #include "MafSequence.h"
 #include <Bpp/Seq/Container/AlignedSequenceContainer.h>
+#include <Bpp/Seq/Container/SequenceContainerTools.h>
 
 #include <Bpp/Clonable.h>
 
@@ -104,11 +105,23 @@ public:
   double getScore() const { return score_; }
   unsigned int getPass() const { return pass_; }
 
-  const TemplateAlignedSequenceContainer<MafSequence, Site>& alignment() const { return *this; }
+  std::unique_ptr<AlignedSequenceContainer> getAlignment() const {
+    auto aln = std::make_unique<AlignedSequenceContainer>(AlphabetTools::DNA_ALPHABET);
+    SequenceContainerTools::convertContainer<TemplateAlignedSequenceContainer<MafSequence, Site>, AlignedSequenceContainer, Sequence>(*this, *aln);
+    return aln;
+  }
 
+  using TemplateAlignedSequenceContainer::getAlphabet;
+  
+  using TemplateAlignedSequenceContainer::alphabet;
+  
+  using TemplateAlignedSequenceContainer::getSequenceNames;
+  
   using TemplateAlignedSequenceContainer::getNumberOfSequences;
 
   using TemplateAlignedSequenceContainer::getNumberOfSites;
+  
+  using TemplateAlignedSequenceContainer::site;
   
   using TemplateAlignedSequenceContainer::deleteSite;
   

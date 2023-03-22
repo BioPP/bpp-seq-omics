@@ -81,19 +81,18 @@ unique_ptr<MafBlock> SequenceLDhotOutputMafIterator::analyseCurrentBlock_()
 void SequenceLDhotOutputMafIterator::writeBlock(std::ostream& out, const MafBlock& block) const
 {
   // First get alignment:
-  const auto& aln = block.alignment();
-  unique_ptr<VectorSiteContainer> variableSites = make_unique<VectorSiteContainer>(aln.getSequenceNames(), AlphabetTools::DNA_ALPHABET);
+  unique_ptr<VectorSiteContainer> variableSites = make_unique<VectorSiteContainer>(block.getSequenceNames(), AlphabetTools::DNA_ALPHABET);
 
   // We first preparse the data:
   // We assume all sequences are distinct:
-  size_t nbDistinct = aln.getNumberOfSequences();
-  size_t nbGenes = aln.getNumberOfSequences();
+  size_t nbDistinct = block.getNumberOfSequences();
+  size_t nbGenes = block.getNumberOfSequences();
   size_t nbLoci = 0;
 
   string positions = "";
-  for (size_t i = 0; i < aln.getNumberOfSites(); ++i)
+  for (size_t i = 0; i < block.getNumberOfSites(); ++i)
   {
-    const Site& s = aln.site(i);
+    const Site& s = block.site(i);
     if (completeOnly_ && !SiteTools::isComplete(s))
     {
       continue;
@@ -127,7 +126,7 @@ void SequenceLDhotOutputMafIterator::writeBlock(std::ostream& out, const MafBloc
       // At least two alleles (non-gap, non-unresolved) found in this position, so we record it
       positions += " " + TextTools::toString(i + 1);
       nbLoci++;
-      auto tmpSite = make_unique<Site>(aln.site(i));
+      auto tmpSite = make_unique<Site>(block.site(i));
       variableSites->addSite(tmpSite);
     }
   }
@@ -143,7 +142,7 @@ void SequenceLDhotOutputMafIterator::writeBlock(std::ostream& out, const MafBloc
 
   out << "Haplotypes" << endl;
 
-  for (size_t i = 0; i < aln.getNumberOfSequences(); ++i)
+  for (size_t i = 0; i < block.getNumberOfSequences(); ++i)
   {
     out << variableSites->sequence(i).toString() << " 1" << endl;
   }
