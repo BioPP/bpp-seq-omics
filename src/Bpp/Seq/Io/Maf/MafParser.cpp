@@ -48,9 +48,9 @@
 using namespace std;
 using namespace bpp;
 
-MafBlock* MafParser::analyseCurrentBlock_()
+std::unique_ptr<MafBlock> MafParser::analyseCurrentBlock_()
 {
-  MafBlock* block = 0;
+  unique_ptr<MafBlock> block = nullptr;
 
   string line;
   bool test = true;
@@ -70,8 +70,7 @@ MafBlock* MafParser::analyseCurrentBlock_()
       if (currentSequence)
       {
         // Add previous sequence:
-        block->addMafSequence(*currentSequence); // The sequence is copied in the container.
-        currentSequence.reset();
+        block->addSequence(currentSequence->getName(), currentSequence);
       }
 
       // end of paragraph
@@ -82,12 +81,11 @@ MafBlock* MafParser::analyseCurrentBlock_()
       if (currentSequence)
       {
         // Add previous sequence:
-        block->addMafSequence(*currentSequence); // The sequence is copied in the container.
-        currentSequence.reset();
+        block->addSequence(currentSequence->getName(), currentSequence);
       }
 
       // New block.
-      block = new MafBlock();
+      block = make_unique<MafBlock>();
       firstBlock_ = false;
 
       map<string, string> args;
@@ -129,8 +127,7 @@ MafBlock* MafParser::analyseCurrentBlock_()
       if (currentSequence)
       {
         // Add previous sequence:
-        block->addMafSequence(*currentSequence); // The sequence is copied in the container.
-        currentSequence.reset();
+        block->addSequence(currentSequence->getName(), currentSequence);
       }
       if (!st.hasMoreToken())
         throw IOException("Sequence description without a sequence.");
@@ -164,7 +161,7 @@ MafBlock* MafParser::analyseCurrentBlock_()
         {
           mask[i] = cmAlphabet_.isMasked(seq[i]);
         }
-        currentSequence->addAnnotation(new SequenceMask(mask));
+        currentSequence->addAnnotation(make_shared<SequenceMask>(mask));
       }
     }
     else if (line[0] == 'q')
@@ -178,7 +175,7 @@ MafBlock* MafParser::analyseCurrentBlock_()
         throw Exception("MafAlignmentParser::nextBlock(). Quality scores found, but with a different name from the previous sequence: " + name + ", should be " + currentSequence->getName() + ".");
       string qstr = st.nextToken();
       // Now parse the score string:
-      SequenceQuality* seqQual = new SequenceQuality(qstr.size());
+      auto seqQual = make_shared<SequenceQuality>(qstr.size());
       for (size_t i = 0; i < qstr.size(); ++i)
       {
         char c = qstr[i];
@@ -212,8 +209,7 @@ MafBlock* MafParser::analyseCurrentBlock_()
   if (currentSequence)
   {
     // Add previous sequence:
-    block->addMafSequence(*currentSequence); // The sequence is copied in the container.
-    currentSequence.reset();
+    block->addSequence(currentSequence->getName(), currentSequence);
   }
 
   // Returning block:

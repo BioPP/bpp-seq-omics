@@ -54,8 +54,8 @@ namespace bpp
  * @author Sylvain Gaillard
  */
 class Fastq :
-  public virtual ISequenceStream,
-  public virtual OSequenceStream
+  public virtual ISequenceWithQualityStream,
+  public virtual OSequenceWithQualityStream
 {
 private:
   bool repeatName_;
@@ -78,12 +78,12 @@ public:
    *
    * @{
    */
-  const std::string getFormatName() const { return "FASTQ file"; }
-  const std::string getFormatDescription() const
+  const std::string getFormatName() const override { return "FASTQ file"; }
+  const std::string getFormatDescription() const override
   {
     return "Sequence with quality";
   }
-  const std::string getDataType() const { return "Sequence with quality"; }
+  const std::string getDataType() const override { return "Sequence with quality"; }
   /** @} */
   bool repeatName() const { return repeatName_; }
   void repeatName(bool yn) { repeatName_ = yn; }
@@ -119,7 +119,7 @@ public:
    * in.close();
    * @endcode
    */
-  bool nextSequence(std::istream& input, Sequence& seq) const;
+  bool nextSequence(std::istream& input, SequenceWithQuality& seq) const override;
   /** @} */
 
   /**
@@ -131,7 +131,7 @@ public:
    * @copydoc OSequenceStream::writeSequence()
    * @author Sylvain Gaillard
    */
-  void writeSequence(std::ostream& output, const Sequence& seq) const;
+  void writeSequence(std::ostream& output, const SequenceWithQuality& seq) const override;
   /** @} */
 };
 }

@@ -47,11 +47,11 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* BlockMergerMafIterator::analyseCurrentBlock_()
+std::unique_ptr<MafBlock> BlockMergerMafIterator::analyseCurrentBlock_()
 {
   if (!incomingBlock_)
     return 0;
-  currentBlock_  = incomingBlock_;
+  currentBlock_  = move(incomingBlock_);
   incomingBlock_ = iterator_->nextBlock();
   while (incomingBlock_)
   {
@@ -60,38 +60,38 @@ MafBlock* BlockMergerMafIterator::analyseCurrentBlock_()
     {
       try
       {
-        const MafSequence* seq1 = &currentBlock_->getMafSequenceForSpecies(species_[i]);
-        const MafSequence* seq2 = &incomingBlock_->getMafSequenceForSpecies(species_[i]);
-        if (!seq1->hasCoordinates() || !seq2->hasCoordinates())
+        const auto& seq1 = currentBlock_->sequenceForSpecies(species_[i]);
+        const auto& seq2 = incomingBlock_->sequenceForSpecies(species_[i]);
+        if (!seq1.hasCoordinates() || !seq2.hasCoordinates())
           throw Exception("BlockMergerMafIterator::nextBlock. Species '" + species_[i] + "' is missing coordinates in at least one block.");
 
-        if (seq1->stop() > seq2->start())
-          return currentBlock_;
-        size_t space = seq2->start() - seq1->stop();
+        if (seq1.stop() > seq2.start())
+          return move(currentBlock_);
+        size_t space = seq2.start() - seq1.stop();
         if (space > maxDist_)
-          return currentBlock_;
+          return move(currentBlock_);
         if (i == 0)
           globalSpace = space;
         else
         {
           if (space != globalSpace)
-            return currentBlock_;
+            return move(currentBlock_);
         }
-        if (seq1->getChromosome() != seq2->getChromosome()
-            || VectorTools::contains(ignoreChrs_, seq1->getChromosome())
-            || VectorTools::contains(ignoreChrs_, seq2->getChromosome())
-            || seq1->getStrand() != seq2->getStrand()
-            || seq1->getSrcSize() != seq2->getSrcSize())
+        if (seq1.getChromosome() != seq2.getChromosome()
+            || VectorTools::contains(ignoreChrs_, seq1.getChromosome())
+            || VectorTools::contains(ignoreChrs_, seq2.getChromosome())
+            || seq1.getStrand() != seq2.getStrand()
+            || seq1.getSrcSize() != seq2.getSrcSize())
         {
           // There is a syntheny break in this sequence, so we do not merge the blocks.
-          return currentBlock_;
+          return move(currentBlock_);
         }
       }
       catch (SequenceNotFoundException& snfe)
       {
         // At least one block does not contain the sequence.
         // We don't merge the blocks:
-        return currentBlock_;
+        return move(currentBlock_);
       }
     }
     // We merge the two blocks:
@@ -103,7 +103,7 @@ MafBlock* BlockMergerMafIterator::analyseCurrentBlock_()
     vector<string> sp2 = incomingBlock_->getSpeciesList();
     vector<string> allSp = VectorTools::unique(VectorTools::vectorUnion(sp1, sp2));
     // We need to create a new MafBlock:
-    MafBlock* mergedBlock = new MafBlock();
+    auto mergedBlock = make_unique<MafBlock>();
     // We average the score and pass values:
     unsigned int p1 = currentBlock_->getPass();
     unsigned int p2 = incomingBlock_->getPass();
@@ -121,12 +121,12 @@ MafBlock* BlockMergerMafIterator::analyseCurrentBlock_()
       unique_ptr<MafSequence> seq;
       try
       {
-        seq.reset(new MafSequence(currentBlock_->getMafSequenceForSpecies(allSp[i])));
+        seq.reset(new MafSequence(currentBlock_->sequenceForSpecies(allSp[i])));
 
         // Check is there is a second sequence:
         try
         {
-          unique_ptr<MafSequence> tmp(new MafSequence(incomingBlock_->getMafSequenceForSpecies(allSp[i])));
+          auto tmp = make_unique<MafSequence>(incomingBlock_->sequenceForSpecies(allSp[i]));
           string ref1 = seq->getDescription(), ref2 = tmp->getDescription();
           // Add spacer if needed:
           if (globalSpace > 0)
@@ -135,7 +135,7 @@ MafBlock* BlockMergerMafIterator::analyseCurrentBlock_()
             {
               (*logstream_ << "BLOCK MERGER: a spacer of size " << globalSpace << " is inserted in sequence for species " << allSp[i] << ".").endLine();
             }
-            seq->append(vector<int>(globalSpace, AlphabetTools::DNA_ALPHABET.getUnknownCharacterCode()));
+            seq->append(vector<int>(globalSpace, AlphabetTools::DNA_ALPHABET->getUnknownCharacterCode()));
           }
           if (seq->getChromosome() != tmp->getChromosome())
           {
@@ -181,7 +181,7 @@ MafBlock* BlockMergerMafIterator::analyseCurrentBlock_()
       catch (SequenceNotFoundException& snfe1)
       {
         // There must be a second sequence then:
-        seq.reset(new MafSequence(incomingBlock_->getMafSequenceForSpecies(allSp[i])));
+        seq.reset(new MafSequence(incomingBlock_->sequenceForSpecies(allSp[i])));
         string ref2 = seq->getDescription();
         seq->setToSizeL(seq->size() + currentBlock_->getNumberOfSites() + globalSpace);
         if (logstream_)
@@ -189,14 +189,11 @@ MafBlock* BlockMergerMafIterator::analyseCurrentBlock_()
           (*logstream_ << "BLOCK MERGER: adding " << ref2 << " and extend it with " << currentBlock_->getNumberOfSites() << " gaps on the left.").endLine();
         }
       }
-      mergedBlock->addMafSequence(*seq);
+      mergedBlock->addSequence(seq->getName(), seq);
     }
-    // Cleaning stuff:
-    delete currentBlock_;
-    delete incomingBlock_;
-    currentBlock_ = mergedBlock;
+    currentBlock_ = move(mergedBlock);
     // We check if we can also merge the next block:
     incomingBlock_ = iterator_->nextBlock();
   }
-  return currentBlock_;
+  return move(currentBlock_);
 }

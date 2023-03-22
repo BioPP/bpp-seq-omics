@@ -47,7 +47,7 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* SequenceFilterMafIterator::analyseCurrentBlock_()
+unique_ptr<MafBlock> SequenceFilterMafIterator::analyseCurrentBlock_()
 {
   currentBlock_ = iterator_->nextBlock();
   while (currentBlock_)
@@ -55,7 +55,7 @@ MafBlock* SequenceFilterMafIterator::analyseCurrentBlock_()
     map<string, unsigned int> counts;
     for (size_t i = currentBlock_->getNumberOfSequences(); i > 0; --i)
     {
-      string species = currentBlock_->getMafSequence(i - 1).getSpecies();
+      string species = currentBlock_->sequence(i - 1).getSpecies();
       if (!VectorTools::contains(species_, species))
       {
         if (logstream_)
@@ -64,7 +64,7 @@ MafBlock* SequenceFilterMafIterator::analyseCurrentBlock_()
         }
         if (!keep_)
         {
-          currentBlock_->removeMafSequence(i - 1);
+          currentBlock_->removeSequence(i - 1);
         }
       }
       else
@@ -80,7 +80,6 @@ MafBlock* SequenceFilterMafIterator::analyseCurrentBlock_()
       {
         (*logstream_ << "SEQUENCE FILTER: block " << currentBlock_->getDescription() << " is now empty. Try to get the next one.").endLine();
       }
-      delete currentBlock_;
     }
     else
     {
@@ -91,7 +90,6 @@ MafBlock* SequenceFilterMafIterator::analyseCurrentBlock_()
         {
           (*logstream_ << "SEQUENCE FILTER: block " << currentBlock_->getDescription() << " does not contain all species and will be ignored. Try to get the next one.").endLine();
         }
-        delete currentBlock_;
       }
       else
       {
@@ -107,16 +105,15 @@ MafBlock* SequenceFilterMafIterator::analyseCurrentBlock_()
             {
               (*logstream_ << "SEQUENCE FILTER: block " << currentBlock_->getDescription() << " has two sequences for species '" << it->first << "' and will be ignored. Try to get the next one.").endLine();
             }
-            delete currentBlock_;
           }
           else
           {
-            return currentBlock_;
+            return move(currentBlock_);
           }
         }
         else
         {
-          return currentBlock_;
+          return move(currentBlock_);
         }
       }
     }
@@ -125,5 +122,5 @@ MafBlock* SequenceFilterMafIterator::analyseCurrentBlock_()
     currentBlock_ = iterator_->nextBlock();
   }
 
-  return currentBlock_;
+  return move(currentBlock_);
 }

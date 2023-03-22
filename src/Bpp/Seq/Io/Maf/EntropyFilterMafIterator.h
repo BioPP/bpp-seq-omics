@@ -40,7 +40,7 @@
 #ifndef _ENTROPYFILTERMAFITERATOR_H_
 #define _ENTROPYFILTERMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From the STL:
 #include <iostream>
@@ -58,7 +58,7 @@ namespace bpp
  */
 class EntropyFilterMafIterator :
   public AbstractFilterMafIterator,
-  public virtual MafTrashIterator
+  public virtual MafTrashIteratorInterface
 {
 private:
   std::vector<std::string> species_;
@@ -66,15 +66,24 @@ private:
   unsigned int step_;
   double maxEnt_;
   unsigned int maxPos_;
-  std::deque<MafBlock*> blockBuffer_;
-  std::deque<MafBlock*> trashBuffer_;
+  std::deque<std::unique_ptr<MafBlock>> blockBuffer_;
+  std::deque<std::unique_ptr<MafBlock>> trashBuffer_;
   std::deque<unsigned int> window_;
   bool keepTrashedBlocks_;
   bool missingAsGap_;
   bool ignoreGaps_;
 
 public:
-  EntropyFilterMafIterator(MafIterator* iterator, const std::vector<std::string>& species, unsigned int windowSize, unsigned int step, double maxEnt, unsigned int maxPos, bool keepTrashedBlocks, bool missingAsGap, bool ignoreGaps) :
+  EntropyFilterMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      const std::vector<std::string>& species,
+      unsigned int windowSize,
+      unsigned int step,
+      double maxEnt,
+      unsigned int maxPos,
+      bool keepTrashedBlocks, 
+      bool missingAsGap,
+      bool ignoreGaps) :
     AbstractFilterMafIterator(iterator),
     species_(species),
     windowSize_(windowSize),
@@ -90,16 +99,16 @@ public:
   {}
 
 public:
-  MafBlock* nextRemovedBlock()
+  std::unique_ptr<MafBlock> nextRemovedBlock()
   {
     if (trashBuffer_.size() == 0) return 0;
-    MafBlock* block = trashBuffer_.front();
+    auto block = move(trashBuffer_.front());
     trashBuffer_.pop_front();
     return block;
   }
 
 private:
-  MafBlock* analyseCurrentBlock_();
+  std::unique_ptr<MafBlock> analyseCurrentBlock_();
 };
 } // end of namespace bpp.
 

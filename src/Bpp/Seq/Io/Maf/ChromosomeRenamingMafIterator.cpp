@@ -47,17 +47,18 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* ChromosomeRenamingMafIterator::analyseCurrentBlock_()
+unique_ptr<MafBlock> ChromosomeRenamingMafIterator::analyseCurrentBlock_()
 {
   currentBlock_ = iterator_->nextBlock();
   if (currentBlock_)
   {
     for (size_t i = 0; i < currentBlock_->getNumberOfSequences(); ++i)
     {
-      string chr = currentBlock_->getMafSequence(i).getChromosome();
+      string chr = currentBlock_->sequence(i).getChromosome();
       auto tln = chrTranslation_.find(chr);
       if (tln != chrTranslation_.end()) {
-        currentBlock_->getMafSequence(i).setChromosome(tln->second);
+	// We force conversion to avoid unecessary recopy
+        const_cast<MafSequence&>(currentBlock_->sequence(i)).setChromosome(tln->second);
         if (logstream_)
         {
           (*logstream_ << "CHROMOSOME RENAMING: renamed " << chr << " to " << tln->second << ".").endLine();
@@ -66,6 +67,6 @@ MafBlock* ChromosomeRenamingMafIterator::analyseCurrentBlock_()
     }
   }
 
-  return currentBlock_;
+  return move(currentBlock_);
 }
 

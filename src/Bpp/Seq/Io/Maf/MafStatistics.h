@@ -62,7 +62,7 @@ namespace bpp
 class MafStatisticsResult
 {
 protected:
-  mutable std::map<std::string, BppNumberI*> values_;
+  mutable std::map<std::string, std::unique_ptr<BppNumberI>> values_;
 
 public:
   MafStatisticsResult() : values_() {}
@@ -70,18 +70,26 @@ public:
 
   MafStatisticsResult(const MafStatisticsResult& msr) : values_()
   {
-    for (std::map<std::string, BppNumberI*>::const_iterator it = msr.values_.begin();
-         it != msr.values_.end();
-         ++it)
+    for (auto& it : values_)
     {
-      values_[it->first] = it->second->clone();
+      values_[it.first].reset(it.second->clone());
     }
+  }
+
+  MafStatisticsResult& operator=(const MafStatisticsResult& msr)
+  {
+    values_.clear();
+    for (auto& it : values_)
+    {
+      values_[it.first].reset(it.second->clone());
+    }
+    return *this;
   }
 
 public:
   virtual const BppNumberI& getValue(const std::string& tag) const
   {
-    std::map<std::string, BppNumberI*>::iterator it = values_.find(tag);
+    auto it = values_.find(tag);
     if (it != values_.end())
       return *it->second;
     else
@@ -96,11 +104,7 @@ public:
    */
   virtual void setValue(const std::string& tag, double value)
   {
-    if (values_[tag])
-    {
-      delete values_[tag];
-    }
-    values_[tag] = new BppDouble(value);
+    values_[tag].reset(new BppDouble(value));
   }
 
   /**
@@ -111,11 +115,7 @@ public:
    */
   virtual void setValue(const std::string& tag, int value)
   {
-    if (values_[tag])
-    {
-      delete values_[tag];
-    }
-    values_[tag] = new BppInteger(value);
+    values_[tag].reset(new BppInteger(value));
   }
 
   /**
@@ -126,11 +126,7 @@ public:
    */
   virtual void setValue(const std::string& tag, unsigned int value)
   {
-    if (values_[tag])
-    {
-      delete values_[tag];
-    }
-    values_[tag] = new BppUnsignedInteger(value);
+    values_[tag].reset(new BppUnsignedInteger(value));
   }
 
   /**
@@ -198,20 +194,17 @@ public:
 
   virtual void setValue(double value)
   {
-    if (values_[name_]) delete values_[name_];
-    values_[name_] = new BppDouble(value);
+    values_[name_].reset(new BppDouble(value));
   }
 
   virtual void setValue(int value)
   {
-    if (values_[name_]) delete values_[name_];
-    values_[name_] = new BppInteger(value);
+    values_[name_].reset(new BppInteger(value));
   }
 
   virtual void setValue(unsigned int value)
   {
-    if (values_[name_]) delete values_[name_];
-    values_[name_] = new BppUnsignedInteger(value);
+    values_[name_].reset(new BppUnsignedInteger(value));
   }
 };
 
@@ -221,11 +214,11 @@ public:
  * @author Julien Dutheil
  * @see MafBlock
  */
-class MafStatistics
+class MafStatisticsInterface
 {
 public:
-  MafStatistics() {}
-  virtual ~MafStatistics() {}
+  MafStatisticsInterface() {}
+  virtual ~MafStatisticsInterface() {}
 
 public:
   virtual std::string getShortName() const = 0;
@@ -243,7 +236,7 @@ public:
  * @brief Partial implementation of MafStatistics, for convenience.
  */
 class AbstractMafStatistics :
-  public virtual MafStatistics
+  public virtual MafStatisticsInterface
 {
 protected:
   MafStatisticsResult result_;
@@ -260,7 +253,7 @@ public:
  * @brief Partial implementation of MafStatistics, for convenience.
  */
 class AbstractMafStatisticsSimple :
-  public MafStatistics
+  public virtual MafStatisticsInterface
 {
 protected:
   SimpleMafStatisticsResult result_;
@@ -355,7 +348,7 @@ public:
   std::string getFullName() const { return "Sequence length for species " + species_; }
   void compute(const MafBlock& block)
   {
-    std::vector<const MafSequence*> seqs = block.getMafSequencesForSpecies(species_);
+    std::vector<const MafSequence*> seqs = block.getSequencesForSpecies(species_);
     if (seqs.size() == 0)
       result_.setValue(0.);
     else if (seqs.size() == 1)
@@ -392,7 +385,7 @@ public:
  * This class stores a selection of species and create for each block the corresponding SiteContainer instance.
  */
 class AbstractSpeciesSelectionMafStatistics :
-  public virtual MafStatistics
+  public virtual MafStatisticsInterface
 {
 private:
   std::vector<std::string> species_;
@@ -412,7 +405,7 @@ public:
   {}
 
 protected:
-  SiteContainer* getSiteContainer_(const MafBlock& block);
+  std::unique_ptr<SiteContainerInterface> getSiteContainer_(const MafBlock& block);
 };
 
 
@@ -422,16 +415,16 @@ protected:
  * This class stores two non-overlapping selections of species and create for each block the corresponding SiteContainer instances.
  */
 class AbstractSpeciesMultipleSelectionMafStatistics :
-  public virtual MafStatistics
+  public virtual MafStatisticsInterface
 {
 private:
-  std::vector< std::vector<std::string> > species_;
+  std::vector<std::vector<std::string>> species_;
 
 public:
   AbstractSpeciesMultipleSelectionMafStatistics(const std::vector< std::vector<std::string> >& species);
 
 protected:
-  std::vector<SiteContainer*> getSiteContainers_(const MafBlock& block);
+  std::vector<std::unique_ptr<SiteContainerInterface>> getSiteContainers_(const MafBlock& block);
 };
 
 
@@ -452,10 +445,13 @@ class CharacterCountsMafStatistics :
   public AbstractSpeciesSelectionMafStatistics
 {
 private:
-  const Alphabet* alphabet_;
+  std::shared_ptr<const Alphabet> alphabet_;
 
 public:
-  CharacterCountsMafStatistics(const Alphabet* alphabet, const std::vector<std::string>& species, const std::string suffix) :
+  CharacterCountsMafStatistics(
+      std::shared_ptr<const Alphabet> alphabet,
+      const std::vector<std::string>& species,
+      const std::string suffix) :
     AbstractMafStatistics(),
     AbstractSpeciesSelectionMafStatistics(species, true, suffix),
     alphabet_(alphabet) {}
@@ -694,7 +690,7 @@ public:
   std::vector<std::string> getSupportedTags() const;
 
 private:
-  static std::vector<int> getPatterns_(const SiteContainer& sites);
+  static std::vector<int> getPatterns_(const SiteContainerInterface& sites);
 };
 
 
@@ -727,7 +723,7 @@ public:
   std::vector<std::string> getSupportedTags() const;
 
 private:
-  static std::vector<int> getPatterns_(const SiteContainer& sites);
+  static std::vector<int> getPatterns_(const SiteContainerInterface& sites);
 };
 } // end of namespace bpp
 

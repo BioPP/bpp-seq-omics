@@ -93,30 +93,30 @@ void VcfOutputMafIterator::writeHeader_(std::ostream& out) const
 
 void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block) const
 {
-  const MafSequence& refSeq = block.getMafSequenceForSpecies(refSpecies_);
+  const MafSequence& refSeq = block.sequenceForSpecies(refSpecies_);
   string chr = refSeq.getChromosome();
   SequenceWalker walker(refSeq);
   size_t offset = refSeq.start();
-  int gap = refSeq.getAlphabet()->getGapCharacterCode();
+  int gap = refSeq.alphabet().getGapCharacterCode();
   map<int, string> chars;
-  for (int i = 0; i < static_cast<int>(AlphabetTools::DNA_ALPHABET.getNumberOfTypes()); ++i)
+  for (int i = 0; i < static_cast<int>(AlphabetTools::DNA_ALPHABET->getNumberOfTypes()); ++i)
   {
-    chars[i] = AlphabetTools::DNA_ALPHABET.intToChar(i);
+    chars[i] = AlphabetTools::DNA_ALPHABET->intToChar(i);
   }
-  VectorSiteContainer sites(block.getAlignment());
+  const auto& sites = block.alignment();
   // Where to store genotype information, if any:
   vector<int> gt(genotypes_.size());
   // Now we look all sites for SNPs:
-  for (size_t i = 0; i < sites.getNumberOfSites(); i++)
+  for (size_t i = 0; i < sites.getNumberOfSites(); ++i)
   {
     if (refSeq[i] == gap)
       continue;
     string filter = "";
-    if (SiteTools::hasGap(sites.getSite(i)))
+    if (SiteTools::hasGap(sites.site(i)))
     {
       filter = "gap";
     }
-    if (SymbolListTools::hasUnresolved(sites.getSite(i)))
+    if (SymbolListTools::hasUnresolved(sites.site(i)))
     {
       if (filter != "")
         filter += ";";
@@ -126,7 +126,7 @@ void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
       filter = "PASS";
 
     map<int, size_t> counts;
-    SiteTools::getCounts(sites.getSite(i), counts);
+    SiteTools::getCounts(sites.site(i), counts);
     int ref = refSeq[i];
     string alt = "";
     string ac = "";
@@ -173,7 +173,7 @@ void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
           {
             if (geno != "")
               geno += "|"; // Polyploid
-            vector<const MafSequence*> sequences = block.getMafSequencesForSpecies(x);
+            vector<const MafSequence*> sequences = block.getSequencesForSpecies(x);
             if (sequences.size() == 0)
               geno += (generateDiploids_ ? ".|." : ".");
             else if (sequences.size() > 1)
@@ -181,7 +181,7 @@ void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
             else
             {
               int state = (*sequences[0])[i];
-              if (AlphabetTools::DNA_ALPHABET.isGap(state) || AlphabetTools::DNA_ALPHABET.isUnresolved(state))
+              if (AlphabetTools::DNA_ALPHABET->isGap(state) || AlphabetTools::DNA_ALPHABET->isUnresolved(state))
                 geno += (generateDiploids_ ? ".|." : ".");
               else
               {

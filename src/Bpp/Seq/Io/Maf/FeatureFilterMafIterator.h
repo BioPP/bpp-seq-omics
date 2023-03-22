@@ -40,12 +40,13 @@
 #ifndef _FEATUREFILTERMAFITERATOR_H_
 #define _FEATUREFILTERMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From the STL:
 #include <iostream>
 #include <string>
 #include <deque>
+#include <memory>
 
 namespace bpp
 {
@@ -56,17 +57,21 @@ namespace bpp
  */
 class FeatureFilterMafIterator :
   public AbstractFilterMafIterator,
-  public MafTrashIterator
+  public MafTrashIteratorInterface
 {
 private:
   std::string refSpecies_;
-  std::deque<MafBlock*> blockBuffer_;
-  std::deque<MafBlock*> trashBuffer_;
+  std::deque<std::unique_ptr<MafBlock>> blockBuffer_;
+  std::deque<std::unique_ptr<MafBlock>> trashBuffer_;
   bool keepTrashedBlocks_;
   std::map<std::string, MultiRange<size_t> > ranges_;
 
 public:
-  FeatureFilterMafIterator(MafIterator* iterator, const std::string& refSpecies, const SequenceFeatureSet& features, bool keepTrashedBlocks) :
+  FeatureFilterMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      const std::string& refSpecies,
+      const SequenceFeatureSet& features,
+      bool keepTrashedBlocks) :
     AbstractFilterMafIterator(iterator),
     refSpecies_(refSpecies),
     blockBuffer_(),
@@ -76,27 +81,25 @@ public:
   {
     // Build ranges:
     std::set<std::string> seqIds = features.getSequences();
-    for (std::set<std::string>::iterator it = seqIds.begin();
-         it != seqIds.end();
-         ++it)
+    for (auto& it : seqIds)
     {
       {
-        features.fillRangeCollectionForSequence(*it, ranges_[*it]);
+        features.fillRangeCollectionForSequence(it, ranges_[it]);
       }
     }
   }
 
 public:
-  MafBlock* nextRemovedBlock()
+  std::unique_ptr<MafBlock> nextRemovedBlock()
   {
-    if (trashBuffer_.size() == 0) return 0;
-    MafBlock* block = trashBuffer_.front();
+    if (trashBuffer_.size() == 0) return nullptr;
+    auto block = move(trashBuffer_.front());
     trashBuffer_.pop_front();
     return block;
   }
 
 private:
-  MafBlock* analyseCurrentBlock_();
+  std::unique_ptr<MafBlock> analyseCurrentBlock_();
 };
 } // end of namespace bpp.
 

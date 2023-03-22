@@ -40,7 +40,7 @@
 #ifndef _CONCATENATEMAFITERATOR_H_
 #define _CONCATENATEMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From the STL:
 #include <iostream>
@@ -61,14 +61,17 @@ class ConcatenateMafIterator :
   public AbstractFilterMafIterator
 {
 private:
-  MafBlock* incomingBlock_;
+  std::unique_ptr<MafBlock> incomingBlock_;
   unsigned int minimumSize_;
   std::string refSpecies_;
 
 public:
-  ConcatenateMafIterator(MafIterator* iterator, unsigned int minimumSize, std::string refSpecies = "") :
+  ConcatenateMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      unsigned int minimumSize,
+      std::string refSpecies = "") :
     AbstractFilterMafIterator(iterator),
-    incomingBlock_(0),
+    incomingBlock_(nullptr),
     minimumSize_(minimumSize),
     refSpecies_(refSpecies)
   {
@@ -78,21 +81,21 @@ public:
 private:
   ConcatenateMafIterator(const ConcatenateMafIterator& iterator) :
     AbstractFilterMafIterator(0),
-    incomingBlock_(iterator.incomingBlock_),
+    incomingBlock_(),
     minimumSize_(iterator.minimumSize_),
     refSpecies_(iterator.refSpecies_)
   {}
 
   ConcatenateMafIterator& operator=(const ConcatenateMafIterator& iterator)
   {
-    incomingBlock_ = iterator.incomingBlock_;
+    incomingBlock_ = nullptr;
     minimumSize_ = iterator.minimumSize_;
     refSpecies_ = iterator.refSpecies_;
     return *this;
   }
 
 private:
-  MafBlock* analyseCurrentBlock_();
+  std::unique_ptr<MafBlock> analyseCurrentBlock_();
 };
 } // end of namespace bpp.
 

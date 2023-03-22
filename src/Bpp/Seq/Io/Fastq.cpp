@@ -44,7 +44,7 @@
 
 using namespace bpp;
 
-bool Fastq::nextSequence(std::istream& input, Sequence& seq) const
+bool Fastq::nextSequence(std::istream& input, SequenceWithQuality& seq) const
 {
   if (input && !input.eof())
   {
@@ -95,7 +95,7 @@ bool Fastq::nextSequence(std::istream& input, Sequence& seq) const
 
 /******************************************************************************/
 
-void Fastq::writeSequence(std::ostream& output, const Sequence& seq) const
+void Fastq::writeSequence(std::ostream& output, const SequenceWithQuality& seq) const
 {
   std::string qual(seq.size(), static_cast<char>(33));
   try

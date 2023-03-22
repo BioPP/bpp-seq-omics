@@ -40,12 +40,14 @@ knowledge of the CeCILL license and that you accept its terms.
 #include <Bpp/Numeric/VectorTools.h>
 #include <Bpp/Seq/Io/Fastq.h>
 #include <Bpp/Seq/SequenceWithQuality.h>
-#include <Bpp/Seq/Alphabet/DNA.h>
+#include <Bpp/Seq/Alphabet/AlphabetTools.h>
 
 #include <iostream>
 #include <fstream>
+#include <memory>
 
 using namespace bpp;
+using namespace std;
 
 int main () {
   try {
@@ -56,7 +58,7 @@ int main () {
       return 1;
     }
     Fastq fq;
-    const Alphabet* alpha = new DNA();
+    shared_ptr<const Alphabet> alpha = AlphabetTools::DNA_ALPHABET;
     SequenceWithQuality seq("", "", alpha);
     while (fq.nextSequence(input, seq)) {
       std::cout << seq.getName() << " " << seq.size();

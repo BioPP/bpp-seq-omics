@@ -40,7 +40,7 @@
 #ifndef _SEQUENCELDHOTOUTPUTMAFITERATOR_H_
 #define _SEQUENCELDHOTOUTPUTMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From bpp-seq:
 #include <Bpp/Seq/Io/OSequence.h>
@@ -76,10 +76,10 @@ public:
    * (for instance using coordinates information).
    */
   SequenceLDhotOutputMafIterator(
-    MafIterator* iterator,
-    const std::string& file,
-    bool completeOnly = true,
-    const std::string& reference = "") :
+      std::shared_ptr<MafIteratorInterface> iterator,
+      const std::string& file,
+      bool completeOnly = true,
+      const std::string& reference = "") :
     AbstractFilterMafIterator(iterator),
     file_(file),
     refSpecies_(reference),
@@ -87,7 +87,7 @@ public:
     completeOnly_(completeOnly)
   {}
 
-  ~SequenceLDhotOutputMafIterator() {}
+  virtual ~SequenceLDhotOutputMafIterator() {}
 
 private:
   SequenceLDhotOutputMafIterator(const SequenceLDhotOutputMafIterator& iterator) :
@@ -108,7 +108,7 @@ private:
   }
 
 private:
-  MafBlock* analyseCurrentBlock_();
+  std::unique_ptr<MafBlock> analyseCurrentBlock_();
 
   void writeBlock(std::ostream& out, const MafBlock& block) const;
 };

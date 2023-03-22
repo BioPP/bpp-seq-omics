@@ -40,7 +40,7 @@
 #ifndef _CHROMOSOMEMAFITERATOR_H_
 #define _CHROMOSOMEMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From the STL:
 #include <iostream>
@@ -65,7 +65,10 @@ public:
    * @param reference The reference species name.
    * @param chr the set of chromosome names to filter.
    */
-  ChromosomeMafIterator(MafIterator* iterator, const std::string& reference, const std::set<std::string>& chr) :
+  ChromosomeMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      const std::string& reference,
+      const std::set<std::string>& chr) :
     AbstractFilterMafIterator(iterator),
     ref_(reference),
     chr_(chr)
@@ -77,7 +80,10 @@ public:
    * @param reference The reference species name.
    * @param chr the chromosome name to filter.
    */
-  ChromosomeMafIterator(MafIterator* iterator, const std::string& reference, const std::string& chr) :
+  ChromosomeMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      const std::string& reference,
+      const std::string& chr) :
     AbstractFilterMafIterator(iterator),
     ref_(reference),
     chr_()
@@ -100,7 +106,7 @@ private:
   }
 
 private:
-  MafBlock* analyseCurrentBlock_();
+  std::unique_ptr<MafBlock> analyseCurrentBlock_();
 };
 } // end of namespace bpp.
 

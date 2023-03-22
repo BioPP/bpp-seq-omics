@@ -40,7 +40,7 @@
 #ifndef _SEQUENCEFILTERMAFITERATOR_H_
 #define _SEQUENCEFILTERMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From the STL:
 #include <iostream>
@@ -76,7 +76,12 @@ public:
    * @param keep If true, sequences not in the selection will be kept.
    * @param rmDuplicates If true, block that contain more than one instance for at least one species will be discarded.
    */
-  SequenceFilterMafIterator(MafIterator* iterator, const std::vector<std::string>& species, bool strict = false, bool keep = false, bool rmDuplicates = false) :
+  SequenceFilterMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      const std::vector<std::string>& species,
+      bool strict = false,
+      bool keep = false,
+      bool rmDuplicates = false) :
     AbstractFilterMafIterator(iterator),
     species_(species),
     strict_(strict),
@@ -103,7 +108,7 @@ private:
   }
 
 private:
-  MafBlock* analyseCurrentBlock_();
+  std::unique_ptr<MafBlock> analyseCurrentBlock_();
 };
 } // end of namespace bpp.
 

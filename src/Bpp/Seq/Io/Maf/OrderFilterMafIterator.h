@@ -40,7 +40,7 @@
 #ifndef _ORDERFILTERMAFITERATOR_H_
 #define _ORDERFILTERMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From the STL:
 #include <iostream>
@@ -79,12 +79,13 @@ public:
    * @param overlappingBlockDiscarded Tell is overlapping blocks should be discarded
    * @param overlappingBlockThrowsException Tell is overlapping blocks should throw an exception
    */
-  OrderFilterMafIterator(MafIterator* iterator,
-                         const std::string& reference,
-                         bool unsortedBlockDiscarded = true,
-                         bool unsortedBlockThrowsException = false,
-                         bool overlappingBlockDiscarded = true,
-                         bool overlappingBlockThrowsException = false) :
+  OrderFilterMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      const std::string& reference,
+      bool unsortedBlockDiscarded = true,
+      bool unsortedBlockThrowsException = false,
+      bool overlappingBlockDiscarded = true,
+      bool overlappingBlockThrowsException = false) :
     AbstractFilterMafIterator(iterator),
     refSpecies_(reference),
     currentChr_(),
@@ -123,7 +124,7 @@ private:
   }
 
 public:
-  MafBlock* analyseCurrentBlock_()
+  std::unique_ptr<MafBlock> analyseCurrentBlock_()
   {
     bool testCont = true;
     while (testCont)
@@ -134,7 +135,7 @@ public:
       else
         testCont = false;
     }
-    return currentBlock_;
+    return move(currentBlock_);
   }
 
 private:

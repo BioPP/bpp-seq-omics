@@ -49,24 +49,14 @@
 #include <vector>
 
 using namespace bpp;
+using namespace std;
 
 /******************************************************************************/
 
-Sequence* SequenceFeatureTools::extract(const Sequence& seq, const SeqRange& range)
-{
-  if (range.end() > seq.size())
-    throw IndexOutOfBoundsException ("SequenceTools::extract: Invalid upper bound", range.end(), 0, seq.size());
-  Sequence* sout = SequenceTools::subseq(seq, range.begin(), range.end() - 1);
-  if (range.isNegativeStrand())
-  {
-    SequenceTools::invertComplement(*sout);
-  }
-  return sout;
-}
-
-/******************************************************************************/
-
-void SequenceFeatureTools::extract(const Sequence& seq, const SeqRange& range, Sequence& output)
+void SequenceFeatureTools::extract(
+    const SequenceInterface& seq,
+    const SeqRange& range, 
+    SequenceInterface& output)
 {
   if (range.end() > seq.size())
     throw IndexOutOfBoundsException ("SequenceTools::extract: Invalid upper bound", range.end(), 0, seq.size());
@@ -79,15 +69,18 @@ void SequenceFeatureTools::extract(const Sequence& seq, const SeqRange& range, S
 
 /******************************************************************************/
 
-unsigned int SequenceFeatureTools::getOrfs(const Sequence& seq, SequenceFeatureSet& featSet, const GeneticCode& gCode)
+unsigned int SequenceFeatureTools::getOrfs(
+    const SequenceInterface& seq,
+    SequenceFeatureSet& featSet,
+    const GeneticCode& gCode)
 {
-  if (!AlphabetTools::isNucleicAlphabet(seq.getAlphabet()))
+  if (!AlphabetTools::isNucleicAlphabet(&seq.alphabet()))
   {
     throw AlphabetException("SequenceFeatureTools::getOrfs: Sequence alphabet must be nucleic!", seq.getAlphabet());
   }
   unsigned int orfCpt = 0;
-  const CodonAlphabet* codonAlpha = gCode.getSourceAlphabet();
-  std::vector< std::vector<size_t> > starts(3), stops(3);
+  auto codonAlpha = gCode.getCodonAlphabet();
+  std::vector< std::vector<size_t>> starts(3), stops(3);
   size_t phase = 0;
   for (size_t p = 0; p < seq.size() - 2; p++)
   {

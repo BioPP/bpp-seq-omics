@@ -40,7 +40,7 @@
 #ifndef _PLINKOUTPUTMAFITERATOR_H_
 #define _PLINKOUTPUTMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From the STL:
 #include <iostream>
@@ -56,8 +56,8 @@ class PlinkOutputMafIterator :
   public AbstractFilterMafIterator
 {
 private:
-  std::ostream* outputPed_;
-  std::ostream* outputMap_;
+  std::shared_ptr<std::ostream> outputPed_;
+  std::shared_ptr<std::ostream> outputMap_;
   std::vector<std::string> species_;
   std::string refSpecies_;
   bool map3_;
@@ -94,20 +94,33 @@ public:
    * @param phenotype Phenotype value to set in the map file.
    * @param columnSeparator Character used to separate columns (PLINK officially supports space and tab).
    */
-  PlinkOutputMafIterator(MafIterator* iterator,
-                         std::ostream* outPed,
-                         std::ostream* outMap,
-                         const std::vector<std::string>& species,
-                         const std::string& reference,
-                         bool map3 = false,
-                         bool recodeChr = false,
-			 bool makeDiploids = false,
-			 int phenotype = 0,
-			 char columnSeparator = '\t') :
+  PlinkOutputMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      std::shared_ptr<std::ostream> outPed,
+      std::shared_ptr<std::ostream> outMap,
+      const std::vector<std::string>& species,
+      const std::string& reference,
+      bool map3 = false,
+      bool recodeChr = false,
+      bool makeDiploids = false,
+      int phenotype = 0,
+      char columnSeparator = '\t') :
     AbstractFilterMafIterator(iterator),
-    outputPed_(outPed), outputMap_(outMap), species_(species), refSpecies_(reference), map3_(map3),
-    ped_(), currentChr_(""), lastPosition_(0), recodeChr_(recodeChr), chrCodes_(), currentCode_(1),
-    makeDiploids_(makeDiploids), phenotype_(phenotype), colSeparator_(TextTools::toString(columnSeparator)), nbIndividuals_(0)
+    outputPed_(outPed),
+    outputMap_(outMap), 
+    species_(species),
+    refSpecies_(reference),
+    map3_(map3),
+    ped_(),
+    currentChr_(""), 
+    lastPosition_(0),
+    recodeChr_(recodeChr),
+    chrCodes_(),
+    currentCode_(1),
+    makeDiploids_(makeDiploids),
+    phenotype_(phenotype),
+    colSeparator_(TextTools::toString(columnSeparator)),
+    nbIndividuals_(0)
   {
     init_();
   }
@@ -153,14 +166,14 @@ private:
   }
 
 public:
-  MafBlock* analyseCurrentBlock_()
+  std::unique_ptr<MafBlock> analyseCurrentBlock_()
   {
     currentBlock_ = iterator_->nextBlock();
     if (outputMap_ && currentBlock_)
       parseBlock_(*outputMap_, *currentBlock_);
     if (outputMap_ && outputPed_ && !currentBlock_)
       writePedToFile_(*outputPed_); // Note we currently can output Map and no Ped, but not Ped without Map.
-    return currentBlock_;
+    return move(currentBlock_);
   }
 
 private:

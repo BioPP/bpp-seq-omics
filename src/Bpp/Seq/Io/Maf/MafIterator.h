@@ -41,6 +41,7 @@
 #define _MAFITERATOR_H_
 
 #include "MafBlock.h"
+#include "IterationListener.h"
 
 // From the STL:
 #include <iostream>
@@ -49,88 +50,39 @@
 
 namespace bpp
 {
-// Forward declaration:
-class IterationListener;
 
 /**
  * @brief Interface to loop over maf alignment blocks.
  */
-class MafIterator
+class MafIteratorInterface
 {
 public:
-  virtual ~MafIterator() {}
-
+  virtual ~MafIteratorInterface() {}
+  
 public:
   /**
    * @brief Get the next available alignment block.
    *
    * @return A maf alignment block, or a null pointer if no more block is available.
    */
-  virtual MafBlock* nextBlock() = 0;
+  virtual std::unique_ptr<MafBlock> nextBlock() = 0;
 
   virtual bool isVerbose() const = 0;
 
   virtual void setVerbose(bool yn) = 0;
 
-  virtual void addIterationListener(IterationListener* listener) = 0;
+  virtual void addIterationListener(std::unique_ptr<IterationListenerInterface> listener) = 0;
 };
 
-/**
- * @brief Partial implementation of the MafIterator interface.
- *
- * This implements the listener parts.
- */
-class AbstractMafIterator :
-  public virtual MafIterator
-{
-protected:
-  std::vector<IterationListener*> iterationListeners_;
-  bool started_;
-  bool verbose_;
 
-public:
-  AbstractMafIterator() : iterationListeners_(), started_(false), verbose_(true) {}
-
-  virtual ~AbstractMafIterator() {}
-
-public:
-  void addIterationListener(IterationListener* listener)
-  {
-    iterationListeners_.push_back(listener);
-  }
-
-  MafBlock* nextBlock()
-  {
-    if (!started_)
-    {
-      fireIterationStartSignal_();
-      started_ = true;
-    }
-    MafBlock* block = analyseCurrentBlock_();
-    if (block)
-      fireIterationMoveSignal_(*block);
-    else
-      fireIterationStopSignal_();
-    return block;
-  }
-
-  bool isVerbose() const { return verbose_; }
-  void setVerbose(bool yn) { verbose_ = yn; }
-
-protected:
-  virtual MafBlock* analyseCurrentBlock_() = 0;
-  virtual void fireIterationStartSignal_();
-  virtual void fireIterationMoveSignal_(const MafBlock& currentBlock);
-  virtual void fireIterationStopSignal_();
-};
 
 /**
  * @brief Interface to loop over removed blocks of a maf alignment.
  */
-class MafTrashIterator
+class MafTrashIteratorInterface
 {
 public:
-  virtual ~MafTrashIterator() {}
+  virtual ~MafTrashIteratorInterface() {}
 
 public:
   /**
@@ -138,115 +90,9 @@ public:
    *
    * @return A maf alignment block, or a null pointer if no more block is available.
    */
-  virtual MafBlock* nextRemovedBlock() = 0;
+  virtual std::unique_ptr<MafBlock> nextRemovedBlock() = 0;
 };
 
-
-/**
- * @brief Helper class for developping filter for maf blocks.
- */
-class AbstractFilterMafIterator :
-  public AbstractMafIterator
-{
-protected:
-  MafIterator* iterator_;
-  MafBlock* currentBlock_;
-  std::shared_ptr<OutputStream> logstream_;
-
-public:
-  AbstractFilterMafIterator(MafIterator* iterator) :
-    AbstractMafIterator(),
-    iterator_(iterator), currentBlock_(0),
-    logstream_(ApplicationTools::message) {}
-
-private:
-  AbstractFilterMafIterator(const AbstractFilterMafIterator& it) :
-    AbstractMafIterator(it),
-    iterator_(it.iterator_), currentBlock_(0),
-    logstream_(it.logstream_) {}
-
-  AbstractFilterMafIterator& operator=(const AbstractFilterMafIterator& it)
-  {
-    AbstractMafIterator::operator=(it);
-    currentBlock_ = 0;
-    iterator_  = it.iterator_;
-    logstream_ = it.logstream_;
-    return *this;
-  }
-
-public:
-  void setLogStream(std::shared_ptr<OutputStream> logstream) { logstream_ = logstream; }
-};
-
-
-class TrashIteratorAdapter :
-  public AbstractMafIterator
-{
-private:
-  MafTrashIterator* iterator_;
-
-public:
-  TrashIteratorAdapter(MafTrashIterator* iterator) :
-    iterator_(iterator) {}
-
-private:
-  TrashIteratorAdapter(const TrashIteratorAdapter& iterator) :
-    iterator_(iterator.iterator_) {}
-
-  TrashIteratorAdapter& operator=(const TrashIteratorAdapter& iterator)
-  {
-    iterator_ = iterator.iterator_;
-    return *this;
-  }
-
-private:
-  MafBlock* analyseCurrentBlock_()
-  {
-    return iterator_->nextRemovedBlock();
-  }
-};
-
-
-/**
- * @brief This special iterator synchronizes two adaptors.
- *
- * It takes as input a main iterator and a secondary one. The nextBlock method of the secondary iterator will be
- * called immediately after the one of the primary one. The resulting block of the main iterator will be forwarded,
- * while the one of the secondary iterator will be destroyed.
- */
-class MafIteratorSynchronizer :
-  public AbstractFilterMafIterator
-{
-private:
-  MafIterator* secondaryIterator_;
-
-public:
-  MafIteratorSynchronizer(MafIterator* primaryIterator, MafIterator* secondaryIterator) :
-    AbstractFilterMafIterator(primaryIterator), secondaryIterator_(secondaryIterator)
-  {}
-
-private:
-  MafIteratorSynchronizer(const MafIteratorSynchronizer& iterator) :
-    AbstractFilterMafIterator(0),
-    secondaryIterator_(iterator.secondaryIterator_)
-  {}
-
-  MafIteratorSynchronizer& operator=(const MafIteratorSynchronizer& iterator)
-  {
-    secondaryIterator_ = iterator.secondaryIterator_;
-    return *this;
-  }
-
-private:
-  MafBlock* analyseCurrentBlock_()
-  {
-    currentBlock_ = iterator_->nextBlock();
-    MafBlock* secondBlock = secondaryIterator_->nextBlock();
-    if (secondBlock)
-      delete secondBlock;
-    return currentBlock_;
-  }
-};
 } // end of namespace bpp.
 
 #endif//_MAFITERATOR_H_

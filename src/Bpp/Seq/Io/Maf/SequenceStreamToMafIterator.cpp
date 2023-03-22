@@ -44,17 +44,17 @@
 using namespace std;
 using namespace bpp;
 
-MafBlock* SequenceStreamToMafIterator::analyseCurrentBlock_()
+unique_ptr<MafBlock> SequenceStreamToMafIterator::analyseCurrentBlock_()
 {
-  unique_ptr<MafBlock> block(new MafBlock());
+  auto block = make_unique<MafBlock>();
 
-  MafSequence mafSeq;
+  auto mafSeq = make_unique<MafSequence>();
   if (stream_->eof())
-    return 0;
+    return nullptr;
 
-  seqStream_->nextSequence(*stream_, mafSeq);
+  seqStream_->nextSequence(*stream_, *mafSeq);
   // Check if sequence name contains meta information:
-  string meta = mafSeq.getName();
+  string meta = mafSeq->getName();
   StringTokenizer st(meta, ":");
   if (st.numberOfRemainingTokens() == 5)
   {
@@ -65,13 +65,13 @@ MafBlock* SequenceStreamToMafIterator::analyseCurrentBlock_()
       start--;
     string strand  = st.nextToken();
     unsigned int length  = TextTools::to<unsigned int>(st.nextToken());
-    mafSeq.setName(species + "." + chr);
-    mafSeq.setStrand(strand[0]);
-    mafSeq.setStart(start);
-    if (mafSeq.size() != length)
-      throw Exception("SequenceStreamToMafIterator::analyseCurrentBlock_. Sequence size does not match its header specification: expected " + TextTools::toString(length) + " and found " + TextTools::toString(mafSeq.size()));
+    mafSeq->setName(species + "." + chr);
+    mafSeq->setStrand(strand[0]);
+    mafSeq->setStart(start);
+    if (mafSeq->size() != length)
+      throw Exception("SequenceStreamToMafIterator::analyseCurrentBlock_. Sequence size does not match its header specification: expected " + TextTools::toString(length) + " and found " + TextTools::toString(mafSeq->size()));
   }
-  block->addMafSequence(mafSeq);
+  block->addSequence(mafSeq->getName(), mafSeq);
 
-  return block.release();
+  return block;
 }

@@ -25,8 +25,8 @@ set (CPP_FILES
   Bpp/Seq/Io/Maf/FeatureExtractorMafIterator.cpp
   Bpp/Seq/Io/Maf/FeatureFilterMafIterator.cpp
   Bpp/Seq/Io/Maf/FullGapFilterMafIterator.cpp
-  Bpp/Seq/Io/Maf/IterationListener.cpp
-  Bpp/Seq/Io/Maf/MafIterator.cpp
+  Bpp/Seq/Io/Maf/AbstractIterationListener.cpp
+  Bpp/Seq/Io/Maf/AbstractMafIterator.cpp
   Bpp/Seq/Io/Maf/MafParser.cpp
   Bpp/Seq/Io/Maf/MafSequence.cpp
   Bpp/Seq/Io/Maf/MafStatistics.cpp

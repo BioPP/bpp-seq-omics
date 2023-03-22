@@ -40,7 +40,7 @@
 #ifndef _BLOCKMERGERMAFITERATOR_H_
 #define _BLOCKMERGERMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From the STL:
 #include <iostream>
@@ -65,17 +65,21 @@ class BlockMergerMafIterator :
 {
 private:
   std::vector<std::string> species_;
-  MafBlock* incomingBlock_;
+  std::unique_ptr<MafBlock> incomingBlock_;
   std::vector<std::string> ignoreChrs_; // These chromosomes will never be merged (ex: 'Un').
   unsigned int maxDist_;
   bool renameChimericChromosomes_;
   std::map<std::string, unsigned int> chimericChromosomeCounts_;
 
 public:
-  BlockMergerMafIterator(MafIterator* iterator, const std::vector<std::string>& species, unsigned int maxDist = 0, bool renameChimericChromosomes = false) :
+  BlockMergerMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      const std::vector<std::string>& species,
+      unsigned int maxDist = 0,
+      bool renameChimericChromosomes = false) :
     AbstractFilterMafIterator(iterator),
     species_(species),
-    incomingBlock_(0),
+    incomingBlock_(nullptr),
     ignoreChrs_(),
     maxDist_(maxDist),
     renameChimericChromosomes_(renameChimericChromosomes),
@@ -88,7 +92,7 @@ private:
   BlockMergerMafIterator(const BlockMergerMafIterator& iterator) :
     AbstractFilterMafIterator(0),
     species_(iterator.species_),
-    incomingBlock_(iterator.incomingBlock_),
+    incomingBlock_(),
     ignoreChrs_(iterator.ignoreChrs_),
     maxDist_(iterator.maxDist_),
     renameChimericChromosomes_(iterator.renameChimericChromosomes_),
@@ -98,7 +102,7 @@ private:
   BlockMergerMafIterator& operator=(const BlockMergerMafIterator& iterator)
   {
     species_                   = iterator.species_;
-    incomingBlock_             = iterator.incomingBlock_;
+    incomingBlock_             = nullptr;
     ignoreChrs_                = iterator.ignoreChrs_;
     maxDist_                   = iterator.maxDist_;
     renameChimericChromosomes_ = iterator.renameChimericChromosomes_;
@@ -117,7 +121,7 @@ public:
   }
 
 private:
-  MafBlock* analyseCurrentBlock_();
+  std::unique_ptr<MafBlock> analyseCurrentBlock_();
 };
 } // end of namespace bpp.
 

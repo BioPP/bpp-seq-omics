@@ -50,24 +50,24 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* FeatureExtractorMafIterator::analyseCurrentBlock_()
+unique_ptr<MafBlock> FeatureExtractorMafIterator::analyseCurrentBlock_()
 {
   while (blockBuffer_.size() == 0)
   {
     // Unless there is no more block in the buffer, we need to parse more:
     unique_ptr<MafBlock> block;
 START:
-    block.reset(iterator_->nextBlock());
+    block = iterator_->nextBlock();
     if (!block.get())
       return 0; // No more block.
 
     // Check if the block contains the reference species:
-    if (!block->hasMafSequenceForSpecies(refSpecies_)) {
+    if (!block->hasSequenceForSpecies(refSpecies_)) {
       goto START;
     }
 
     // Get the feature ranges for this block:
-    const MafSequence& refSeq = block->getMafSequenceForSpecies(refSpecies_);
+    const auto& refSeq = block->sequenceForSpecies(refSpecies_);
     // first check if there is one (for now we assume that features refer to the chromosome or contig name, with implicit species):
 
     auto mr = ranges_.find(refSeq.getChromosome());
@@ -118,15 +118,14 @@ START:
         ApplicationTools::displayGauge(i++, ranges.getSet().size() - 1, '=');
       }
       // This does not go after i=0, problem with ranges?????
-      MafBlock* newBlock = new MafBlock();
+      auto newBlock = make_unique<MafBlock>();
       newBlock->setScore(block->getScore());
       newBlock->setPass(block->getPass());
       size_t a = walker.getAlignmentPosition(it->begin() - refSeq.start());
       size_t b = walker.getAlignmentPosition(it->end() - refSeq.start() - 1);
       for (size_t j = 0; j < block->getNumberOfSequences(); ++j)
       {
-        unique_ptr<MafSequence> subseq;
-        subseq.reset(block->getMafSequence(j).subSequence(a, b - a + 1));
+        auto subseq = block->sequence(j).subSequence(a, b - a + 1);
         if (!ignoreStrand_)
         {
           if ((dynamic_cast<const SeqRange*>(it)->isNegativeStrand() && refSeq.getStrand() == '+') ||
@@ -136,16 +135,16 @@ START:
           }
         }
         (*logstream_ << subseq->getName()).endLine();
-        newBlock->addMafSequence(*subseq);
+        newBlock->addSequence(subseq->getName(), subseq);
       }
-      blockBuffer_.push_back(newBlock);
+      blockBuffer_.push_back(move(newBlock));
     }
 
     if (verbose_)
       ApplicationTools::displayTaskDone();
   }
 
-  MafBlock* nxtBlock = blockBuffer_.front();
+  auto nxtBlock = move(blockBuffer_.front());
   blockBuffer_.pop_front();
   return nxtBlock;
 }

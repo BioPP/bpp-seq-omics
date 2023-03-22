@@ -40,7 +40,7 @@
 #ifndef _OUTPUTMAFITERATOR_H_
 #define _OUTPUTMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From the STL:
 #include <iostream>
@@ -56,12 +56,17 @@ class OutputMafIterator :
   public AbstractFilterMafIterator
 {
 private:
-  std::ostream* output_;
+  std::shared_ptr<std::ostream> output_;
   bool mask_;
 
 public:
-  OutputMafIterator(MafIterator* iterator, std::ostream* out, bool mask = true) :
-    AbstractFilterMafIterator(iterator), output_(out), mask_(mask)
+  OutputMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      std::shared_ptr<std::ostream> out,
+      bool mask = true) :
+    AbstractFilterMafIterator(iterator),
+    output_(out),
+    mask_(mask)
   {
     if (output_)
       writeHeader(*output_);
@@ -82,12 +87,12 @@ private:
   }
 
 public:
-  MafBlock* analyseCurrentBlock_()
+  std::unique_ptr<MafBlock> analyseCurrentBlock_()
   {
     currentBlock_ = iterator_->nextBlock();
     if (output_ && currentBlock_)
       writeBlock(*output_, *currentBlock_);
-    return currentBlock_;
+    return move(currentBlock_);
   }
 
 private:

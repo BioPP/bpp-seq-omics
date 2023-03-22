@@ -52,13 +52,13 @@ const short WindowSplitMafIterator::RAGGED_RIGHT = 1;
 const short WindowSplitMafIterator::CENTER = 2;
 const short WindowSplitMafIterator::ADJUST = 3;
 
-MafBlock* WindowSplitMafIterator::analyseCurrentBlock_()
+unique_ptr<MafBlock> WindowSplitMafIterator::analyseCurrentBlock_()
 {
   // Note 02/08/21: For now overlapping windows are only supported with the RAGGED_LEFT option. It could be easily generalized for cases where the window size is a multiple of the step value. More general cases are more tricky to implement, in particular for the ADJUST case.
   while (blockBuffer_.size() == 0)
   {
     // Build a new series of windows:
-    MafBlock* block = iterator_->nextBlock();
+    auto block = iterator_->nextBlock();
     if (!block)
       return 0; // No more block.
 
@@ -82,7 +82,7 @@ MafBlock* WindowSplitMafIterator::analyseCurrentBlock_()
     // cout << "Effective size: " << size << endl;
     for (size_t i = pos; i + size <= bSize; i += windowStep_)
     {
-      MafBlock* newBlock = new MafBlock();
+      auto newBlock = make_unique<MafBlock>();
       newBlock->setScore(block->getScore());
       newBlock->setPass(block->getPass());
       if (align_ == ADJUST)
@@ -97,23 +97,19 @@ MafBlock* WindowSplitMafIterator::analyseCurrentBlock_()
       }
       for (size_t j = 0; j < block->getNumberOfSequences(); ++j)
       {
-        unique_ptr<MafSequence> subseq(block->getMafSequence(j).subSequence(i, size));
-        newBlock->addMafSequence(*subseq);
+        auto subseq = block->sequence(j).subSequence(i, size);
+        newBlock->addSequence(subseq->getName(), subseq);
       }
-      blockBuffer_.push_back(newBlock);
+      blockBuffer_.push_back(move(newBlock));
     }
 
     if (align_ == ADJUST && keepSmallBlocks_ && bSize < windowSize_)
     {
-      blockBuffer_.push_back(block);
-    }
-    else
-    {
-      delete block;
+      blockBuffer_.push_back(move(block));
     }
   }
 
-  MafBlock* nxtBlock = blockBuffer_.front();
+  auto nxtBlock = move(blockBuffer_.front());
   blockBuffer_.pop_front();
   return nxtBlock;
 }

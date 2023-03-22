@@ -59,12 +59,13 @@ void MsmcOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block
 {
   // Preliminary stuff...
 
-  VectorSiteContainer sites(&AlphabetTools::DNA_ALPHABET);
+  VectorSiteContainer sites(AlphabetTools::DNA_ALPHABET);
   for (size_t i = 0; i < species_.size(); ++i)
   {
-    if (block.hasMafSequenceForSpecies(species_[i]))
+    if (block.hasSequenceForSpecies(species_[i]))
     {
-      sites.addSequence(block.getMafSequenceForSpecies(species_[i]));
+      auto tmpseq = make_unique<Sequence>(block.sequenceForSpecies(species_[i]));
+      sites.addSequence(tmpseq->getName(), tmpseq);
       // Note: in case of duplicates, this takes the first sequence.
     }
     else
@@ -74,9 +75,9 @@ void MsmcOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block
     }
   }
   // Get the reference species for coordinates:
-  if (!block.hasMafSequenceForSpecies(refSpecies_))
+  if (!block.hasSequenceForSpecies(refSpecies_))
     return;
-  const MafSequence& refSeq = block.getMafSequenceForSpecies(refSpecies_);
+  const auto& refSeq = block.sequenceForSpecies(refSpecies_);
   string chr = refSeq.getChromosome();
   if (chr != currentChr_)
   {
@@ -103,18 +104,18 @@ void MsmcOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block
       continue;
 
     // We call SNPs only at position without gap or unresolved characters:
-    if (SiteTools::isComplete(sites.getSite(i)))
+    if (SiteTools::isComplete(sites.site(i)))
     {
       nbOfCalledSites_++;
 
-      if (!SiteTools::isConstant(sites.getSite(i)))
+      if (!SiteTools::isConstant(sites.site(i)))
       {
         string pos = "NA";
         if (refSeq[i] != gap)
         {
           pos = TextTools::toString(offset + walker.getSequencePosition(i) + 1);
         }
-        out << chr << "\t" << pos << "\t" << nbOfCalledSites_ << "\t" << sites.getSite(i).toString() << endl;
+        out << chr << "\t" << pos << "\t" << nbOfCalledSites_ << "\t" << sites.site(i).toString() << endl;
         // Reset number of called sites
         nbOfCalledSites_ = 0;
       }

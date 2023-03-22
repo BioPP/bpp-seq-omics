@@ -40,7 +40,7 @@
 #ifndef _COORDINATESOUTPUTMAFITERATOR_H_
 #define _COORDINATESOUTPUTMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From the STL:
 #include <iostream>
@@ -59,7 +59,7 @@ class CoordinatesOutputMafIterator :
   public AbstractFilterMafIterator
 {
 private:
-  std::ostream* output_;
+  std::shared_ptr<std::ostream> output_;
   std::vector<std::string> species_;
   bool includeSrcSize_;
 
@@ -72,8 +72,15 @@ public:
    * @param species A vector of species names for which coordinates should be output. In case of missing species for one block, NA will be produced.
    * @param includeSrcSize Tell if source size should also be written (useful to convert coordinates on the negative strand).
    */
-  CoordinatesOutputMafIterator(MafIterator* iterator, std::ostream* out, const std::vector<std::string>& species, bool includeSrcSize = false) :
-    AbstractFilterMafIterator(iterator), output_(out), species_(species), includeSrcSize_(includeSrcSize)
+  CoordinatesOutputMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      std::shared_ptr<std::ostream> out,
+      const std::vector<std::string>& species,
+      bool includeSrcSize = false) :
+    AbstractFilterMafIterator(iterator),
+      output_(out),
+	species_(species),
+	includeSrcSize_(includeSrcSize)
   {
     if (output_)
       writeHeader_(*output_);
@@ -97,7 +104,7 @@ private:
 
 private:
   void writeHeader_(std::ostream& out) const;
-  MafBlock* analyseCurrentBlock_();
+  std::unique_ptr<MafBlock> analyseCurrentBlock_();
 };
 } // end of namespace bpp.
 

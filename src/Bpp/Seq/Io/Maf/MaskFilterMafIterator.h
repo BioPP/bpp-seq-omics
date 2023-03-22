@@ -40,7 +40,7 @@
 #ifndef _MASKFILTERMAFITERATOR_H_
 #define _MASKFILTERMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From the STL:
 #include <iostream>
@@ -57,20 +57,26 @@ namespace bpp
  */
 class MaskFilterMafIterator :
   public AbstractFilterMafIterator,
-  public MafTrashIterator
+  public virtual MafTrashIteratorInterface
 {
 private:
   std::vector<std::string> species_;
   unsigned int windowSize_;
   unsigned int step_;
   unsigned int maxMasked_;
-  std::deque<MafBlock*> blockBuffer_;
-  std::deque<MafBlock*> trashBuffer_;
-  std::deque< std::vector<bool> > window_;
+  std::deque<std::unique_ptr<MafBlock>> blockBuffer_;
+  std::deque<std::unique_ptr<MafBlock>> trashBuffer_;
+  std::deque<std::vector<bool>> window_;
   bool keepTrashedBlocks_;
 
 public:
-  MaskFilterMafIterator(MafIterator* iterator, const std::vector<std::string>& species, unsigned int windowSize, unsigned int step, unsigned int maxMasked, bool keepTrashedBlocks) :
+  MaskFilterMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      const std::vector<std::string>& species, 
+      unsigned int windowSize,
+      unsigned int step,
+      unsigned int maxMasked, 
+      bool keepTrashedBlocks) :
     AbstractFilterMafIterator(iterator),
     species_(species),
     windowSize_(windowSize),
@@ -83,16 +89,16 @@ public:
   {}
 
 public:
-  MafBlock* nextRemovedBlock()
+  std::unique_ptr<MafBlock> nextRemovedBlock()
   {
-    if (trashBuffer_.size() == 0) return 0;
-    MafBlock* block = trashBuffer_.front();
+    if (trashBuffer_.size() == 0) return nullptr;
+    auto block = move(trashBuffer_.front());
     trashBuffer_.pop_front();
     return block;
   }
 
 private:
-  MafBlock* analyseCurrentBlock_();
+  std::unique_ptr<MafBlock> analyseCurrentBlock_();
 };
 } // end of namespace bpp.
 

@@ -72,8 +72,8 @@ private:
   size_t srcSize_;
 
 public:
-  MafSequence(const Alphabet* alphabet = & AlphabetTools::DNA_ALPHABET) :
-    EdSymbolList<int>(alphabet),
+  MafSequence(std::shared_ptr<const Alphabet> alphabet = AlphabetTools::DNA_ALPHABET) :
+    AbstractTemplateSymbolList<int>(alphabet),
     SequenceWithAnnotation(alphabet),
     hasCoordinates_(false),
     begin_(0),
@@ -88,8 +88,8 @@ public:
       const std::string& name,
       const std::string& sequence,
       bool parseName = true,
-      const Alphabet* alphabet = & AlphabetTools::DNA_ALPHABET) :
-    EdSymbolList<int>(alphabet),
+      std::shared_ptr<const Alphabet> alphabet = AlphabetTools::DNA_ALPHABET) :
+    AbstractTemplateSymbolList<int>(alphabet),
     SequenceWithAnnotation(name, sequence, alphabet),
     hasCoordinates_(false),
     begin_(0),
@@ -111,8 +111,8 @@ public:
       char strand,
       size_t srcSize,
       bool parseName = true,
-      const Alphabet* alphabet = & AlphabetTools::DNA_ALPHABET) :
-    EdSymbolList<int>(alphabet),
+      std::shared_ptr<const Alphabet> alphabet = AlphabetTools::DNA_ALPHABET) :
+    AbstractTemplateSymbolList<int>(alphabet),
     SequenceWithAnnotation(name, sequence, alphabet),
     hasCoordinates_(true),
     begin_(begin),
@@ -127,8 +127,8 @@ public:
       splitNameIntoSpeciesAndChromosome(name, species_, chromosome_);
   }
 
-  MafSequence(const MafSequence& mafSeq):
-    EdSymbolList<int>(mafSeq),
+  MafSequence(const MafSequence& mafSeq) :
+    AbstractTemplateSymbolList<int>(mafSeq),
     SequenceWithAnnotation(mafSeq),
     hasCoordinates_(mafSeq.hasCoordinates_),
     begin_(mafSeq.begin_),
@@ -142,14 +142,13 @@ public:
   MafSequence& operator=(const MafSequence& mafSeq)
   {
     SequenceWithAnnotation::operator=(mafSeq);
-    EdSymbolList<int>::operator=(mafSeq);
     hasCoordinates_ = mafSeq.hasCoordinates_;
-    begin_ = mafSeq.begin_;
-    species_ = mafSeq.species_;
-    chromosome_ = mafSeq.chromosome_;
-    strand_ = mafSeq.strand_;
-    size_ = mafSeq.size_;
-    srcSize_ = mafSeq.srcSize_;
+    begin_          = mafSeq.begin_;
+    species_        = mafSeq.species_;
+    chromosome_     = mafSeq.chromosome_;
+    strand_         = mafSeq.strand_;
+    size_           = mafSeq.size_;
+    srcSize_        = mafSeq.srcSize_;
     return *this;
   }
 
@@ -268,7 +267,7 @@ public:
    * @param startAt Begining of sub-sequence.
    * @param length  the length of the sub-sequence.
    */
-  MafSequence* subSequence(size_t startAt, size_t length) const;
+  std::unique_ptr<MafSequence> subSequence(size_t startAt, size_t length) const;
 
 private:
   void beforeSequenceChanged(const IntSymbolListEditionEvent& event) {}

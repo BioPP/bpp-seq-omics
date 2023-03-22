@@ -53,51 +53,47 @@ namespace bpp
  * This class basically contains a AlignedSequenceContainer made of MafSequence objects.
  */
 class MafBlock :
-  protected AlignedSequenceContainer
+  protected TemplateAlignedSequenceContainer<MafSequence, Site>
 {
 private:
   double score_;
   unsigned int pass_;
-  std::map<std::string, Clonable*> properties_;
+  std::map<std::string, std::unique_ptr<Clonable>> properties_;
 
 public:
   MafBlock() :
-    AbstractSequenceContainer(&AlphabetTools::DNA_ALPHABET),
-    AlignedSequenceContainer(&AlphabetTools::DNA_ALPHABET),
+    TemplateAlignedSequenceContainer(AlphabetTools::DNA_ALPHABET),
     score_(log(0)),
     pass_(0),
     properties_()
   {}
 
   MafBlock(const MafBlock& block) :
-    AbstractSequenceContainer(block),
-    AlignedSequenceContainer(block),
+    TemplateAlignedSequenceContainer(block),
     score_(block.score_),
     pass_(block.pass_),
     properties_()
   {
-    std::map<std::string, Clonable*>::const_iterator it;
-    for (it = block.properties_.begin(); it != block.properties_.end(); ++it)
+    for (const auto& it : block.properties_)
     {
-      properties_[it->first] = it->second->clone();
+      properties_[it.first].reset(it.second->clone());
     }
   }
 
   MafBlock& operator=(const MafBlock& block)
   {
-    AlignedSequenceContainer::operator=(block),
+    TemplateAlignedSequenceContainer::operator=(block),
     score_     = block.score_;
     pass_      = block.pass_;
     deleteProperties_();
-    std::map<std::string, Clonable*>::const_iterator it;
-    for (it = block.properties_.begin(); it != block.properties_.end(); ++it)
+    for (const auto& it : block.properties_)
     {
-      properties_[it->first] = it->second->clone();
+      properties_[it.first].reset(it.second->clone());
     }
     return *this;
   }
 
-  MafBlock* clone() const { return new MafBlock(*this); }
+  MafBlock* clone() const override { return new MafBlock(*this); }
 
   virtual ~MafBlock() { deleteProperties_(); }
 
@@ -108,57 +104,31 @@ public:
   double getScore() const { return score_; }
   unsigned int getPass() const { return pass_; }
 
-  const AlignedSequenceContainer& getAlignment() const { return *this; }
+  const TemplateAlignedSequenceContainer<MafSequence, Site>& alignment() const { return *this; }
 
-  using AlignedSequenceContainer::getNumberOfSequences;
+  using TemplateAlignedSequenceContainer::getNumberOfSequences;
 
-  using AlignedSequenceContainer::getNumberOfSites;
+  using TemplateAlignedSequenceContainer::getNumberOfSites;
   
-  using AlignedSequenceContainer::deleteSite;
+  using TemplateAlignedSequenceContainer::deleteSite;
   
-  using AlignedSequenceContainer::deleteSites;
+  using TemplateAlignedSequenceContainer::deleteSites;
   
-  using AlignedSequenceContainer::clear;
+  using TemplateAlignedSequenceContainer::addSequence;
+  
+  using TemplateAlignedSequenceContainer::hasSequence;
+  
+  using TemplateAlignedSequenceContainer::sequence;
+  
+  using TemplateAlignedSequenceContainer::removeSequence;
+  
+  using TemplateAlignedSequenceContainer::clear;
 
-  void addMafSequence(const MafSequence& sequence) { 
-    addSequence(sequence, false);
-  }
-
-  bool hasMafSequence(const std::string& name) const
-  {
-    return AlignedSequenceContainer::hasSequence(name);
-  }
-
-  const MafSequence& getMafSequence(const std::string& name) const
-  {
-    return dynamic_cast<const MafSequence&>(getSequence(name));
-  }
-
-  const MafSequence& getMafSequence(size_t i) const
-  {
-    return dynamic_cast<const MafSequence&>(getSequence(i));
-  }
-
-  MafSequence& getMafSequence(const std::string& name)
-  {
-    return dynamic_cast<MafSequence&>(getSequence_(name));
-  }
-
-  MafSequence& getMafSequence(size_t i)
-  {
-    return dynamic_cast<MafSequence&>(getSequence_(i));
-  }
-
-  std::shared_ptr<MafSequence> removeMafSequence(size_t i)
-  {
-    return std::dynamic_pointer_cast<MafSequence>(removeSequence(i));
-  }
-
-  bool hasMafSequenceForSpecies(const std::string& species) const
+  bool hasSequenceForSpecies(const std::string& species) const
   {
     for (size_t i = 0; i < getNumberOfSequences(); ++i)
     {
-      const MafSequence& seq = getMafSequence(i);
+      const MafSequence& seq = sequence(i);
       if (seq.getSpecies() == species)
         return true;
     }
@@ -166,24 +136,24 @@ public:
   }
 
   // Return the first sequence with the species name.
-  const MafSequence& getMafSequenceForSpecies(const std::string& species) const
+  const MafSequence& sequenceForSpecies(const std::string& species) const
   {
     for (size_t i = 0; i < getNumberOfSequences(); ++i)
     {
-      const MafSequence& seq = getMafSequence(i);
+      const MafSequence& seq = sequence(i);
       if (seq.getSpecies() == species)
         return seq;
     }
-    throw SequenceNotFoundException("MafBlock::getSequenceForSpecies. No sequence with the given species name in this block.", species);
+    throw SequenceNotFoundException("MafBlock::sequenceForSpecies. No sequence with the given species name in this block.", species);
   }
 
   // Return all sequences with the species name.
-  std::vector<const MafSequence*> getMafSequencesForSpecies(const std::string& species) const
+  std::vector<const MafSequence*> getSequencesForSpecies(const std::string& species) const
   {
     std::vector<const MafSequence*> selection;
     for (size_t i = 0; i < getNumberOfSequences(); ++i)
     {
-      const MafSequence* seq = &getMafSequence(i);
+      const MafSequence* seq = &sequence(i);
       if (seq->getSpecies() == species)
         selection.push_back(seq);
     }
@@ -198,7 +168,7 @@ public:
     std::vector<std::string> lst;
     for (size_t i = 0; i < getNumberOfSequences(); ++i)
     {
-      lst.push_back(getMafSequence(i).getSpecies());
+      lst.push_back(sequence(i).getSpecies());
     }
     return lst;
   }
@@ -208,7 +178,7 @@ public:
     // This is a bit of a trick, but avoid useless recopies.
     // It is safe here because the AlignedSequenceContainer is fully encapsulated.
     // It would not work if a VectorSiteContainer was used.
-    const_cast<MafSequence&>(getMafSequence(i)).removeCoordinates();
+    const_cast<MafSequence&>(sequence(i)).removeCoordinates();
   }
 
   std::string getDescription() const
@@ -224,7 +194,7 @@ public:
    */
   bool hasProperty(const std::string& property) const
   {
-    std::map<std::string, Clonable*>::const_iterator it = properties_.find(property);
+    auto it = properties_.find(property);
     return it != properties_.end();
   }
 
@@ -237,7 +207,7 @@ public:
    */
   const Clonable& getProperty(const std::string& property) const
   {
-    std::map<std::string, Clonable*>::const_iterator it = properties_.find(property);
+    auto it = properties_.find(property);
     if (it == properties_.end())
       throw Exception("MafBlock::getProperty. No data for property: " + property + " in block.");
     return *it->second;
@@ -251,10 +221,9 @@ public:
    */
   void deleteProperty(const std::string& property)
   {
-    std::map<std::string, Clonable*>::iterator it = properties_.find(property);
+    auto it = properties_.find(property);
     if (it == properties_.end())
       throw Exception("MafBlock::deleteProperty. No data for property: " + property + " in block.");
-    delete it->second;
     properties_.erase(it);
   }
 
@@ -266,23 +235,18 @@ public:
    * @param data The data to associate to this property.
    * @throw Exception if the pointer toward the input data is NULL.
    */
-  void setProperty(const std::string& property, Clonable* data)
+  void setProperty(const std::string& property, std::unique_ptr<Clonable> data)
   {
     if (!data)
-      throw Exception("MafBlock::setProperty. Pointer to data is NULL.");
+      throw Exception("MafBlock::setProperty. Pointer to data is nullptr.");
     if (hasProperty(property))
       deleteProperty(property);
-    properties_[property] = data;
+    properties_[property] = move(data);
   }
 
 private:
   void deleteProperties_()
   {
-    std::map<std::string, Clonable*>::iterator it;
-    for (it = properties_.begin(); it != properties_.end(); ++it)
-    {
-      delete it->second;
-    }
     properties_.clear();
   }
 };

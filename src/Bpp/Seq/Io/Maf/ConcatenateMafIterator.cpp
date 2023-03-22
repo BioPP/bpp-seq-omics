@@ -50,28 +50,28 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* ConcatenateMafIterator::analyseCurrentBlock_()
+unique_ptr<MafBlock> ConcatenateMafIterator::analyseCurrentBlock_()
 {
   if (!incomingBlock_)
     return 0;
-  currentBlock_  = incomingBlock_;
+  currentBlock_  = move(incomingBlock_);
   incomingBlock_ = iterator_->nextBlock();
   size_t count = 1;
   if (verbose_)
     ApplicationTools::displayMessage("Concatenating new block...");
   while (incomingBlock_ &&
          (refSpecies_ == "" ||
-          (incomingBlock_->hasMafSequenceForSpecies(refSpecies_) &&
-           currentBlock_->hasMafSequenceForSpecies(refSpecies_) &&
-           incomingBlock_->getMafSequenceForSpecies(refSpecies_).getChromosome() ==
-           currentBlock_->getMafSequenceForSpecies(refSpecies_).getChromosome()
+          (incomingBlock_->hasSequenceForSpecies(refSpecies_) &&
+           currentBlock_->hasSequenceForSpecies(refSpecies_) &&
+           incomingBlock_->sequenceForSpecies(refSpecies_).getChromosome() ==
+           currentBlock_->sequenceForSpecies(refSpecies_).getChromosome()
           )
          )
          )
   {
     if (currentBlock_->getNumberOfSites() >= minimumSize_)
     {
-      return currentBlock_;
+      return move(currentBlock_);
     }
     if (verbose_)
     {
@@ -83,7 +83,7 @@ MafBlock* ConcatenateMafIterator::analyseCurrentBlock_()
     vector<string> sp2 = incomingBlock_->getSpeciesList();
     vector<string> allSp = VectorTools::unique(VectorTools::vectorUnion(sp1, sp2));
     // We need to create a new MafBlock:
-    MafBlock* mergedBlock = new MafBlock();
+    auto mergedBlock = make_unique<MafBlock>();
     // We average the score and pass values:
     unsigned int p1 = currentBlock_->getPass();
     unsigned int p2 = incomingBlock_->getPass();
@@ -101,12 +101,12 @@ MafBlock* ConcatenateMafIterator::analyseCurrentBlock_()
       unique_ptr<MafSequence> seq;
       try
       {
-        seq.reset(new MafSequence(currentBlock_->getMafSequenceForSpecies(allSp[i])));
+        seq.reset(new MafSequence(currentBlock_->sequenceForSpecies(allSp[i])));
 
         // Check is there is a second sequence:
         try
         {
-          unique_ptr<MafSequence> tmp(new MafSequence(incomingBlock_->getMafSequenceForSpecies(allSp[i])));
+          auto tmp = make_unique<MafSequence>(incomingBlock_->sequenceForSpecies(allSp[i]));
           string ref1 = seq->getDescription(), ref2 = tmp->getDescription();
           if (seq->getChromosome() != tmp->getChromosome())
           {
@@ -140,7 +140,7 @@ MafBlock* ConcatenateMafIterator::analyseCurrentBlock_()
       catch (SequenceNotFoundException& snfe1)
       {
         // There must be a second sequence then:
-        seq.reset(new MafSequence(incomingBlock_->getMafSequenceForSpecies(allSp[i])));
+        seq.reset(new MafSequence(incomingBlock_->sequenceForSpecies(allSp[i])));
         string ref2 = seq->getDescription();
         seq->setToSizeL(seq->size() + currentBlock_->getNumberOfSites());
         if (logstream_)
@@ -148,14 +148,11 @@ MafBlock* ConcatenateMafIterator::analyseCurrentBlock_()
           (*logstream_ << "BLOCK CONCATENATE: adding " << ref2 << " and extend it with " << currentBlock_->getNumberOfSites() << " gaps on the left.").endLine();
         }
       }
-      mergedBlock->addMafSequence(*seq);
+      mergedBlock->addSequence(seq->getName(), seq);
     }
-    // Cleaning stuff:
-    delete currentBlock_;
-    delete incomingBlock_;
-    currentBlock_ = mergedBlock;
+    currentBlock_ = move(mergedBlock);
     // We check if we can also merge the next block:
     incomingBlock_ = iterator_->nextBlock();
   }
-  return currentBlock_;
+  return move(currentBlock_);
 }

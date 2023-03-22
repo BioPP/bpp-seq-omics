@@ -51,33 +51,33 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* CoordinateTranslatorMafIterator::analyseCurrentBlock_()
+unique_ptr<MafBlock> CoordinateTranslatorMafIterator::analyseCurrentBlock_()
 {
-  unique_ptr<MafBlock> block(iterator_->nextBlock());
-  if (!block.get())
-    return 0; // No more block.
+  auto block = iterator_->nextBlock();
+  if (!block)
+    return nullptr; // No more block.
 
   // Check if the block contains the reference and target species:
-  if (!block->hasMafSequenceForSpecies(referenceSpecies_))
-    return block.release();
-  if (!block->hasMafSequenceForSpecies(targetSpecies_))
-    return block.release();
+  if (!block->hasSequenceForSpecies(referenceSpecies_))
+    return block;
+  if (!block->hasSequenceForSpecies(targetSpecies_))
+    return block;
 
   // Get the feature ranges for this block:
-  const MafSequence& refSeq = block->getMafSequenceForSpecies(referenceSpecies_);
-  const MafSequence& targetSeq = block->getMafSequenceForSpecies(targetSpecies_);
+  const auto& refSeq = block->sequenceForSpecies(referenceSpecies_);
+  const auto& targetSeq = block->sequenceForSpecies(targetSpecies_);
 
   // first check if there is one (for now we assume that features refer to the chromosome or contig name, with implicit species):
   std::map<std::string, SequenceFeatureSet*>::iterator mr = inputFeaturesPerChr_.find(refSeq.getChromosome());
   if (mr == inputFeaturesPerChr_.end())
-    return block.release();
+    return block;
 
   // second get only features within this block:
   unique_ptr<SequenceFeatureSet> selectedFeatures(mr->second->getSubsetForRange(SeqRange(refSeq.getRange(true)), true));
 
   // test if there are some features to translate here:
   if (selectedFeatures->isEmpty())
-    return block.release();
+    return block;
 
   // Get coordinate range sets:
   RangeSet<size_t> ranges;
@@ -109,7 +109,7 @@ MafBlock* CoordinateTranslatorMafIterator::analyseCurrentBlock_()
     (*logstream_ << "COORDINATE CONVERTOR: lifting over " << ranges.getSet().size() << " features from block " << block->getDescription() << ".").endLine();
   }
 
-  const Alphabet* alphabet = refSeq.getAlphabet();
+  auto alphabet = refSeq.getAlphabet();
   size_t i = 0;
   for (const auto& it : ranges.getSet())
   {
@@ -146,5 +146,5 @@ MafBlock* CoordinateTranslatorMafIterator::analyseCurrentBlock_()
     ApplicationTools::displayTaskDone();
 
   // Block is simply forwarded:
-  return block.release();
+  return block;
 }

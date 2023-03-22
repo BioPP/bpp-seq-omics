@@ -52,17 +52,17 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* SequenceLDhotOutputMafIterator::analyseCurrentBlock_()
+unique_ptr<MafBlock> SequenceLDhotOutputMafIterator::analyseCurrentBlock_()
 {
-  MafBlock* block = iterator_->nextBlock();
+  auto block = iterator_->nextBlock();
   if (block)
   {
     string chr   = "ChrNA";
     string start = "StartNA";
     string stop  = "StopNA";
-    if (block->hasMafSequenceForSpecies(refSpecies_))
+    if (block->hasSequenceForSpecies(refSpecies_))
     {
-      const MafSequence& refseq = block->getMafSequenceForSpecies(refSpecies_);
+      const MafSequence& refseq = block->sequenceForSpecies(refSpecies_);
       chr   = refseq.getChromosome();
       start = TextTools::toString(refseq.start());
       stop  = TextTools::toString(refseq.stop());
@@ -81,8 +81,8 @@ MafBlock* SequenceLDhotOutputMafIterator::analyseCurrentBlock_()
 void SequenceLDhotOutputMafIterator::writeBlock(std::ostream& out, const MafBlock& block) const
 {
   // First get alignment:
-  const SiteContainer& aln = block.getAlignment();
-  unique_ptr<VectorSiteContainer> variableSites(new VectorSiteContainer(aln.getSequenceNames(), &AlphabetTools::DNA_ALPHABET));
+  const auto& aln = block.alignment();
+  unique_ptr<VectorSiteContainer> variableSites = make_unique<VectorSiteContainer>(aln.getSequenceNames(), AlphabetTools::DNA_ALPHABET);
 
   // We first preparse the data:
   // We assume all sequences are distinct:
@@ -93,7 +93,7 @@ void SequenceLDhotOutputMafIterator::writeBlock(std::ostream& out, const MafBloc
   string positions = "";
   for (size_t i = 0; i < aln.getNumberOfSites(); ++i)
   {
-    const Site& s = aln.getSite(i);
+    const Site& s = aln.site(i);
     if (completeOnly_ && !SiteTools::isComplete(s))
     {
       continue;
@@ -102,7 +102,7 @@ void SequenceLDhotOutputMafIterator::writeBlock(std::ostream& out, const MafBloc
     int x = -1;
     for (size_t j = 0; j < s.size() && count < 2; ++j)
     {
-      if (!AlphabetTools::DNA_ALPHABET.isGap(s[j]) && !AlphabetTools::DNA_ALPHABET.isUnresolved(s[j]))
+      if (!AlphabetTools::DNA_ALPHABET->isGap(s[j]) && !AlphabetTools::DNA_ALPHABET->isUnresolved(s[j]))
       {
         if (count == 0)
         {
@@ -127,7 +127,8 @@ void SequenceLDhotOutputMafIterator::writeBlock(std::ostream& out, const MafBloc
       // At least two alleles (non-gap, non-unresolved) found in this position, so we record it
       positions += " " + TextTools::toString(i + 1);
       nbLoci++;
-      variableSites->addSite(aln.getSite(i));
+      auto tmpSite = make_unique<Site>(aln.site(i));
+      variableSites->addSite(tmpSite);
     }
   }
 
@@ -144,7 +145,7 @@ void SequenceLDhotOutputMafIterator::writeBlock(std::ostream& out, const MafBloc
 
   for (size_t i = 0; i < aln.getNumberOfSequences(); ++i)
   {
-    out << variableSites->getSequence(i).toString() << " 1" << endl;
+    out << variableSites->sequence(i).toString() << " 1" << endl;
   }
 
   out << "#" << endl;

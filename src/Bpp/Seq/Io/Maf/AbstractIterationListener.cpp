@@ -1,5 +1,5 @@
 //
-// File: IterationListener.cpp
+// File: AbstractIterationListener.cpp
 // Authors: Julien Dutheil
 // Created: Wed Jun 27 2012
 //
@@ -37,7 +37,7 @@
    knowledge of the CeCILL license and that you accept its terms.
  */
 
-#include "IterationListener.h"
+#include "AbstractIterationListener.h"
 
 // From the STL:
 #include <vector>
@@ -58,10 +58,10 @@ void CsvStatisticsOutputIterationListener::iterationStarts()
 
 void CsvStatisticsOutputIterationListener::iterationMoves(const MafBlock& currentBlock)
 {
-  const vector<const BppNumberI*>& values = statsIterator_->getResults();
-  if (currentBlock.hasMafSequenceForSpecies(refSpecies_))
+  auto& values = statsIterator_->getResults();
+  if (currentBlock.hasSequenceForSpecies(refSpecies_))
   {
-    const MafSequence& refSeq = currentBlock.getMafSequenceForSpecies(refSpecies_);
+    const auto& refSeq = currentBlock.sequenceForSpecies(refSpecies_);
     if (refSeq.hasCoordinates())
       *output_ << refSeq.getChromosome() << sep_ << refSeq.start() << sep_ << refSeq.stop();
     else
@@ -74,9 +74,7 @@ void CsvStatisticsOutputIterationListener::iterationMoves(const MafBlock& curren
   for (size_t i = 0; i < values.size(); ++i)
   {
     *output_ << sep_ << (values[i] ? values[i]->toString() : "NA");
-    // Memory cleaning:
-    if (values[i])
-      delete values[i];
   }
   output_->endLine();
 }
+

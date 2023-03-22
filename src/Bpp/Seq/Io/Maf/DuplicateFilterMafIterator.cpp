@@ -47,7 +47,7 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* DuplicateFilterMafIterator::analyseCurrentBlock_()
+unique_ptr<MafBlock> DuplicateFilterMafIterator::analyseCurrentBlock_()
 {
   currentBlock_ = iterator_->nextBlock();
   while (currentBlock_)
@@ -59,14 +59,14 @@ MafBlock* DuplicateFilterMafIterator::analyseCurrentBlock_()
     size_t stop  = 0;
     for (size_t i = 0; i < currentBlock_->getNumberOfSequences() && !foundRef; ++i)
     {
-      string species = currentBlock_->getMafSequence(i).getSpecies();
+      string species = currentBlock_->sequence(i).getSpecies();
       if (species == ref_)
       {
         foundRef = true;
-        chr    = currentBlock_->getMafSequence(i).getChromosome();
-        strand = currentBlock_->getMafSequence(i).getStrand();
-        start  = currentBlock_->getMafSequence(i).start();
-        stop   = currentBlock_->getMafSequence(i).stop();
+        chr    = currentBlock_->sequence(i).getChromosome();
+        strand = currentBlock_->sequence(i).getStrand();
+        start  = currentBlock_->sequence(i).start();
+        stop   = currentBlock_->sequence(i).stop();
       }
     }
     if (!foundRef)
@@ -75,7 +75,6 @@ MafBlock* DuplicateFilterMafIterator::analyseCurrentBlock_()
       {
         (*logstream_ << "DUPLICATE FILTER: block does not contain reference species and was removed.").endLine();
       }
-      delete currentBlock_;
     }
     else
     {
@@ -86,11 +85,10 @@ MafBlock* DuplicateFilterMafIterator::analyseCurrentBlock_()
         {
           (*logstream_ << "DUPLICATE FILTER: sequence in reference species was found in a previous block. New block was removed.").endLine();
         }
-        delete currentBlock_;
       }
       else
       {
-        return currentBlock_;
+        return move(currentBlock_);
       }
     }
 
@@ -98,5 +96,5 @@ MafBlock* DuplicateFilterMafIterator::analyseCurrentBlock_()
     currentBlock_ = iterator_->nextBlock();
   }
 
-  return currentBlock_;
+  return move(currentBlock_);
 }

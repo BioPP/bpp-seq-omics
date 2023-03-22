@@ -50,30 +50,30 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* QualityFilterMafIterator::analyseCurrentBlock_()
+unique_ptr<MafBlock> QualityFilterMafIterator::analyseCurrentBlock_()
 {
   if (blockBuffer_.size() == 0)
   {
     do
     {
       // Else there is no more block in the buffer, we need parse more:
-      MafBlock* block = iterator_->nextBlock();
+      auto block = iterator_->nextBlock();
       if (!block)
         return 0; // No more block.
 
       // Parse block.
-      vector< vector<int> > aln;
+      vector<vector<int>> aln;
       for (size_t i = 0; i < species_.size(); ++i)
       {
-        const MafSequence* seq = &block->getMafSequenceForSpecies(species_[i]);
-        if (seq->hasAnnotation(SequenceQuality::QUALITY_SCORE))
+        const MafSequence& seq = block->sequenceForSpecies(species_[i]);
+        if (seq.hasAnnotation(SequenceQuality::QUALITY_SCORE))
         {
-          aln.push_back(dynamic_cast<const SequenceQuality&>(seq->getAnnotation(SequenceQuality::QUALITY_SCORE)).getScores());
+          aln.push_back(dynamic_cast<const SequenceQuality&>(seq.annotation(SequenceQuality::QUALITY_SCORE)).getScores());
         }
       }
       if (aln.size() != species_.size())
       {
-        blockBuffer_.push_back(block);
+        blockBuffer_.push_back(move(block));
         if (logstream_)
         {
           (*logstream_ << "QUAL CLEANER: block is missing quality score for at least one species and will therefore not be filtered.").endLine();
@@ -193,7 +193,7 @@ MafBlock* QualityFilterMafIterator::analyseCurrentBlock_()
         // Now we remove regions with two many gaps, using a sliding window:
         if (pos.size() == 0)
         {
-          blockBuffer_.push_back(block);
+          blockBuffer_.push_back(move(block));
           if (logstream_)
           {
             (*logstream_ << "QUAL CLEANER: block is clean and kept as is.").endLine();
@@ -228,66 +228,60 @@ MafBlock* QualityFilterMafIterator::analyseCurrentBlock_()
             }
             if (pos[i] > 0)
             {
-              MafBlock* newBlock = new MafBlock();
+              auto newBlock = make_unique<MafBlock>();
               newBlock->setScore(block->getScore());
               newBlock->setPass(block->getPass());
               for (size_t j = 0; j < block->getNumberOfSequences(); ++j)
               {
-                MafSequence* subseq;
+                unique_ptr<MafSequence> subseq;
                 if (i == 0)
                 {
-                  subseq = block->getMafSequence(j).subSequence(0, pos[i]);
+                  subseq = block->sequence(j).subSequence(0, pos[i]);
                 }
                 else
                 {
-                  subseq = block->getMafSequence(j).subSequence(pos[i - 1], pos[i] - pos[i - 1]);
+                  subseq = block->sequence(j).subSequence(pos[i - 1], pos[i] - pos[i - 1]);
                 }
-                newBlock->addMafSequence(*subseq);
-                delete subseq;
+                newBlock->addSequence(subseq->getName(), subseq);
               }
-              blockBuffer_.push_back(newBlock);
+              blockBuffer_.push_back(move(newBlock));
             }
 
             if (keepTrashedBlocks_)
             {
-              MafBlock* outBlock = new MafBlock();
+              auto outBlock = make_unique<MafBlock>();
               outBlock->setScore(block->getScore());
               outBlock->setPass(block->getPass());
               for (size_t j = 0; j < block->getNumberOfSequences(); ++j)
               {
-                MafSequence* outseq = block->getMafSequence(j).subSequence(pos[i], pos[i + 1] - pos[i]);
-                outBlock->addMafSequence(*outseq);
-                delete outseq;
+		auto outseq = block->sequence(j).subSequence(pos[i], pos[i + 1] - pos[i]);
+                outBlock->addSequence(outseq->getName(), outseq);
               }
-              trashBuffer_.push_back(outBlock);
+              trashBuffer_.push_back(move(outBlock));
             }
           }
           // Add last block:
           if (pos[pos.size() - 1] < block->getNumberOfSites())
           {
-            MafBlock* newBlock = new MafBlock();
+            auto newBlock = make_unique<MafBlock>();
             newBlock->setScore(block->getScore());
             newBlock->setPass(block->getPass());
             for (size_t j = 0; j < block->getNumberOfSequences(); ++j)
             {
-              MafSequence* subseq;
-              subseq = block->getMafSequence(j).subSequence(pos[pos.size() - 1], block->getNumberOfSites() - pos[pos.size() - 1]);
-              newBlock->addMafSequence(*subseq);
-              delete subseq;
+              auto subseq = block->sequence(j).subSequence(pos[pos.size() - 1], block->getNumberOfSites() - pos[pos.size() - 1]);
+              newBlock->addSequence(subseq->getName(), subseq);
             }
-            blockBuffer_.push_back(newBlock);
+            blockBuffer_.push_back(move(newBlock));
           }
           if (verbose_)
             ApplicationTools::displayTaskDone();
-
-          delete block;
         }
       }
     }
     while (blockBuffer_.size() == 0);
   }
 
-  MafBlock* block = blockBuffer_.front();
+  auto block = move(blockBuffer_.front());
   blockBuffer_.pop_front();
   return block;
 }

@@ -47,7 +47,7 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* OrphanSequenceFilterMafIterator::analyseCurrentBlock_()
+std::unique_ptr<MafBlock> OrphanSequenceFilterMafIterator::analyseCurrentBlock_()
 {
   currentBlock_ = iterator_->nextBlock();
   while (currentBlock_)
@@ -55,7 +55,7 @@ MafBlock* OrphanSequenceFilterMafIterator::analyseCurrentBlock_()
     map<string, unsigned int> counts;
     for (size_t i = 0; i < currentBlock_->getNumberOfSequences(); ++i)
     {
-      string species = currentBlock_->getMafSequence(i).getSpecies();
+      string species = currentBlock_->sequence(i).getSpecies();
       counts[species]++;
     }
     bool test = counts.size() <= species_.size();
@@ -85,12 +85,12 @@ MafBlock* OrphanSequenceFilterMafIterator::analyseCurrentBlock_()
       if (!duplicate)  // No duplicate found or duplicates are kept
       {
         if (strictCrit || (!strict_ && loseCrit))
-          return currentBlock_;
+          return move(currentBlock_);
       }
     }
     // Otherwise there is at least one extra species, we get the next block...
     currentBlock_ = iterator_->nextBlock();
   }
 
-  return currentBlock_;
+  return move(currentBlock_);
 }

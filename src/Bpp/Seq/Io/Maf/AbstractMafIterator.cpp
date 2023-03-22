@@ -37,8 +37,7 @@
    knowledge of the CeCILL license and that you accept its terms.
  */
 
-#include "MafIterator.h"
-#include "IterationListener.h"
+#include "AbstractMafIterator.h"
 
 using namespace bpp;
 
@@ -50,24 +49,24 @@ using namespace std;
 
 void AbstractMafIterator::fireIterationStartSignal_()
 {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it)
+  for (auto& it : iterationListeners_)
   {
-    (*it)->iterationStarts();
+    it->iterationStarts();
   }
 }
 
 void AbstractMafIterator::fireIterationMoveSignal_(const MafBlock& currentBlock)
 {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it)
+  for (auto& it : iterationListeners_)
   {
-    (*it)->iterationMoves(currentBlock);
+    it->iterationMoves(currentBlock);
   }
 }
 
 void AbstractMafIterator::fireIterationStopSignal_()
 {
-  for (std::vector<IterationListener*>::iterator it = iterationListeners_.begin(); it != iterationListeners_.end(); ++it)
+  for (auto& it : iterationListeners_)
   {
-    (*it)->iterationStops();
+    it->iterationStops();
   }
 }

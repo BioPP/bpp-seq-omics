@@ -40,7 +40,7 @@
 #ifndef _SEQUENCESTATISTICSMAFITERATOR_H_
 #define _SEQUENCESTATISTICSMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 #include "MafStatistics.h"
 
 // From the STL:
@@ -66,8 +66,8 @@ class SequenceStatisticsMafIterator :
   public AbstractFilterMafIterator
 {
 private:
-  std::vector<MafStatistics*> statistics_;
-  std::vector<const BppNumberI*> results_;
+  std::vector<std::shared_ptr<MafStatisticsInterface>> statistics_;
+  std::vector<std::unique_ptr<BppNumberI>> results_;
   std::vector<std::string> names_;
 
 public:
@@ -75,30 +75,32 @@ public:
    * @param iterator The input iterator.
    * @param statistics A vector of pointers toward MafStatistics, to be computed simultaneously for each maf block.
    */
-  SequenceStatisticsMafIterator(MafIterator* iterator, const std::vector<MafStatistics*> statistics);
+  SequenceStatisticsMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      const std::vector<std::shared_ptr<MafStatisticsInterface>> statistics);
 
 private:
   SequenceStatisticsMafIterator(const SequenceStatisticsMafIterator& iterator) :
     AbstractFilterMafIterator(0),
     statistics_(iterator.statistics_),
-    results_(iterator.results_),
+    results_(),
     names_(iterator.names_)
   {}
 
   SequenceStatisticsMafIterator& operator=(const SequenceStatisticsMafIterator& iterator)
   {
     statistics_ = iterator.statistics_;
-    results_ = iterator.results_;
+    results_.clear();
     names_ = iterator.names_;
     return *this;
   }
 
 public:
-  const std::vector<const BppNumberI*>& getResults() const { return results_; }
+  const std::vector<std::unique_ptr<BppNumberI>>& getResults() const { return results_; }
   const std::vector<std::string>& getResultsColumnNames() const { return names_; }
 
 private:
-  MafBlock* analyseCurrentBlock_();
+  std::unique_ptr<MafBlock> analyseCurrentBlock_();
 };
 } // end of namespace bpp.
 

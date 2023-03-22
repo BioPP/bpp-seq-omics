@@ -40,7 +40,7 @@
 #ifndef _MAFPARSER_H_
 #define _MAFPARSER_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 #include <Bpp/Seq/Alphabet/CaseMaskedAlphabet.h>
 
 // From the STL:
@@ -62,7 +62,7 @@ class MafParser :
   public AbstractMafIterator
 {
 private:
-  std::istream* stream_;
+  std::shared_ptr<std::istream> stream_;
   bool mask_;
   bool checkSequenceSize_;
   CaseMaskedAlphabet cmAlphabet_;
@@ -85,20 +85,29 @@ public:
    *        to gaps and DOT_ASUNRES will convert them to 'N', which
    *        will increase parsing time.
    */
-  MafParser(std::istream* stream, bool parseMask = false, bool checkSize = true, short dotOption = DOT_ERROR) :
-    stream_(stream), mask_(parseMask), checkSequenceSize_(checkSize), cmAlphabet_(&AlphabetTools::DNA_ALPHABET),
-    firstBlock_(true), dotOption_(dotOption) {}
+  MafParser(
+      std::shared_ptr<std::istream> stream, 
+      bool parseMask = false,
+      bool checkSize = true,
+      short dotOption = DOT_ERROR) :
+    stream_(stream),
+    mask_(parseMask),
+    checkSequenceSize_(checkSize),
+    cmAlphabet_(AlphabetTools::DNA_ALPHABET),
+    firstBlock_(true),
+    dotOption_(dotOption)
+  {}
 
 private:
   // Recopy is forbidden!
   MafParser(const MafParser& maf) :
-    stream_(0), mask_(maf.mask_), checkSequenceSize_(maf.checkSequenceSize_),
-    cmAlphabet_(&AlphabetTools::DNA_ALPHABET), firstBlock_(maf.firstBlock_),
+    stream_(nullptr), mask_(maf.mask_), checkSequenceSize_(maf.checkSequenceSize_),
+    cmAlphabet_(AlphabetTools::DNA_ALPHABET), firstBlock_(maf.firstBlock_),
     dotOption_(maf.dotOption_) {}
 
   MafParser& operator=(const MafParser& maf)
   {
-    stream_ = 0;
+    stream_ = nullptr;
     mask_ = maf.mask_;
     checkSequenceSize_ = maf.checkSequenceSize_;
     firstBlock_ = maf.firstBlock_;
@@ -107,7 +116,7 @@ private:
   }
 
 private:
-  MafBlock* analyseCurrentBlock_();
+  std::unique_ptr<MafBlock> analyseCurrentBlock_();
 
 public:
   static constexpr short DOT_ERROR = 0;

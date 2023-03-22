@@ -47,7 +47,7 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* ChromosomeMafIterator::analyseCurrentBlock_()
+std::unique_ptr<MafBlock> ChromosomeMafIterator::analyseCurrentBlock_()
 {
   currentBlock_ = iterator_->nextBlock();
   while (currentBlock_)
@@ -56,11 +56,11 @@ MafBlock* ChromosomeMafIterator::analyseCurrentBlock_()
     string chr = "";
     for (size_t i = 0; i < currentBlock_->getNumberOfSequences() && !foundRef; ++i)
     {
-      string species = currentBlock_->getMafSequence(i).getSpecies();
+      string species = currentBlock_->sequence(i).getSpecies();
       if (species == ref_)
       {
         foundRef = true;
-        chr = currentBlock_->getMafSequence(i).getChromosome();
+        chr = currentBlock_->sequence(i).getChromosome();
       }
     }
     if (!foundRef)
@@ -69,7 +69,6 @@ MafBlock* ChromosomeMafIterator::analyseCurrentBlock_()
       {
         (*logstream_ << "CHROMOSOME FILTER: block does not contain reference species and was removed.").endLine();
       }
-      delete currentBlock_;
     }
     else if (chr_.find(chr) == chr_.end())
     {
@@ -77,16 +76,15 @@ MafBlock* ChromosomeMafIterator::analyseCurrentBlock_()
       {
         (*logstream_ << "CHROMOSOME FILTER: reference species without queried chromosome was removed.").endLine();
       }
-      delete currentBlock_;
     }
     else
     {
-      return currentBlock_;
+      return move(currentBlock_);
     }
 
     // Look for the next block:
     currentBlock_ = iterator_->nextBlock();
   }
 
-  return currentBlock_;
+  return move(currentBlock_);
 }

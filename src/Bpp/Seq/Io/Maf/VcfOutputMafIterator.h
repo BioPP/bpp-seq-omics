@@ -40,7 +40,7 @@
 #ifndef _VCFOUTPUTMAFITERATOR_H_
 #define _VCFOUTPUTMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From the STL:
 #include <iostream>
@@ -58,9 +58,9 @@ class VcfOutputMafIterator :
   public AbstractFilterMafIterator
 {
 private:
-  std::ostream* output_;
+  std::shared_ptr<std::ostream> output_;
   std::string refSpecies_;
-  std::vector<std::vector<std::string> > genotypes_;
+  std::vector<std::vector<std::string>> genotypes_;
   bool outputAll_;
   bool generateDiploids_;
 
@@ -75,10 +75,21 @@ public:
    * @param outputAll If true, also output non-variable positions.
    * @param generateDiploids If true, output artificial "homozygous" diploids.
    */
-  VcfOutputMafIterator(MafIterator* iterator, std::ostream* out, const std::string& reference, const std::vector<std::string>& genotypes, bool outputAll = false, bool generateDiploids = false) :
-    AbstractFilterMafIterator(iterator), output_(out), refSpecies_(reference), genotypes_(), outputAll_(outputAll), generateDiploids_(generateDiploids)
+  VcfOutputMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      std::shared_ptr<std::ostream> out,
+      const std::string& reference,
+      const std::vector<std::string>& genotypes,
+      bool outputAll = false,
+      bool generateDiploids = false) :
+    AbstractFilterMafIterator(iterator),
+    output_(out),
+    refSpecies_(reference),
+    genotypes_(),
+    outputAll_(outputAll),
+    generateDiploids_(generateDiploids)
   {
-    for (auto g: genotypes)
+    for (auto g : genotypes)
     {
       std::vector<std::string> tmp;
       tmp.push_back(g);
@@ -97,8 +108,18 @@ public:
    * @param genotypes A list of species combinations for which genotype information should be written in the VCF file. There will be one extra column per genotype, +1 format column. When more than one sequence is specified in a combination, a (phased) polyploid genotype will be created.
    * @param outputAll If true, also output non-variable positions.
    */
-  VcfOutputMafIterator(MafIterator* iterator, std::ostream* out, const std::string& reference, const std::vector< std::vector<std::string> >& genotypes, bool outputAll = false) :
-    AbstractFilterMafIterator(iterator), output_(out), refSpecies_(reference), genotypes_(genotypes), outputAll_(outputAll), generateDiploids_(false)
+  VcfOutputMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      std::shared_ptr<std::ostream> out,
+      const std::string& reference,
+      const std::vector< std::vector<std::string> >& genotypes,
+      bool outputAll = false) :
+    AbstractFilterMafIterator(iterator),
+    output_(out),
+    refSpecies_(reference),
+    genotypes_(genotypes),
+    outputAll_(outputAll),
+    generateDiploids_(false)
   {
     if (output_)
       writeHeader_(*output_);
@@ -125,12 +146,12 @@ private:
   }
 
 public:
-  MafBlock* analyseCurrentBlock_()
+  std::unique_ptr<MafBlock> analyseCurrentBlock_()
   {
     currentBlock_ = iterator_->nextBlock();
     if (output_ && currentBlock_)
       writeBlock_(*output_, *currentBlock_);
-    return currentBlock_;
+    return move(currentBlock_);
   }
 
 private:

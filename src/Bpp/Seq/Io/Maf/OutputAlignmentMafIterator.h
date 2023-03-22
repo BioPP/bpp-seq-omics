@@ -40,7 +40,7 @@
 #ifndef _OUTPUTALIGNMENTMAFITERATOR_H_
 #define _OUTPUTALIGNMENTMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From bpp-seq:
 #include <Bpp/Seq/Io/OSequence.h>
@@ -60,7 +60,7 @@ class OutputAlignmentMafIterator :
   public AbstractFilterMafIterator
 {
 private:
-  std::ostream* output_;
+  std::shared_ptr<std::ostream> output_;
   std::string file_;
   bool mask_;
   bool outputCoordinates_;
@@ -86,20 +86,20 @@ public:
    * (for instance using coordinates information).
    */
   OutputAlignmentMafIterator(
-    MafIterator* iterator,
-    std::ostream* out,
-    OAlignment* writer,
-    bool mask = true,
-    bool outputCoordinates = true,
-    bool addLDHatHeader = false,
-    const std::string& reference = "") :
+      std::shared_ptr<MafIteratorInterface> iterator,
+      std::shared_ptr<std::ostream> out,
+      std::unique_ptr<OAlignment> writer,
+      bool mask = true,
+      bool outputCoordinates = true,
+      bool addLDHatHeader = false,
+      const std::string& reference = "") :
     AbstractFilterMafIterator(iterator),
     output_(out),
     file_(),
     mask_(mask),
     outputCoordinates_(outputCoordinates),
     addLDHatHeader_(addLDHatHeader),
-    writer_(writer),
+    writer_(move(writer)),
     currentBlockIndex_(0),
     refSpecies_(reference)
   {
@@ -124,20 +124,20 @@ public:
    * (for instance using coordinates information).
    */
   OutputAlignmentMafIterator(
-    MafIterator* iterator,
-    const std::string& file,
-    OAlignment* writer,
-    bool mask = true,
-    bool outputCoordinates = true,
-    bool addLDHatHeader = false,
-    const std::string& reference = "") :
+      std::shared_ptr<MafIteratorInterface> iterator,
+      const std::string& file,
+      std::unique_ptr<OAlignment> writer,
+      bool mask = true,
+      bool outputCoordinates = true,
+      bool addLDHatHeader = false,
+      const std::string& reference = "") :
     AbstractFilterMafIterator(iterator),
     output_(0),
     file_(file),
     mask_(mask),
     outputCoordinates_(outputCoordinates),
     addLDHatHeader_(addLDHatHeader),
-    writer_(writer),
+    writer_(move(writer)),
     currentBlockIndex_(0),
     refSpecies_(reference)
   {
@@ -145,7 +145,7 @@ public:
       throw Exception("OutputAlignmentMafIterator (constructor 2): sequence writer should not be a NULL pointer!");
   }
 
-  ~OutputAlignmentMafIterator() {}
+  virtual ~OutputAlignmentMafIterator() {}
 
 private:
   OutputAlignmentMafIterator(const OutputAlignmentMafIterator& iterator) :
@@ -174,7 +174,7 @@ private:
   }
 
 private:
-  MafBlock* analyseCurrentBlock_();
+  std::unique_ptr<MafBlock> analyseCurrentBlock_();
 
   void writeBlock(std::ostream& out, const MafBlock& block) const;
 };

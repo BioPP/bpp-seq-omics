@@ -40,7 +40,7 @@
 #ifndef _ALIGNMENTFILTERMAFITERATOR_H_
 #define _ALIGNMENTFILTERMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From the STL:
 #include <iostream>
@@ -62,7 +62,7 @@ namespace bpp
  */
 class AlignmentFilterMafIterator :
   public AbstractFilterMafIterator,
-  public virtual MafTrashIterator
+  public virtual MafTrashIteratorInterface
 {
 private:
   std::vector<std::string> species_;
@@ -71,9 +71,9 @@ private:
   unsigned int maxGap_;
   double maxPropGap_;
   double maxEnt_;
-  std::deque<MafBlock*> blockBuffer_;
-  std::deque<MafBlock*> trashBuffer_;
-  std::deque< std::vector<int> > window_;
+  std::deque<std::unique_ptr<MafBlock>> blockBuffer_;
+  std::deque<std::unique_ptr<MafBlock>> trashBuffer_;
+  std::deque<std::vector<int>> window_;
   bool keepTrashedBlocks_;
   bool missingAsGap_;
   bool relative_;
@@ -92,14 +92,15 @@ public:
    * @param keepTrashedBlocks Removed windows are kept as separate blocks.
    * @param missingAsGap Add missing species as gap sequences where needed.
    */
-  AlignmentFilterMafIterator(MafIterator* iterator,
-                             const std::vector<std::string>& species,
-                             unsigned int windowSize,
-                             unsigned int step,
-                             unsigned int maxGap,
-                             double maxEnt,
-                             bool keepTrashedBlocks,
-                             bool missingAsGap) :
+  AlignmentFilterMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      const std::vector<std::string>& species,
+      unsigned int windowSize,
+      unsigned int step,
+      unsigned int maxGap,
+      double maxEnt,
+      bool keepTrashedBlocks,
+      bool missingAsGap) :
     AbstractFilterMafIterator(iterator),
     species_(species),
     windowSize_(windowSize),
@@ -128,14 +129,15 @@ public:
    * @param keepTrashedBlocks Removed windows are kept as separate blocks.
    * @param missingAsGap Add missing species as gap sequences where needed.
    */
-  AlignmentFilterMafIterator(MafIterator* iterator,
-                             const std::vector<std::string>& species,
-                             unsigned int windowSize,
-                             unsigned int step,
-                             double maxPropGap,
-                             double maxEnt,
-                             bool keepTrashedBlocks,
-                             bool missingAsGap) :
+  AlignmentFilterMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      const std::vector<std::string>& species,
+      unsigned int windowSize,
+      unsigned int step,
+      double maxPropGap,
+      double maxEnt,
+      bool keepTrashedBlocks,
+      bool missingAsGap) :
     AbstractFilterMafIterator(iterator),
     species_(species),
     windowSize_(windowSize),
@@ -152,16 +154,16 @@ public:
   {}
 
 public:
-  MafBlock* nextRemovedBlock()
+  std::unique_ptr<MafBlock> nextRemovedBlock()
   {
     if (trashBuffer_.size() == 0) return 0;
-    MafBlock* block = trashBuffer_.front();
+    auto block = std::move(trashBuffer_.front());
     trashBuffer_.pop_front();
     return block;
   }
 
 private:
-  MafBlock* analyseCurrentBlock_();
+  std::unique_ptr<MafBlock> analyseCurrentBlock_();
 };
 
 /**
@@ -174,7 +176,7 @@ private:
  */
 class AlignmentFilter2MafIterator :
   public AbstractFilterMafIterator,
-  public virtual MafTrashIterator
+  public virtual MafTrashIteratorInterface
 {
 private:
   std::vector<std::string> species_;
@@ -183,9 +185,9 @@ private:
   unsigned int maxGap_;
   double maxPropGap_;
   unsigned int maxPos_;
-  std::deque<MafBlock*> blockBuffer_;
-  std::deque<MafBlock*> trashBuffer_;
-  std::deque< std::vector<bool> > window_;
+  std::deque<std::unique_ptr<MafBlock>> blockBuffer_;
+  std::deque<std::unique_ptr<MafBlock>> trashBuffer_;
+  std::deque<std::vector<bool>> window_;
   bool keepTrashedBlocks_;
   bool missingAsGap_;
   bool relative_;
@@ -204,7 +206,15 @@ public:
    * @param keepTrashedBlocks Removed windows are kept as separate blocks.
    * @param missingAsGap Add missing species as gap sequences where needed.
    */
-  AlignmentFilter2MafIterator(MafIterator* iterator, const std::vector<std::string>& species, unsigned int windowSize, unsigned int step, unsigned int maxGap, unsigned int maxPos, bool keepTrashedBlocks, bool missingAsGap) :
+  AlignmentFilter2MafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      const std::vector<std::string>& species,
+      unsigned int windowSize,
+      unsigned int step,
+      unsigned int maxGap,
+      unsigned int maxPos,
+      bool keepTrashedBlocks,
+      bool missingAsGap) :
     AbstractFilterMafIterator(iterator),
     species_(species),
     windowSize_(windowSize),
@@ -233,7 +243,15 @@ public:
    * @param keepTrashedBlocks Removed windows are kept as separate blocks.
    * @param missingAsGap Add missing species as gap sequences where needed.
    */
-  AlignmentFilter2MafIterator(MafIterator* iterator, const std::vector<std::string>& species, unsigned int windowSize, unsigned int step, double maxPropGap, unsigned int maxPos, bool keepTrashedBlocks, bool missingAsGap) :
+  AlignmentFilter2MafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      const std::vector<std::string>& species,
+      unsigned int windowSize,
+      unsigned int step,
+      double maxPropGap,
+      unsigned int maxPos,
+      bool keepTrashedBlocks,
+      bool missingAsGap) :
     AbstractFilterMafIterator(iterator),
     species_(species),
     windowSize_(windowSize),
@@ -250,16 +268,16 @@ public:
   {}
 
 public:
-  MafBlock* nextRemovedBlock()
+  std::unique_ptr<MafBlock> nextRemovedBlock()
   {
     if (trashBuffer_.size() == 0) return 0;
-    MafBlock* block = trashBuffer_.front();
+    auto block = std::move(trashBuffer_.front());
     trashBuffer_.pop_front();
     return block;
   }
 
 private:
-  MafBlock* analyseCurrentBlock_();
+  std::unique_ptr<MafBlock> analyseCurrentBlock_();
 };
 } // end of namespace bpp.
 

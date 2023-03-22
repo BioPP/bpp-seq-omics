@@ -47,7 +47,9 @@ using namespace bpp;
 
 using namespace std;
 
-SequenceStatisticsMafIterator::SequenceStatisticsMafIterator(MafIterator* iterator, const std::vector<MafStatistics*> statistics) :
+SequenceStatisticsMafIterator::SequenceStatisticsMafIterator(
+    std::shared_ptr<MafIteratorInterface> iterator,
+    const std::vector<shared_ptr<MafStatisticsInterface>> statistics) :
   AbstractFilterMafIterator(iterator),
   statistics_(statistics),
   results_(),
@@ -73,7 +75,7 @@ SequenceStatisticsMafIterator::SequenceStatisticsMafIterator(MafIterator* iterat
   results_.resize(names_.size());
 }
 
-MafBlock* SequenceStatisticsMafIterator::analyseCurrentBlock_()
+unique_ptr<MafBlock> SequenceStatisticsMafIterator::analyseCurrentBlock_()
 {
   vector<string> tags;
   currentBlock_ = iterator_->nextBlock();
@@ -89,7 +91,7 @@ MafBlock* SequenceStatisticsMafIterator::analyseCurrentBlock_()
       {
         if (result.hasValue(tags[j]))
         {
-          results_[k] = result.getValue(tags[j]).clone();
+          results_[k].reset(result.getValue(tags[j]).clone());
         }
         else
         {
@@ -99,5 +101,5 @@ MafBlock* SequenceStatisticsMafIterator::analyseCurrentBlock_()
       }
     }
   }
-  return currentBlock_;
+  return move(currentBlock_);
 }

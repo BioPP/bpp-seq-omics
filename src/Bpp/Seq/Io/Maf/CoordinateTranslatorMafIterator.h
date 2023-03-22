@@ -40,7 +40,7 @@
 #ifndef _COORDINATETRANSLATORMAFITERATOR_H_
 #define _COORDINATETRANSLATORMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From the STL:
 #include <iostream>
@@ -81,7 +81,7 @@ public:
    *        tells if the previous non-gap position should be returned, or NA.
    */
   CoordinateTranslatorMafIterator(
-    MafIterator* iterator,
+    std::shared_ptr<MafIteratorInterface> iterator,
     const std::string& referenceSpecies,
     const std::string& targetSpecies,
     const SequenceFeatureSet& features,
@@ -95,13 +95,11 @@ public:
     outputClosestCoordinate_(outputClosestCoordinate)
   {
     // Sort features per chromosome for a faster access:
-    std::set<std::string> seqIds = features.getSequences();
-    for (std::set<std::string>::iterator it = seqIds.begin();
-         it != seqIds.end();
-         ++it)
+    auto seqIds = features.getSequences();
+    for (auto it : seqIds)
     {
       {
-        inputFeaturesPerChr_[*it] = features.getSubsetForSequence(*it);
+        inputFeaturesPerChr_[it] = features.getSubsetForSequence(it);
       }
     }
     output_ << "chr.ref\tstrand.ref\tbegin.ref\tend.ref\tchr.target\tstrand.target\tbegin.target\tend.target" << std::endl;
@@ -119,7 +117,7 @@ public:
   }
 
 private:
-  MafBlock* analyseCurrentBlock_();
+  std::unique_ptr<MafBlock> analyseCurrentBlock_();
 };
 } // end of namespace bpp.
 

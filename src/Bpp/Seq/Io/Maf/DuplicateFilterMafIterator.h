@@ -40,7 +40,7 @@
 #ifndef _DUPLICATEFILTERMAFITERATOR_H_
 #define _DUPLICATEFILTERMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From the STL:
 #include <iostream>
@@ -67,7 +67,9 @@ public:
    * @param iterator The input iterator.
    * @param reference The reference species name.
    */
-  DuplicateFilterMafIterator(MafIterator* iterator, const std::string& reference) :
+  DuplicateFilterMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      const std::string& reference) :
     AbstractFilterMafIterator(iterator),
     ref_(reference),
     blocks_()
@@ -88,7 +90,7 @@ private:
   }
 
 private:
-  MafBlock* analyseCurrentBlock_();
+  std::unique_ptr<MafBlock> analyseCurrentBlock_();
 };
 } // end of namespace bpp.
 

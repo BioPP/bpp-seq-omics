@@ -45,7 +45,7 @@
 using namespace bpp;
 using namespace std;
 
-MafSequence* MafSequence::subSequence(size_t startAt, size_t length) const
+unique_ptr<MafSequence> MafSequence::subSequence(size_t startAt, size_t length) const
 {
   string subseq = toString().substr(startAt, length);
   size_t begin = begin_;
@@ -57,13 +57,13 @@ MafSequence* MafSequence::subSequence(size_t startAt, size_t length) const
         begin++;
     }
   }
-  MafSequence* newSeq = new MafSequence(getName(), subseq, begin, strand_, srcSize_);
+  auto newSeq = make_unique<MafSequence>(getName(), subseq, begin, strand_, srcSize_);
   if (!hasCoordinates_)
     newSeq->removeCoordinates();
   vector<string> anno = getAnnotationTypes();
   for (size_t i = 0; i < anno.size(); ++i)
   {
-    newSeq->addAnnotation(getAnnotation(anno[i]).getPartAnnotation(startAt, length));
+    newSeq->addAnnotation(annotation(anno[i]).getPartAnnotation(startAt, length));
   }
   return newSeq;
 }

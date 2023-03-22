@@ -47,19 +47,19 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_()
+unique_ptr<MafBlock> FeatureFilterMafIterator::analyseCurrentBlock_()
 {
   if (blockBuffer_.size() == 0)
   {
     // Unless there is no more block in the buffer, we need to parse more:
     do
     {
-      MafBlock* block = iterator_->nextBlock();
+      auto block = iterator_->nextBlock();
       if (!block)
-        return 0; // No more block.
+        return nullptr; // No more block.
 
       // Check if the block contains the reference species:
-      if (!block->hasMafSequenceForSpecies(refSpecies_))
+      if (!block->hasSequenceForSpecies(refSpecies_))
       {
         if (logstream_)
         {
@@ -69,9 +69,9 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_()
       }
 
       // Get the feature ranges for this block:
-      const MafSequence& refSeq = block->getMafSequenceForSpecies(refSpecies_);
+      const auto& refSeq = block->sequenceForSpecies(refSpecies_);
       // first check if there is one (for now we assume that features refer to the chromosome or contig name, with implicit species):
-      std::map<std::string, MultiRange<size_t> >::iterator mr = ranges_.find(refSeq.getChromosome());
+      auto mr = ranges_.find(refSeq.getChromosome());
       if (mr == ranges_.end())
       {
         if (logstream_)
@@ -181,68 +181,61 @@ MafBlock* FeatureFilterMafIterator::analyseCurrentBlock_()
           }
           if (pos[i] > 0)
           {
-            MafBlock* newBlock = new MafBlock();
+            auto newBlock = make_unique<MafBlock>();
             newBlock->setScore(block->getScore());
             newBlock->setPass(block->getPass());
             for (size_t j = 0; j < block->getNumberOfSequences(); ++j)
             {
-              MafSequence* subseq;
+              unique_ptr<MafSequence> subseq;
               if (i == 0)
               {
-                subseq = block->getMafSequence(j).subSequence(0, pos[i]);
+                subseq = block->sequence(j).subSequence(0, pos[i]);
               }
               else
               {
-                subseq = block->getMafSequence(j).subSequence(pos[i - 1], pos[i] - pos[i - 1]);
+                subseq = block->sequence(j).subSequence(pos[i - 1], pos[i] - pos[i - 1]);
               }
-              newBlock->addMafSequence(*subseq);
-              delete subseq;
+              newBlock->addSequence(subseq->getName(), subseq);
             }
             if (newBlock->getNumberOfSites() > 0)
-              blockBuffer_.push_back(newBlock);
-            else
-              delete newBlock;
+              blockBuffer_.push_back(move(newBlock));
           }
 
           if (keepTrashedBlocks_)
           {
-            MafBlock* outBlock = new MafBlock();
+            auto outBlock = make_unique<MafBlock>();
             outBlock->setScore(block->getScore());
             outBlock->setPass(block->getPass());
             for (size_t j = 0; j < block->getNumberOfSequences(); ++j)
             {
-              MafSequence* outseq = block->getMafSequence(j).subSequence(pos[i], pos[i + 1] - pos[i]);
-              outBlock->addMafSequence(*outseq);
-              delete outseq;
+              auto outseq = block->sequence(j).subSequence(pos[i], pos[i + 1] - pos[i]);
+              outBlock->addSequence(outseq->getName(), outseq);
             }
-            trashBuffer_.push_back(outBlock);
+            trashBuffer_.push_back(move(outBlock));
           }
         }
         // Add last block:
         if (pos.back() < block->getNumberOfSites())
         {
-          MafBlock* newBlock = new MafBlock();
+          auto newBlock = make_unique<MafBlock>();
           newBlock->setScore(block->getScore());
           newBlock->setPass(block->getPass());
           for (size_t j = 0; j < block->getNumberOfSequences(); ++j)
           {
-            MafSequence* subseq;
-            subseq = block->getMafSequence(j).subSequence(pos[pos.size() - 1], block->getNumberOfSites() - pos[pos.size() - 1]);
-            newBlock->addMafSequence(*subseq);
-            delete subseq;
+            auto subseq = block->sequence(j).subSequence(pos[pos.size() - 1], block->getNumberOfSites() - pos[pos.size() - 1]);
+            newBlock->addSequence(subseq->getName(), subseq);
           }
-          blockBuffer_.push_back(newBlock);
+          blockBuffer_.push_back(move(newBlock));
         }
         if (verbose_)
           ApplicationTools::displayTaskDone();
-
-        delete block;
       }
     }
     while (blockBuffer_.size() == 0);
   }
 
-  MafBlock* nxtBlock = blockBuffer_.front();
+  auto nxtBlock = move(blockBuffer_.front());
   blockBuffer_.pop_front();
   return nxtBlock;
 }
+

@@ -40,7 +40,7 @@
 #ifndef _TABLEOUTPUTMAFITERATOR_H_
 #define _TABLEOUTPUTMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From the STL:
 #include <iostream>
@@ -56,7 +56,7 @@ class TableOutputMafIterator :
   public AbstractFilterMafIterator
 {
 private:
-  std::ostream* output_;
+  std::shared_ptr<std::ostream> output_;
   std::vector<std::string> species_;
   std::string refSpecies_;
 
@@ -71,10 +71,11 @@ public:
    * @param reference The species to use as a reference for coordinates.
    * It does not have to be one of the selected species for output.
    */
-  TableOutputMafIterator(MafIterator* iterator,
-                         std::ostream* out,
-                         const std::vector<std::string>& species,
-                         const std::string& reference) :
+  TableOutputMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      std::shared_ptr<std::ostream> out,
+      const std::vector<std::string>& species,
+      const std::string& reference) :
     AbstractFilterMafIterator(iterator),
     output_(out), species_(species), refSpecies_(reference)
   {
@@ -104,12 +105,12 @@ private:
   }
 
 public:
-  MafBlock* analyseCurrentBlock_()
+  std::unique_ptr<MafBlock> analyseCurrentBlock_()
   {
     currentBlock_ = iterator_->nextBlock();
     if (output_ && currentBlock_)
       writeBlock_(*output_, *currentBlock_);
-    return currentBlock_;
+    return move(currentBlock_);
   }
 
 private:

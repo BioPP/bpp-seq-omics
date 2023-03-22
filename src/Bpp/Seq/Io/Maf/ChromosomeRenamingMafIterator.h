@@ -40,7 +40,7 @@
 #ifndef _CHROMOSOMERENAMINGMAFITERATOR_H_
 #define _CHROMOSOMERENAMINGMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From the STL:
 #include <iostream>
@@ -63,12 +63,12 @@ public:
    * @param iterator The input iterator.
    * @param chrTranslation a map with original chromosome names as keys and translations as values. Only chromosomes matching one of the key will be translated, without further checking of the new name.
    */
-  ChromosomeRenamingMafIterator(MafIterator* iterator, const std::map<std::string, std::string>& chrTranslation) :
+  ChromosomeRenamingMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      const std::map<std::string, std::string>& chrTranslation) :
     AbstractFilterMafIterator(iterator),
     chrTranslation_(chrTranslation)
-  {
-  }
-
+  {}
 
 private:
   ChromosomeRenamingMafIterator(const ChromosomeRenamingMafIterator& iterator) :
@@ -83,7 +83,7 @@ private:
   }
 
 private:
-  MafBlock* analyseCurrentBlock_();
+  std::unique_ptr<MafBlock> analyseCurrentBlock_();
 };
 } // end of namespace bpp.
 

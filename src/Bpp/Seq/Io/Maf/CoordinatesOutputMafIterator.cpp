@@ -56,7 +56,7 @@ void CoordinatesOutputMafIterator::writeHeader_(ostream& out) const
   out << endl;
 }
 
-MafBlock* CoordinatesOutputMafIterator::analyseCurrentBlock_()
+std::unique_ptr<MafBlock> CoordinatesOutputMafIterator::analyseCurrentBlock_()
 {
   currentBlock_ = iterator_->nextBlock();
   if (currentBlock_)
@@ -65,7 +65,7 @@ MafBlock* CoordinatesOutputMafIterator::analyseCurrentBlock_()
     {
       if (i > 0)
         *output_ << "\t";
-      vector<const MafSequence*> seqs = currentBlock_->getMafSequencesForSpecies(species_[i]);
+      vector<const MafSequence*> seqs = currentBlock_->getSequencesForSpecies(species_[i]);
       if (seqs.size() > 1)
         throw Exception("CoordinatesOutputMafIterator::analyseCurrentBlock_(). There is more than one sequence for species '" + species_[i] + "' in current block.");
       else if (seqs.size() == 0)
@@ -83,5 +83,5 @@ MafBlock* CoordinatesOutputMafIterator::analyseCurrentBlock_()
     }
     *output_ << endl;
   }
-  return currentBlock_;
+  return move(currentBlock_);
 }

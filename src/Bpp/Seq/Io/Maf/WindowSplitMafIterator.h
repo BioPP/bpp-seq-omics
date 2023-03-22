@@ -40,7 +40,7 @@
 #ifndef _WINDOWSPLITMAFITERATOR_H_
 #define _WINDOWSPLITMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From the STL:
 #include <iostream>
@@ -59,7 +59,7 @@ private:
   size_t windowSize_;
   size_t windowStep_;
   short align_;
-  std::deque<MafBlock*> blockBuffer_;
+  std::deque<std::unique_ptr<MafBlock>> blockBuffer_;
   bool keepSmallBlocks_;
 
 public:
@@ -69,10 +69,18 @@ public:
   static const short ADJUST;
 
 public:
-  WindowSplitMafIterator(MafIterator* iterator, size_t windowSize, size_t windowStep, short splitOption = CENTER, bool keepSmallBlocks = false) :
+  WindowSplitMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      size_t windowSize,
+      size_t windowStep,
+      short splitOption = CENTER,
+      bool keepSmallBlocks = false) :
     AbstractFilterMafIterator(iterator),
-    windowSize_(windowSize), windowStep_(windowStep),
-    align_(splitOption), blockBuffer_(), keepSmallBlocks_(keepSmallBlocks)
+    windowSize_(windowSize), 
+    windowStep_(windowStep),
+    align_(splitOption),
+    blockBuffer_(),
+    keepSmallBlocks_(keepSmallBlocks)
   {
     if (splitOption != RAGGED_LEFT && splitOption != RAGGED_RIGHT
         && splitOption != CENTER && splitOption != ADJUST)
@@ -82,7 +90,7 @@ public:
   }
 
 private:
-  MafBlock* analyseCurrentBlock_();
+  std::unique_ptr<MafBlock> analyseCurrentBlock_();
 };
 } // end of namespace bpp.
 

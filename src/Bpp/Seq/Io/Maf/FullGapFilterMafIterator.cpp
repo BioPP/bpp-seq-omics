@@ -51,19 +51,20 @@ using namespace bpp;
 
 using namespace std;
 
-MafBlock* FullGapFilterMafIterator::analyseCurrentBlock_()
+unique_ptr<MafBlock> FullGapFilterMafIterator::analyseCurrentBlock_()
 {
-  MafBlock* block = iterator_->nextBlock();
+  auto block = iterator_->nextBlock();
   if (!block)
-    return 0;
+    return nullptr;
 
   // We create a copy of the ingroup alignement for better efficiency:
-  VectorSiteContainer vsc(&AlphabetTools::DNA_ALPHABET);
+  VectorSiteContainer vsc(AlphabetTools::DNA_ALPHABET);
   for (size_t i = 0; i < species_.size(); ++i)
   {
-    if (block->hasMafSequenceForSpecies(species_[i]))
+    if (block->hasSequenceForSpecies(species_[i]))
     {
-      vsc.addSequence(block->getMafSequenceForSpecies(species_[i]));
+      auto tmpSeq = make_unique<Sequence>(block->sequenceForSpecies(species_[i]));
+      vsc.addSequence(tmpSeq->getName(), tmpSeq);
     }
   }
   if (vsc.getNumberOfSequences() == 0)
@@ -81,8 +82,8 @@ MafBlock* FullGapFilterMafIterator::analyseCurrentBlock_()
   bool test = false;
   for (size_t i = 0; i < n; ++i)
   {
-    const Site* site = &vsc.getSite(i);
-    if (SiteTools::isGapOnly(*site))
+    const Site& site = vsc.site(i);
+    if (SiteTools::isGapOnly(site))
     {
       if (test)
       {
@@ -117,8 +118,7 @@ MafBlock* FullGapFilterMafIterator::analyseCurrentBlock_()
   {
     for (size_t i = 0; i < block->getNumberOfSequences(); ++i)
     {
-      const MafSequence* seq = &block->getMafSequence(i);
-      if (!VectorTools::contains(species_, seq->getSpecies()))
+      if (!VectorTools::contains(species_, block->sequence(i).getSpecies()))
       {
         block->removeCoordinatesFromSequence(i);
       }

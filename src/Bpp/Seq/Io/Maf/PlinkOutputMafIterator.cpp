@@ -68,12 +68,13 @@ void PlinkOutputMafIterator::init_()
 void PlinkOutputMafIterator::parseBlock_(std::ostream& out, const MafBlock& block)
 {
   // Preliminary stuff...
-  VectorSiteContainer sites(&AlphabetTools::DNA_ALPHABET);
-  for (auto species: species_)
+  VectorSiteContainer sites(AlphabetTools::DNA_ALPHABET);
+  for (auto& species : species_)
   {
-    if (block.hasMafSequenceForSpecies(species))
+    if (block.hasSequenceForSpecies(species))
     {
-      sites.addSequence(block.getMafSequenceForSpecies(species));
+      auto tmpSeq = make_unique<Sequence>(block.sequenceForSpecies(species));
+      sites.addSequence(tmpSeq->getName(), tmpSeq);
       // Note: in case of duplicates, this takes the first sequence.
     }
     else
@@ -83,9 +84,9 @@ void PlinkOutputMafIterator::parseBlock_(std::ostream& out, const MafBlock& bloc
     }
   }
   // Get the reference species for coordinates:
-  if (!block.hasMafSequenceForSpecies(refSpecies_))
+  if (!block.hasSequenceForSpecies(refSpecies_))
     return;
-  const MafSequence& refSeq = block.getMafSequenceForSpecies(refSpecies_);
+  const MafSequence& refSeq = block.sequenceForSpecies(refSpecies_);
   string chr = refSeq.getChromosome();
   if (chr != currentChr_)
   {
@@ -127,14 +128,14 @@ void PlinkOutputMafIterator::parseBlock_(std::ostream& out, const MafBlock& bloc
       continue;
 
     // We call SNPs only at position without gap or unresolved characters, and for biallelic sites:
-    if (SiteTools::isComplete(sites.getSite(i)) && SiteTools::getNumberOfDistinctCharacters(sites.getSite(i)) == 2)
+    if (SiteTools::isComplete(sites.site(i)) && SiteTools::getNumberOfDistinctCharacters(sites.site(i)) == 2)
     {
       string pos = "NA";
       if (refSeq[i] != gap)
       {
         pos = TextTools::toString(offset + walker.getSequencePosition(i) + 1);
       }
-      string alleles = sites.getSite(i).toString();
+      string alleles = sites.site(i).toString();
       if (makeDiploids_) {
         for (size_t j = 0; j < nbIndividuals_; ++j)
         {

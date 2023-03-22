@@ -40,7 +40,7 @@
 #ifndef _MSMCOUTPUTMAFITERATOR_H_
 #define _MSMCOUTPUTMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From the STL:
 #include <iostream>
@@ -58,7 +58,7 @@ class MsmcOutputMafIterator :
   public AbstractFilterMafIterator
 {
 private:
-  std::ostream* output_;
+  std::shared_ptr<std::ostream> output_;
   std::vector<std::string> species_;
   std::string refSpecies_;
   std::string currentChr_;
@@ -77,10 +77,11 @@ public:
    * @param reference The species to use as a reference for coordinates.
    * It does not have to be one of the selected species on which SNPs are computed.
    */
-  MsmcOutputMafIterator(MafIterator* iterator,
-                        std::ostream* out,
-                        const std::vector<std::string>& species,
-                        const std::string& reference) :
+  MsmcOutputMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      std::shared_ptr<std::ostream> out,
+      const std::vector<std::string>& species,
+      const std::string& reference) :
     AbstractFilterMafIterator(iterator),
     output_(out), species_(species), refSpecies_(reference),
     currentChr_(""), lastPosition_(0), nbOfCalledSites_(0)
@@ -109,12 +110,12 @@ private:
   }
 
 public:
-  MafBlock* analyseCurrentBlock_()
+  std::unique_ptr<MafBlock> analyseCurrentBlock_()
   {
     currentBlock_ = iterator_->nextBlock();
     if (output_ && currentBlock_)
       writeBlock_(*output_, *currentBlock_);
-    return currentBlock_;
+    return move(currentBlock_);
   }
 
 private:

@@ -40,12 +40,13 @@
 #ifndef _FULLGAPFILTERMAFITERATOR_H_
 #define _FULLGAPFILTERMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From the STL:
 #include <iostream>
 #include <string>
 #include <deque>
+#include <memory>
 
 namespace bpp
 {
@@ -64,13 +65,15 @@ private:
   std::vector<std::string> species_;
 
 public:
-  FullGapFilterMafIterator(MafIterator* iterator, const std::vector<std::string>& species) :
+  FullGapFilterMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      const std::vector<std::string>& species) :
     AbstractFilterMafIterator(iterator),
     species_(species)
   {}
 
 private:
-  MafBlock* analyseCurrentBlock_();
+  std::unique_ptr<MafBlock> analyseCurrentBlock_();
 };
 } // end of namespace bpp.
 

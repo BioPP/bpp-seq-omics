@@ -40,7 +40,7 @@
 #ifndef _REMOVEEMPTYSEQUENCESMAFITERATOR_H_
 #define _REMOVEEMPTYSEQUENCESMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From the STL:
 #include <iostream>
@@ -64,8 +64,11 @@ public:
    * @param iterator The input iterator.
    * @param unresolvedAsGaps Tell if unresolved characters (e.g. 'N') should be treated as gaps.
    */
-  RemoveEmptySequencesMafIterator(MafIterator* iterator, bool unresolvedAsGaps = false) :
-    AbstractFilterMafIterator(iterator), unresolvedAsGaps_(unresolvedAsGaps)
+  RemoveEmptySequencesMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      bool unresolvedAsGaps = false) :
+    AbstractFilterMafIterator(iterator),
+       	unresolvedAsGaps_(unresolvedAsGaps)
   {}
 
 private:
@@ -81,7 +84,7 @@ private:
   }
 
 private:
-  MafBlock* analyseCurrentBlock_();
+  std::unique_ptr<MafBlock> analyseCurrentBlock_();
 };
 } // end of namespace bpp.
 

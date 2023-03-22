@@ -55,8 +55,8 @@ using namespace std;
 
 void PairwiseDivergenceMafStatistics::compute(const MafBlock& block)
 {
-  vector<const MafSequence*> seqs1 = block.getMafSequencesForSpecies(species1_);
-  vector<const MafSequence*> seqs2 = block.getMafSequencesForSpecies(species2_);
+  vector<const MafSequence*> seqs1 = block.getSequencesForSpecies(species1_);
+  vector<const MafSequence*> seqs2 = block.getSequencesForSpecies(species2_);
   if (seqs1.size() > 1 || seqs2.size() > 1)
     throw Exception("PairwiseDivergenceMafStatistics::compute. Duplicated sequence for species " + species1_ + "or " + species2_ + ".");
   if (seqs1.size() == 0 || seqs2.size() == 0)
@@ -65,22 +65,27 @@ void PairwiseDivergenceMafStatistics::compute(const MafBlock& block)
     result_.setValue(100. - SequenceTools::getPercentIdentity(*seqs1[0], *seqs2[0], true));
 }
 
-SiteContainer* AbstractSpeciesSelectionMafStatistics::getSiteContainer_(const MafBlock& block)
+unique_ptr<SiteContainerInterface> AbstractSpeciesSelectionMafStatistics::getSiteContainer_(const MafBlock& block)
 {
+  auto alignment = make_unique<VectorSiteContainer>(block.alignment().getAlphabet());
   if (noSpeciesMeansAllSpecies_ && species_.size() == 0)
   {
-    return new VectorSiteContainer(block.getAlignment());
+    for (size_t i = 0; i < block.getNumberOfSequences(); ++i)
+    {
+      auto tmpSeq = make_unique<Sequence>(block.sequence(i));
+      alignment->addSequence(tmpSeq->getName(), tmpSeq);
+    }
   }
   // Otherwise, we select species:
-  VectorSiteContainer* alignment = new VectorSiteContainer(block.getAlignment().getAlphabet());
   for (size_t i = 0; i < species_.size(); ++i)
   {
-    if (block.hasMafSequenceForSpecies(species_[i]))
+    if (block.hasSequenceForSpecies(species_[i]))
     {
-      vector<const MafSequence*> selection = block.getMafSequencesForSpecies(species_[i]);
+      vector<const MafSequence*> selection = block.getSequencesForSpecies(species_[i]);
       for (size_t j = 0; j < selection.size(); ++j)
       {
-        alignment->addSequence(*selection[j]);
+  auto tmpSeq = make_unique<Sequence>(*selection[j]);
+        alignment->addSequence(tmpSeq->getName(), tmpSeq);
       }
     }
   }
@@ -100,24 +105,25 @@ AbstractSpeciesMultipleSelectionMafStatistics::AbstractSpeciesMultipleSelectionM
     throw Exception("AbstractSpeciesMultipleSelectionMafStatistics (constructor). Species selections must be fully distinct.");
 }
 
-vector<SiteContainer*> AbstractSpeciesMultipleSelectionMafStatistics::getSiteContainers_(const MafBlock& block)
+vector<unique_ptr<SiteContainerInterface>> AbstractSpeciesMultipleSelectionMafStatistics::getSiteContainers_(const MafBlock& block)
 {
-  vector<SiteContainer*> alignments;
+  vector<unique_ptr<SiteContainerInterface>> alignments;
   for (size_t k = 0; k < species_.size(); ++k)
   {
-    VectorSiteContainer* alignment = new VectorSiteContainer(block.getAlignment().getAlphabet());
+    auto alignment = make_unique<VectorSiteContainer>(block.alignment().getAlphabet());
     for (size_t i = 0; i < species_[k].size(); ++i)
     {
-      if (block.hasMafSequenceForSpecies(species_[k][i]))
+      if (block.hasSequenceForSpecies(species_[k][i]))
       {
-        vector<const MafSequence*> selection = block.getMafSequencesForSpecies(species_[k][i]);
+        vector<const MafSequence*> selection = block.getSequencesForSpecies(species_[k][i]);
         for (size_t j = 0; j < selection.size(); ++j)
         {
-          alignment->addSequence(*selection[j]);
+    auto tmpSeq = make_unique<Sequence>(*selection[j]);
+          alignment->addSequence(tmpSeq->getName(), tmpSeq);
         }
       }
     }
-    alignments.push_back(alignment);
+    alignments.push_back(move(alignment));
   }
   return alignments;
 }
@@ -137,8 +143,8 @@ vector<string> CharacterCountsMafStatistics::getSupportedTags() const
 
 void CharacterCountsMafStatistics::compute(const MafBlock& block)
 {
-  std::map<int, int> counts;
-  unique_ptr<SiteContainer> sites(getSiteContainer_(block));
+  std::map<int, unsigned int> counts;
+  auto sites = getSiteContainer_(block);
   SequenceContainerTools::getCounts(*sites, counts);
   for (int i = 0; i < static_cast<int>(alphabet_->getSize()); ++i)
   {
@@ -146,10 +152,10 @@ void CharacterCountsMafStatistics::compute(const MafBlock& block)
   }
   result_.setValue("Gap", counts[alphabet_->getGapCharacterCode()]);
   double countUnres = 0;
-  for (map<int, int>::iterator it = counts.begin(); it != counts.end(); ++it)
+  for (auto& it : counts)
   {
-    if (alphabet_->isUnresolved(it->first))
-      countUnres += it->second;
+    if (alphabet_->isUnresolved(it.first))
+      countUnres += it.second;
   }
   result_.setValue("Unresolved", countUnres);
 }
@@ -176,30 +182,30 @@ void SiteFrequencySpectrumMafStatistics::compute(const MafBlock& block)
   int state;
   bool hasOutgroup = (outgroup_ != "");
   bool isAnalyzable;
-  unique_ptr<SiteContainer> alignment;
-  const Sequence* outgroupSeq = 0;
+  unique_ptr<SiteContainerInterface> alignment;
+  const SequenceInterface* outgroupSeq = nullptr;
   if (hasOutgroup)
   {
-    isAnalyzable = (block.hasMafSequenceForSpecies(outgroup_) && block.getNumberOfSequences() > 1);
+    isAnalyzable = (block.hasSequenceForSpecies(outgroup_) && block.getNumberOfSequences() > 1);
     if (isAnalyzable)
     {
       // We need to extract the outgroup sequence:
-      outgroupSeq = &block.getMafSequenceForSpecies(outgroup_); // Here we assume there is only one! Otherwise we take the first one...
-      alignment.reset(getSiteContainer_(block));
+      outgroupSeq = &block.sequenceForSpecies(outgroup_); // Here we assume there is only one! Otherwise we take the first one...
+      alignment = getSiteContainer_(block);
     }
   }
   else
   {
     isAnalyzable = (block.getNumberOfSequences() > 0);
     if (isAnalyzable)
-      alignment.reset(getSiteContainer_(block));
+      alignment = getSiteContainer_(block);
   }
   if (isAnalyzable)
   {
     for (size_t i = 0; i < alignment->getNumberOfSites(); ++i)
     {
       // Note: we do not rely on SiteTool::getCounts as it would be unefficient to count everything.
-      const Site& site = alignment->getSite(i);
+      const Site& site = alignment->site(i);
       map<int, unsigned int> counts;
       bool isUnresolved = false;
       bool isSaturated = false;
@@ -312,13 +318,13 @@ vector<string> FourSpeciesPatternCountsMafStatistics::getSupportedTags() const
 void FourSpeciesPatternCountsMafStatistics::compute(const MafBlock& block)
 {
   counts_.assign(6, 0);
-  unique_ptr<SiteContainer> alignment(getSiteContainer_(block));
+  auto alignment = getSiteContainer_(block);
   if (alignment->getNumberOfSequences() == 4)
   {
     unsigned int nbIgnored = 0;
     for (size_t i = 0; i < block.getNumberOfSites(); ++i)
     {
-      const Site& site = alignment->getSite(i);
+      const Site& site = alignment->site(i);
       if (SiteTools::isComplete(site))
       {
         if (site[0] == site[1] &&
@@ -368,7 +374,7 @@ vector<string> SiteMafStatistics::getSupportedTags() const
 
 void SiteMafStatistics::compute(const MafBlock& block)
 {
-  unique_ptr<SiteContainer> alignment(getSiteContainer_(block));
+  auto alignment = getSiteContainer_(block);
   unsigned int nbNg = 0;
   unsigned int nbCo = 0;
   unsigned int nbPi = 0;
@@ -380,13 +386,13 @@ void SiteMafStatistics::compute(const MafBlock& block)
   {
     for (size_t i = 0; i < alignment->getNumberOfSites(); ++i)
     {
-      if (!SiteTools::hasGap(alignment->getSite(i)))
+      if (!SiteTools::hasGap(alignment->site(i)))
         nbNg++;
-      if (SiteTools::isComplete(alignment->getSite(i)))
+      if (SiteTools::isComplete(alignment->site(i)))
       {
         nbCo++;
         map<int, size_t> counts;
-        SiteTools::getCounts(alignment->getSite(i), counts);
+        SiteTools::getCounts(alignment->site(i), counts);
         switch (counts.size())
         {
         case 1: nbP1++; break;
@@ -396,7 +402,7 @@ void SiteMafStatistics::compute(const MafBlock& block)
         default: throw Exception("The impossible happened. Probably a distortion in the Minkowski space.");
         }
       }
-      if (SiteTools::isParsimonyInformativeSite(alignment->getSite(i)))
+      if (SiteTools::isParsimonyInformativeSite(alignment->site(i)))
         nbPi++;
     }
   }
@@ -425,12 +431,12 @@ vector<string> PolymorphismMafStatistics::getSupportedTags() const
   return tags;
 }
 
-vector<int> PolymorphismMafStatistics::getPatterns_(const SiteContainer& sites)
+vector<int> PolymorphismMafStatistics::getPatterns_(const SiteContainerInterface& sites)
 {
   vector<int> patterns(sites.getNumberOfSites());
   for (size_t i = 0; i < sites.getNumberOfSites(); ++i)
   {
-    const Site& site = sites.getSite(i);
+    const Site& site = sites.site(i);
     int s = -1; // Unresolved
     if (SiteTools::isComplete(site))
     {
@@ -450,7 +456,7 @@ vector<int> PolymorphismMafStatistics::getPatterns_(const SiteContainer& sites)
 
 void PolymorphismMafStatistics::compute(const MafBlock& block)
 {
-  vector<SiteContainer*> alignments(getSiteContainers_(block));
+  vector<unique_ptr<SiteContainerInterface>> alignments = getSiteContainers_(block);
   unsigned int nbF = 0;
   unsigned int nbP = 0;
   unsigned int nbFF = 0;
@@ -550,11 +556,9 @@ vector<string> SequenceDiversityMafStatistics::getSupportedTags() const
 
 void SequenceDiversityMafStatistics::compute(const MafBlock& block)
 {
-  unique_ptr<SiteContainer> alignment(getSiteContainer_(block));
+  unique_ptr<SiteContainerInterface> alignment = getSiteContainer_(block);
   // Get only complete sites:
-  unique_ptr<VectorSiteContainer> alignment2(dynamic_cast<VectorSiteContainer*>(SiteContainerTools::getCompleteSites(*alignment)));
-  if (alignment2 == 0)
-    throw Exception("SequenceDiversityMafStatistics::compute : alignment2 not plain VectorSiteContainer.");
+  unique_ptr<VectorSiteContainer> alignment2 = SiteContainerTools::getCompleteSites<Site, Sequence>(*alignment);
 
   double S = 0;
   size_t nbTot = 0;
@@ -563,7 +567,7 @@ void SequenceDiversityMafStatistics::compute(const MafBlock& block)
   {
     for (size_t i = 0; i < alignment2->getNumberOfSites(); ++i)
     {
-      const Site& site = alignment2->getSite(i);
+      const Site& site = alignment2->site(i);
       if (SiteTools::isComplete(site))
       {
         nbTot++;
@@ -600,8 +604,8 @@ void SequenceDiversityMafStatistics::compute(const MafBlock& block)
     for (size_t j = i + 1; j < n; ++j)
     {
       pi += SiteContainerTools::computeSimilarity(
-        alignment2->getSequence(i),
-        alignment2->getSequence(j),
+        alignment2->sequence(i),
+        alignment2->sequence(j),
         true,
         SiteContainerTools::SIMILARITY_NOGAP,
         true);
