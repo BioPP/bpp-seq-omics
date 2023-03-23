@@ -40,7 +40,7 @@
 #ifndef _BLOCKLENGTHMAFITERATOR_H_
 #define _BLOCKLENGTHMAFITERATOR_H_
 
-#include "MafIterator.h"
+#include "AbstractMafIterator.h"
 
 // From the STL:
 #include <iostream>
@@ -59,13 +59,15 @@ private:
   size_t minLength_;
 
 public:
-  BlockLengthMafIterator(MafIterator* iterator, size_t minLength) :
+  BlockLengthMafIterator(
+      std::shared_ptr<MafIteratorInterface> iterator,
+      size_t minLength) :
     AbstractFilterMafIterator(iterator),
     minLength_(minLength)
   {}
 
 private:
-  MafBlock* analyseCurrentBlock_() throw (Exception)
+  std::unique_ptr<MafBlock> analyseCurrentBlock_() override
   {
     bool test;
     do
@@ -79,12 +81,11 @@ private:
         {
           (*logstream_ << "BLOCK LENGTH FILTER: block " << currentBlock_->getDescription() << " with size " << currentBlock_->getNumberOfSites() << " was discarded.").endLine();
         }
-        delete currentBlock_;
         currentBlock_ = 0;
       }
     }
     while (test);
-    return currentBlock_;
+    return std::move(currentBlock_);
   }
 };
 } // end of namespace bpp.
