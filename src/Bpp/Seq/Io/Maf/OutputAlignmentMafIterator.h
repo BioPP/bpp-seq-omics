@@ -103,7 +103,7 @@ public:
     currentBlockIndex_(0),
     refSpecies_(reference)
   {
-    if (!writer)
+    if (!writer_)
       throw Exception("OutputAlignmentMafIterator (constructor 1): sequence writer should not be a NULL pointer!");
   }
 
@@ -141,7 +141,7 @@ public:
     currentBlockIndex_(0),
     refSpecies_(reference)
   {
-    if (!writer)
+    if (!writer_)
       throw Exception("OutputAlignmentMafIterator (constructor 2): sequence writer should not be a NULL pointer!");
   }
 
