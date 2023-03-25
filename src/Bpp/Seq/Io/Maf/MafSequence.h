@@ -152,7 +152,23 @@ public:
     return *this;
   }
 
-  MafSequence* clone() const
+  MafSequence(const SequenceInterface& seq, bool parseName = true) :
+    AbstractTemplateSymbolList<int>(seq),
+    SequenceWithAnnotation(seq),
+    hasCoordinates_(false),
+    begin_(0),
+    species_(""),
+    chromosome_(""),
+    strand_(0),
+    size_(0),
+    srcSize_(0)
+  {
+    size_ = SequenceTools::getNumberOfSites(*this);
+    if (parseName)
+      splitNameIntoSpeciesAndChromosome(seq.getName(), species_, chromosome_);
+  }
+
+  MafSequence* clone() const override
   {
     return new MafSequence(*this);
   }
@@ -202,7 +218,7 @@ public:
     else throw Exception("MafSequence::getRange(). Sequence " + getName() + " does not have coordinates.");
   }
 
-  void setName(const std::string& name)
+  void setName(const std::string& name) override
   {
     try
     {
@@ -270,14 +286,23 @@ public:
   std::unique_ptr<MafSequence> subSequence(size_t startAt, size_t length) const;
 
 private:
-  void beforeSequenceChanged(const IntSymbolListEditionEvent& event) {}
-  void afterSequenceChanged(const IntSymbolListEditionEvent& event) { size_ = SequenceTools::getNumberOfSites(*this); }
-  void beforeSequenceInserted(const IntSymbolListInsertionEvent& event) {}
-  void afterSequenceInserted(const IntSymbolListInsertionEvent& event) { size_ = SequenceTools::getNumberOfSites(*this); }
-  void beforeSequenceDeleted(const IntSymbolListDeletionEvent& event) {}
-  void afterSequenceDeleted(const IntSymbolListDeletionEvent& event) { size_ = SequenceTools::getNumberOfSites(*this); }
-  void beforeSequenceSubstituted(const IntSymbolListSubstitutionEvent& event) {}
-  void afterSequenceSubstituted(const IntSymbolListSubstitutionEvent& event) {}
+  void beforeSequenceChanged(const IntSymbolListEditionEvent& event) override {}
+  void afterSequenceChanged(const IntSymbolListEditionEvent& event) override
+  {
+    size_ = SequenceTools::getNumberOfSites(*this);
+  }
+  void beforeSequenceInserted(const IntSymbolListInsertionEvent& event) override {}
+  void afterSequenceInserted(const IntSymbolListInsertionEvent& event) override
+  {
+    size_ = SequenceTools::getNumberOfSites(*this);
+  }
+  void beforeSequenceDeleted(const IntSymbolListDeletionEvent& event) override {}
+  void afterSequenceDeleted(const IntSymbolListDeletionEvent& event) override
+  { 
+    size_ = SequenceTools::getNumberOfSites(*this);
+  }
+  void beforeSequenceSubstituted(const IntSymbolListSubstitutionEvent& event) override {}
+  void afterSequenceSubstituted(const IntSymbolListSubstitutionEvent& event) override {}
 };
 } // end of namespace bpp.
 

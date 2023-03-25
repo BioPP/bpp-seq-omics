@@ -48,14 +48,16 @@ unique_ptr<MafBlock> SequenceStreamToMafIterator::analyseCurrentBlock_()
 {
   auto block = make_unique<MafBlock>();
 
-  auto mafSeq = make_unique<MafSequence>();
+  shared_ptr<const Alphabet> alpha = AlphabetTools::DNA_ALPHABET;
+  auto seq = make_unique<Sequence>(alpha);
   if (stream_->eof())
     return nullptr;
 
-  seqStream_->nextSequence(*stream_, *mafSeq);
+  seqStream_->nextSequence(*stream_, *seq);
   // Check if sequence name contains meta information:
-  string meta = mafSeq->getName();
+  string meta = seq->getName();
   StringTokenizer st(meta, ":");
+  auto mafSeq = make_unique<MafSequence>(*seq);
   if (st.numberOfRemainingTokens() == 5)
   {
     string species = st.nextToken();

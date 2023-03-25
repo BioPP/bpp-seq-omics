@@ -61,14 +61,14 @@ class SequenceStreamToMafIterator :
   public AbstractMafIterator
 {
 private:
-  std::shared_ptr<TemplateISequenceStream<MafSequence>> seqStream_;
+  std::shared_ptr<ISequenceStream> seqStream_;
   std::shared_ptr<std::istream> stream_;
   bool zeroBasedCoords_;
   bool firstBlock_;
 
 public:
   SequenceStreamToMafIterator(
-      std::shared_ptr<TemplateISequenceStream<MafSequence>> seqStream,
+      std::shared_ptr<ISequenceStream> seqStream,
       std::shared_ptr<std::istream> stream,
       bool parseMask = false,
       bool zeroBasedCoordinates = true) :

@@ -520,13 +520,17 @@ public:
   };
 
 private:
-  const Alphabet* alphabet_;
+  std::shared_ptr<const DNA> alphabet_;
   Categorizer categorizer_;
   std::vector<unsigned int> counts_;
   std::string outgroup_;
 
 public:
-  SiteFrequencySpectrumMafStatistics(const Alphabet* alphabet, const std::vector<double>& bounds, const std::vector<std::string>& ingroup, const std::string outgroup = "") :
+  SiteFrequencySpectrumMafStatistics(
+      std::shared_ptr<const DNA> alphabet,
+      const std::vector<double>& bounds,
+      const std::vector<std::string>& ingroup, 
+      const std::string outgroup = "") :
     AbstractMafStatistics(),
     AbstractSpeciesSelectionMafStatistics(ingroup),
     alphabet_(alphabet),
@@ -580,12 +584,12 @@ class FourSpeciesPatternCountsMafStatistics :
   public AbstractSpeciesSelectionMafStatistics
 {
 private:
-  const Alphabet* alphabet_;
+  std::shared_ptr<const DNA> alphabet_;
   std::vector<unsigned int> counts_;
 
 public:
   FourSpeciesPatternCountsMafStatistics(
-    const Alphabet* alphabet,
+    std::shared_ptr<const DNA> alphabet,
     const std::vector<std::string>& species) :
     AbstractMafStatistics(),
     AbstractSpeciesSelectionMafStatistics(species),
