@@ -52,7 +52,7 @@ namespace bpp
 /**
  * @brief This iterator performs a simple SNP call from the MAF blocks, and outputs the results in the Variant Call Format (VCF).
  *
- * Only substitutions are supported for now.
+ * Only SNPs are supported for now.
  */
 class VcfOutputMafIterator :
   public AbstractFilterMafIterator
