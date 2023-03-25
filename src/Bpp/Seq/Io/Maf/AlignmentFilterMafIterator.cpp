@@ -539,11 +539,11 @@ unique_ptr<MafBlock> AlignmentFilter2MafIterator::analyseCurrentBlock_()
       // Now we remove regions with two many gaps, using a sliding window:
       if (pos.size() == 0)
       {
-        blockBuffer_.push_back(move(block));
         if (logstream_)
         {
           (*logstream_ << "ALN CLEANER: block " << block->getDescription() << " is clean and kept as is.").endLine();
         }
+        blockBuffer_.push_back(move(block));
       }
       else if (pos.size() == 2 && pos.front() == 0 && pos.back() == block->getNumberOfSites())
       {
