@@ -178,7 +178,7 @@ public:
     return new MafSequence(getName(), std::string(), begin_, strand_, srcSize_, true);
   }
 
-  ~MafSequence() {}
+  virtual ~MafSequence() {}
 
 public:
   bool hasCoordinates() const { return hasCoordinates_; }
