@@ -135,7 +135,7 @@ START:
           }
         }
         (*logstream_ << subseq->getName()).endLine();
-        newBlock->addSequence(subseq->getName(), subseq);
+        newBlock->addSequence(subseq);
       }
       blockBuffer_.push_back(move(newBlock));
     }

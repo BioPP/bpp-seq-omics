@@ -148,7 +148,7 @@ unique_ptr<MafBlock> ConcatenateMafIterator::analyseCurrentBlock_()
           (*logstream_ << "BLOCK CONCATENATE: adding " << ref2 << " and extend it with " << currentBlock_->getNumberOfSites() << " gaps on the left.").endLine();
         }
       }
-      mergedBlock->addSequence(seq->getName(), seq);
+      mergedBlock->addSequence(seq);
     }
     currentBlock_ = move(mergedBlock);
     // We check if we can also merge the next block:

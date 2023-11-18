@@ -70,7 +70,7 @@ std::unique_ptr<MafBlock> MafParser::analyseCurrentBlock_()
       if (currentSequence)
       {
         // Add previous sequence:
-        block->addSequence(currentSequence->getName(), currentSequence);
+        block->addSequence(currentSequence);
       }
 
       // end of paragraph
@@ -81,7 +81,7 @@ std::unique_ptr<MafBlock> MafParser::analyseCurrentBlock_()
       if (currentSequence)
       {
         // Add previous sequence:
-        block->addSequence(currentSequence->getName(), currentSequence);
+        block->addSequence(currentSequence);
       }
 
       // New block.
@@ -127,7 +127,7 @@ std::unique_ptr<MafBlock> MafParser::analyseCurrentBlock_()
       if (currentSequence)
       {
         // Add previous sequence:
-        block->addSequence(currentSequence->getName(), currentSequence);
+        block->addSequence(currentSequence);
       }
       if (!st.hasMoreToken())
         throw IOException("Sequence description without a sequence.");
@@ -209,7 +209,7 @@ std::unique_ptr<MafBlock> MafParser::analyseCurrentBlock_()
   if (currentSequence)
   {
     // Add previous sequence:
-    block->addSequence(currentSequence->getName(), currentSequence);
+    block->addSequence(currentSequence);
   }
 
   // Returning block:

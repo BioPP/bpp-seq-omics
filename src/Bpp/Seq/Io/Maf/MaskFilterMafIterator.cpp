@@ -230,7 +230,7 @@ unique_ptr<MafBlock> MaskFilterMafIterator::analyseCurrentBlock_()
               {
                 subseq = block->sequence(j).subSequence(pos[i - 1], pos[i] - pos[i - 1]);
               }
-              newBlock->addSequence(subseq->getName(), subseq);
+              newBlock->addSequence(subseq);
             }
             blockBuffer_.push_back(move(newBlock));
           }
@@ -243,7 +243,7 @@ unique_ptr<MafBlock> MaskFilterMafIterator::analyseCurrentBlock_()
             for (size_t j = 0; j < block->getNumberOfSequences(); ++j)
             {
               auto outseq = block->sequence(j).subSequence(pos[i], pos[i + 1] - pos[i]);
-              outBlock->addSequence(outseq->getName(), outseq);
+              outBlock->addSequence(outseq);
             }
             trashBuffer_.push_back(move(outBlock));
           }
@@ -257,7 +257,7 @@ unique_ptr<MafBlock> MaskFilterMafIterator::analyseCurrentBlock_()
           for (size_t j = 0; j < block->getNumberOfSequences(); ++j)
           {
             auto subseq = block->sequence(j).subSequence(pos[pos.size() - 1], block->getNumberOfSites() - pos[pos.size() - 1]);
-            newBlock->addSequence(subseq->getName(), subseq);
+            newBlock->addSequence(subseq);
           }
           blockBuffer_.push_back(move(newBlock));
         }

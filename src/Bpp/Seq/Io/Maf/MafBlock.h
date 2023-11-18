@@ -60,20 +60,23 @@ private:
   double score_;
   unsigned int pass_;
   std::map<std::string, std::unique_ptr<Clonable>> properties_;
+  unsigned int idCounter_;
 
 public:
   MafBlock() :
     TemplateAlignedSequenceContainer(AlphabetTools::DNA_ALPHABET),
     score_(log(0)),
     pass_(0),
-    properties_()
+    properties_(),
+    idCounter_(0)
   {}
 
   MafBlock(const MafBlock& block) :
     TemplateAlignedSequenceContainer(block),
     score_(block.score_),
     pass_(block.pass_),
-    properties_()
+    properties_(),
+    idCounter_(block.idCounter_)
   {
     for (const auto& it : block.properties_)
     {
@@ -91,6 +94,7 @@ public:
     {
       properties_[it.first].reset(it.second->clone());
     }
+    idCounter_ = block.idCounter_;
     return *this;
   }
 
@@ -110,6 +114,12 @@ public:
     SequenceContainerTools::convertContainer<TemplateAlignedSequenceContainer<MafSequence, Site>, AlignedSequenceContainer, Sequence>(*this, *aln);
     return aln;
   }
+  
+  void addSequence(std::unique_ptr<MafSequence>& sequence) override
+  {
+    std::string key = "maf_seq_" + TextTools::toString(idCounter_++);
+    TemplateAlignedSequenceContainer::addSequence(key, sequence);
+  } 
 
   using TemplateAlignedSequenceContainer::getAlphabet;
   
@@ -127,7 +137,6 @@ public:
   
   using TemplateAlignedSequenceContainer::deleteSites;
   
-  using TemplateAlignedSequenceContainer::addSequence;
   
   using TemplateAlignedSequenceContainer::hasSequence;
   
@@ -258,6 +267,8 @@ public:
   }
 
 private:
+  using TemplateAlignedSequenceContainer::addSequence;
+
   void deleteProperties_()
   {
     properties_.clear();

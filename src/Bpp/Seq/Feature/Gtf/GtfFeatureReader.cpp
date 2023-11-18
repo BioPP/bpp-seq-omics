@@ -101,33 +101,38 @@ const BasicSequenceFeature GtfFeatureReader::nextFeature()
     if (TextTools::isEmpty(item))
       continue;
     item = TextTools::removeSurroundingWhiteSpaces(item);
-    string::size_type idx = item.find_first_of(' ');
-    string key(item.substr(0, idx));
-    string value(item.substr(idx));
-    // remove first "
-    while (
-      value.size() > 0
-      && (
-        value[0] == '"'
-        || TextTools::isWhiteSpaceCharacter(value[0])
-        )
-      )
+    auto idx = item.find_first_of(' ');
+    if (idx != string::npos)
     {
-      value.erase(value.begin());
-    }
-    // remove last "
-    while (
-      value.size() > 0
-      && (
-        value[value.size() - 1] == '"'
-        || TextTools::isWhiteSpaceCharacter(value[value.size() - 1])
+      string key(item.substr(0, idx));
+      string value(item.substr(idx));
+      // remove first "
+      while (
+        value.size() > 0
+        && (
+          value[0] == '"'
+          || TextTools::isWhiteSpaceCharacter(value[0])
+          )
         )
-      )
-    {
-      value.erase(value.end() - 1);
-    }
-    attributes[key] = value;
+      {
+        value.erase(value.begin());
+      }
+      // remove last "
+      while (
+        value.size() > 0
+        && (
+          value[value.size() - 1] == '"'
+          || TextTools::isWhiteSpaceCharacter(value[value.size() - 1])
+          )
+        )
+      {
+        value.erase(value.end() - 1);
+      }
+      attributes[key] = value;
     // std::cout << "[" << key << "] = [" << value << "]" << std::endl;
+    } else {
+      attributes[item] = ""; //Empty value.
+    }
   }
   // KeyvalTools::multipleKeyvals(attrDesc, attributes, ";", false);
   // std::string id = attributes["ID"];
