@@ -25,7 +25,7 @@ private:
   /**
    * Contains the list of 'seen' block, as [chr][strand][start][stop]
    */
-  std::map< std::string, std::map< char, std::map< size_t, std::map< size_t, size_t > > > > blocks_;
+  std::map< std::string, std::map< char, std::map< size_t, std::map< size_t, size_t >>>> blocks_;
 
 public:
   /**
@@ -59,4 +59,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_DUPLICATEFILTERMAFITERATOR_H_
+#endif // _DUPLICATEFILTERMAFITERATOR_H_

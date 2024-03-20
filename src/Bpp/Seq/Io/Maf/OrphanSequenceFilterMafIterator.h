@@ -68,4 +68,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_ORPHANSEQUENCEFILTERMAFITERATOR_H_
+#endif // _ORPHANSEQUENCEFILTERMAFITERATOR_H_

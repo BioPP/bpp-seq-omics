@@ -10,16 +10,21 @@
 using namespace bpp;
 using namespace std;
 
-int main() {
-  try {
-  ifstream input("example.gff", ios::in);
-  GffFeatureReader reader(input);
-  while (reader.hasMoreFeature()) {
-    BasicSequenceFeature feature = reader.nextFeature();
-    cout << "Found feature " << feature.getId() << " of type " << feature.getType() << ", starting at " << feature.getStart() << " and ending at " << feature.getEnd() << endl;
+int main()
+{
+  try
+  {
+    ifstream input("example.gff", ios::in);
+    GffFeatureReader reader(input);
+    while (reader.hasMoreFeature())
+    {
+      BasicSequenceFeature feature = reader.nextFeature();
+      cout << "Found feature " << feature.getId() << " of type " << feature.getType() << ", starting at " << feature.getStart() << " and ending at " << feature.getEnd() << endl;
+    }
+    return 0;
   }
-  return 0;
-  } catch (exception& ex) {
+  catch (exception& ex)
+  {
     cerr << ex.what() << endl;
     return 1;
   }

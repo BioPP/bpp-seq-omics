@@ -20,7 +20,7 @@ using namespace std;
 
 void SequenceFeatureTools::extract(
     const SequenceInterface& seq,
-    const SeqRange& range, 
+    const SeqRange& range,
     SequenceInterface& output)
 {
   if (range.end() > seq.size())

@@ -64,4 +64,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_CONCATENATEMAFITERATOR_H_
+#endif // _CONCATENATEMAFITERATOR_H_

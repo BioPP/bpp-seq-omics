@@ -21,8 +21,9 @@ unique_ptr<MafBlock> ChromosomeRenamingMafIterator::analyseCurrentBlock_()
     {
       string chr = currentBlock_->sequence(i).getChromosome();
       auto tln = chrTranslation_.find(chr);
-      if (tln != chrTranslation_.end()) {
-	// We force conversion to avoid unecessary recopy
+      if (tln != chrTranslation_.end())
+      {
+        // We force conversion to avoid unecessary recopy
         const_cast<MafSequence&>(currentBlock_->sequence(i)).setChromosome(tln->second);
         if (logstream_)
         {
@@ -34,4 +35,3 @@ unique_ptr<MafBlock> ChromosomeRenamingMafIterator::analyseCurrentBlock_()
 
   return move(currentBlock_);
 }
-

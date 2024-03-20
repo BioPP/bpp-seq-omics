@@ -29,7 +29,7 @@ private:
   std::deque<std::unique_ptr<MafBlock>> blockBuffer_;
   std::deque<std::unique_ptr<MafBlock>> trashBuffer_;
   bool keepTrashedBlocks_;
-  std::map<std::string, MultiRange<size_t> > ranges_;
+  std::map<std::string, MultiRange<size_t>> ranges_;
 
 public:
   FeatureFilterMafIterator(
@@ -68,4 +68,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_FEATUREFILTERMAFITERATOR_H_
+#endif // _FEATUREFILTERMAFITERATOR_H_

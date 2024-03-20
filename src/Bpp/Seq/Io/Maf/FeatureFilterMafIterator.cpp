@@ -203,4 +203,3 @@ unique_ptr<MafBlock> FeatureFilterMafIterator::analyseCurrentBlock_()
   blockBuffer_.pop_front();
   return nxtBlock;
 }
-

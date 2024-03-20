@@ -82,4 +82,4 @@ private:
 };
 } // end of namespace bpp
 
-#endif//_GTFFEATUREREADER_H_
+#endif // _GTFFEATUREREADER_H_

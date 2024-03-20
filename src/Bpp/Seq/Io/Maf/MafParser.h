@@ -51,7 +51,7 @@ public:
    *        will increase parsing time.
    */
   MafParser(
-      std::shared_ptr<std::istream> stream, 
+      std::shared_ptr<std::istream> stream,
       bool parseMask = false,
       bool checkSize = true,
       short dotOption = DOT_ERROR) :
@@ -91,4 +91,4 @@ public:
 };
 } // end of namespace bpp.
 
-#endif//_MAFPARSER_H_
+#endif // _MAFPARSER_H_

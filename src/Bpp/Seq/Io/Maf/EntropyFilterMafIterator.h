@@ -46,7 +46,7 @@ public:
       unsigned int step,
       double maxEnt,
       unsigned int maxPos,
-      bool keepTrashedBlocks, 
+      bool keepTrashedBlocks,
       bool missingAsGap,
       bool ignoreGaps) :
     AbstractFilterMafIterator(iterator),
@@ -77,4 +77,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_ENTROPYFILTERMAFITERATOR_H_
+#endif // _ENTROPYFILTERMAFITERATOR_H_

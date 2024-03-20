@@ -37,8 +37,7 @@ public:
     AbstractFilterMafIterator(iterator),
     ref_(reference),
     chr_(chr)
-  {
-  }
+  {}
 
   /**
    * @param iterator The input iterator.
@@ -75,4 +74,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_CHROMOSOMEMAFITERATOR_H_
+#endif // _CHROMOSOMEMAFITERATOR_H_

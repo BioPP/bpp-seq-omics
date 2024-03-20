@@ -145,4 +145,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_OUTPUTALIGNMENTMAFITERATOR_H_
+#endif // _OUTPUTALIGNMENTMAFITERATOR_H_

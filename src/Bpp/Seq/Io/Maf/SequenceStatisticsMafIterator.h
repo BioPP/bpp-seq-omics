@@ -69,4 +69,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_SEQUENCESTATISTICSMAFITERATOR_H_
+#endif // _SEQUENCESTATISTICSMAFITERATOR_H_

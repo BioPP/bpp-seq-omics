@@ -46,17 +46,17 @@ public:
 private:
   // Recopy is forbidden!
   SequenceStreamToMafIterator(const SequenceStreamToMafIterator& ss2mi) :
-    seqStream_(), 
+    seqStream_(),
     stream_(nullptr),
     zeroBasedCoords_(ss2mi.zeroBasedCoords_),
     firstBlock_(ss2mi.firstBlock_)
   {}
-  
+
   SequenceStreamToMafIterator& operator=(const SequenceStreamToMafIterator& ss2mi)
   {
     seqStream_.reset();
-    stream_ = 0; 
-    zeroBasedCoords_ = ss2mi.zeroBasedCoords_; 
+    stream_ = 0;
+    zeroBasedCoords_ = ss2mi.zeroBasedCoords_;
     firstBlock_ = ss2mi.firstBlock_;
     return *this;
   }
@@ -66,4 +66,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_SEQUENCESTREAMTOMAFITERATOR_H_
+#endif // _SEQUENCESTREAMTOMAFITERATOR_H_

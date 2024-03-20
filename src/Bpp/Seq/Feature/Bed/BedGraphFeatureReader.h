@@ -52,7 +52,7 @@ public:
         start = true;
       }
     }
-    while(!start && !input_.eof());
+    while (!start && !input_.eof());
     if (input_.eof())
       throw Exception("BedGraphFeatureReader::constructor: Invalid BedGraph file, missing proper header.");
     getNextLine_();
@@ -120,4 +120,4 @@ private:
 };
 } // end of namespace bpp
 
-#endif//_BEDGRAPHFEATUREREADER_H_
+#endif // _BEDGRAPHFEATUREREADER_H_

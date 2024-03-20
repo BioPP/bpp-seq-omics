@@ -36,4 +36,4 @@ public:
 };
 } // end of namespace bpp
 
-#endif//_FEATUREREADER_H_
+#endif // _FEATUREREADER_H_

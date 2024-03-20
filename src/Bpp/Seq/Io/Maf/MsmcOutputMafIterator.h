@@ -88,4 +88,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_MSMCOUTPUTMAFITERATOR_H_
+#endif // _MSMCOUTPUTMAFITERATOR_H_

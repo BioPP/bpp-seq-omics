@@ -118,4 +118,4 @@ private:
 };
 } // end of namespace bpp
 
-#endif//_GFFFEATUREREADER_H_
+#endif // _GFFFEATUREREADER_H_

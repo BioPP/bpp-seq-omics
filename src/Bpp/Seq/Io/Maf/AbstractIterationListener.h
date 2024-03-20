@@ -10,7 +10,6 @@
 
 namespace bpp
 {
-
 /**
  * @brief Iteration listener that works with a SequenceStatisticsMafIterator,
  * enabling output of results in a file (partial implementation, format-independent)
@@ -79,4 +78,4 @@ public:
 };
 } // end of namespace bpp.
 
-#endif//_ABSTRACTITERATIONLISTENER_H_
+#endif // _ABSTRACTITERATIONLISTENER_H_

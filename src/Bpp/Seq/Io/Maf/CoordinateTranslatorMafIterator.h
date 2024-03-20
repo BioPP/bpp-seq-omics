@@ -46,12 +46,12 @@ public:
    *        tells if the previous non-gap position should be returned, or NA.
    */
   CoordinateTranslatorMafIterator(
-    std::shared_ptr<MafIteratorInterface> iterator,
-    const std::string& referenceSpecies,
-    const std::string& targetSpecies,
-    const SequenceFeatureSet& features,
-    std::ostream& output,
-    bool outputClosestCoordinate = true) :
+      std::shared_ptr<MafIteratorInterface> iterator,
+      const std::string& referenceSpecies,
+      const std::string& targetSpecies,
+      const SequenceFeatureSet& features,
+      std::ostream& output,
+      bool outputClosestCoordinate = true) :
     AbstractFilterMafIterator(iterator),
     referenceSpecies_(referenceSpecies),
     targetSpecies_(targetSpecies),
@@ -74,8 +74,8 @@ public:
   {
     // Clean sorted features.
     for (std::map<std::string, SequenceFeatureSet*>::iterator it = inputFeaturesPerChr_.begin();
-         it != inputFeaturesPerChr_.end();
-         it++)
+        it != inputFeaturesPerChr_.end();
+        it++)
     {
       delete it->second;
     }
@@ -86,4 +86,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_COORDINATETRANSLATORMAFITERATOR_H_
+#endif // _COORDINATETRANSLATORMAFITERATOR_H_

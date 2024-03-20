@@ -246,4 +246,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_ALIGNMENTFILTERMAFITERATOR_H_
+#endif // _ALIGNMENTFILTERMAFITERATOR_H_

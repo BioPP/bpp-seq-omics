@@ -90,4 +90,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_BLOCKMERGERMAFITERATOR_H_
+#endif // _BLOCKMERGERMAFITERATOR_H_

@@ -68,4 +68,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_FEATUREEXTRACTORMAFITERATOR_H_
+#endif // _FEATUREEXTRACTORMAFITERATOR_H_

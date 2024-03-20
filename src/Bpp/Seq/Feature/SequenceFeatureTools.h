@@ -59,8 +59,8 @@ public:
    * @author Sylvain Gaillard
    */
   static void extract(
-      const SequenceInterface& seq, 
-      const SeqRange& range, 
+      const SequenceInterface& seq,
+      const SeqRange& range,
       SequenceInterface& output);
 
   /**
@@ -79,4 +79,4 @@ public:
 };
 } // end of namespace bpp
 
-#endif//_SEQUENCEFEATURETOOLS_H_
+#endif // _SEQUENCEFEATURETOOLS_H_

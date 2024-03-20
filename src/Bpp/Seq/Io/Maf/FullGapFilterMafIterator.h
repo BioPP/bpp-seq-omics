@@ -42,4 +42,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_FULLGAPFILTERMAFITERATOR_H_
+#endif // _FULLGAPFILTERMAFITERATOR_H_

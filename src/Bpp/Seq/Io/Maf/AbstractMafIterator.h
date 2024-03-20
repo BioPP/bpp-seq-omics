@@ -15,7 +15,6 @@
 
 namespace bpp
 {
-
 /**
  * @brief Partial implementation of the MafIterator interface.
  *
@@ -35,11 +34,11 @@ public:
     started_(false),
     verbose_(true)
   {}
-  
+
   virtual ~AbstractMafIterator() {}
 
 protected:
-  AbstractMafIterator(const AbstractMafIterator& it):
+  AbstractMafIterator(const AbstractMafIterator& it) :
     iterationListeners_(),
     started_(false),
     verbose_(it.verbose_)
@@ -83,7 +82,6 @@ protected:
   virtual void fireIterationMoveSignal_(const MafBlock& currentBlock);
   virtual void fireIterationStopSignal_();
 };
-
 
 
 /**
@@ -192,7 +190,6 @@ private:
     return std::move(currentBlock_);
   }
 };
-
 } // end of namespace bpp.
 
-#endif//_ABSTRACTMAFITERATOR_H_
+#endif // _ABSTRACTMAFITERATOR_H_

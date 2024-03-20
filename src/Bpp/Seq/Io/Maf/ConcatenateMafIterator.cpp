@@ -25,14 +25,14 @@ unique_ptr<MafBlock> ConcatenateMafIterator::analyseCurrentBlock_()
   if (verbose_)
     ApplicationTools::displayMessage("Concatenating new block...");
   while (incomingBlock_ &&
-         (refSpecies_ == "" ||
-          (incomingBlock_->hasSequenceForSpecies(refSpecies_) &&
-           currentBlock_->hasSequenceForSpecies(refSpecies_) &&
-           incomingBlock_->sequenceForSpecies(refSpecies_).getChromosome() ==
-           currentBlock_->sequenceForSpecies(refSpecies_).getChromosome()
-          )
-         )
-         )
+      (refSpecies_ == "" ||
+      (incomingBlock_->hasSequenceForSpecies(refSpecies_) &&
+      currentBlock_->hasSequenceForSpecies(refSpecies_) &&
+      incomingBlock_->sequenceForSpecies(refSpecies_).getChromosome() ==
+      currentBlock_->sequenceForSpecies(refSpecies_).getChromosome()
+      )
+      )
+      )
   {
     if (currentBlock_->getNumberOfSites() >= minimumSize_)
     {

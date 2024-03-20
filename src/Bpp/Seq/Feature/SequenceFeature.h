@@ -279,18 +279,18 @@ public:
   BasicSequenceFeature() : id_(""), sequenceId_(""), source_(""), type_(""), range_(0, 0, '.'), score_(-1), attributes_() {}
 
   BasicSequenceFeature(
-    const std::string& id,
-    const std::string& seqId,
-    const std::string& source,
-    const std::string& type,
-    size_t start,
-    size_t end,
-    char strand,
-    double score = -1) :
+      const std::string& id,
+      const std::string& seqId,
+      const std::string& source,
+      const std::string& type,
+      size_t start,
+      size_t end,
+      char strand,
+      double score = -1) :
     id_(id), sequenceId_(seqId), source_(source),
     type_(type), range_(start, end, strand), score_(score),
     attributes_()
-  // attributes_(), subFeatures_()
+    // attributes_(), subFeatures_()
   {}
 
   virtual BasicSequenceFeature* clone() const { return new BasicSequenceFeature(*this); }
@@ -411,8 +411,8 @@ public:
     features_()
   {
     for (std::vector<SequenceFeature*>::const_iterator it = sfs.features_.begin();
-         it != sfs.features_.end();
-         ++it)
+        it != sfs.features_.end();
+        ++it)
     {
       features_.push_back((**it).clone());
     }
@@ -421,8 +421,8 @@ public:
   {
     clear();
     for (std::vector<SequenceFeature*>::const_iterator it = sfs.features_.begin();
-         it != sfs.features_.end();
-         ++it)
+        it != sfs.features_.end();
+        ++it)
     {
       features_.push_back((**it).clone());
     }
@@ -436,8 +436,8 @@ public:
   void clear()
   {
     for (std::vector<SequenceFeature*>::iterator it = features_.begin();
-         it != features_.end();
-         ++it)
+        it != features_.end();
+        ++it)
     {
       delete *it;
     }
@@ -490,8 +490,8 @@ public:
   {
     std::set<std::string> seqIds;
     for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
-         it != features_.end();
-         ++it)
+        it != features_.end();
+        ++it)
     {
       seqIds.insert((**it).getSequenceId());
     }
@@ -505,8 +505,8 @@ public:
   {
     std::set<std::string> types;
     for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
-         it != features_.end();
-         ++it)
+        it != features_.end();
+        ++it)
     {
       types.insert((**it).getType());
     }
@@ -551,8 +551,8 @@ public:
   {
     SequenceFeatureSet* subset = new SequenceFeatureSet();
     for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
-         it != features_.end();
-         ++it)
+        it != features_.end();
+        ++it)
     {
       if ((**it).getType() == type)
       {
@@ -570,8 +570,8 @@ public:
   {
     SequenceFeatureSet* subset = new SequenceFeatureSet();
     for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
-         it != features_.end();
-         ++it)
+        it != features_.end();
+        ++it)
     {
       if (std::find(types.begin(), types.end(), (**it).getType()) != types.end())
       {
@@ -589,8 +589,8 @@ public:
   {
     SequenceFeatureSet* subset = new SequenceFeatureSet();
     for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
-         it != features_.end();
-         ++it)
+        it != features_.end();
+        ++it)
     {
       if ((**it).getSequenceId() == id)
       {
@@ -608,8 +608,8 @@ public:
   {
     SequenceFeatureSet* subset = new SequenceFeatureSet();
     for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
-         it != features_.end();
-         ++it)
+        it != features_.end();
+        ++it)
     {
       if (std::find(ids.begin(), ids.end(), (**it).getSequenceId()) != ids.end())
       {
@@ -629,8 +629,8 @@ public:
   {
     SequenceFeatureSet* subset = new SequenceFeatureSet();
     for (std::vector<SequenceFeature*>::const_iterator it = features_.begin();
-         it != features_.end();
-         ++it)
+        it != features_.end();
+        ++it)
     {
       if (complete)
       {
@@ -648,4 +648,4 @@ public:
 };
 } // end of namespace bpp
 
-#endif//_SEQUENCEFEATURE_H_
+#endif // _SEQUENCEFEATURE_H_

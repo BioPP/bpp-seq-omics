@@ -55,4 +55,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_BLOCKSIZEMAFITERATOR_H_
+#endif // _BLOCKSIZEMAFITERATOR_H_

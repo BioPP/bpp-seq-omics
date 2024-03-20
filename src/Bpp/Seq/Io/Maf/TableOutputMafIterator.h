@@ -83,4 +83,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_TABLEOUTPUTMAFITERATOR_H_
+#endif // _TABLEOUTPUTMAFITERATOR_H_

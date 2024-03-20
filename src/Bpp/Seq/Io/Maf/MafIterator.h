@@ -15,7 +15,6 @@
 
 namespace bpp
 {
-
 /**
  * @brief Interface to loop over maf alignment blocks.
  */
@@ -23,7 +22,7 @@ class MafIteratorInterface
 {
 public:
   virtual ~MafIteratorInterface() {}
-  
+
 public:
   /**
    * @brief Get the next available alignment block.
@@ -38,7 +37,6 @@ public:
 
   virtual void addIterationListener(std::unique_ptr<IterationListenerInterface> listener) = 0;
 };
-
 
 
 /**
@@ -57,7 +55,6 @@ public:
    */
   virtual std::unique_ptr<MafBlock> nextRemovedBlock() = 0;
 };
-
 } // end of namespace bpp.
 
-#endif//_MAFITERATOR_H_
+#endif // _MAFITERATOR_H_

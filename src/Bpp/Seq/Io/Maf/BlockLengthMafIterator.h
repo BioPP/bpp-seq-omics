@@ -55,4 +55,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_BLOCKLENGTHMAFITERATOR_H_
+#endif // _BLOCKLENGTHMAFITERATOR_H_

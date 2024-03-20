@@ -42,4 +42,3 @@ void CsvStatisticsOutputIterationListener::iterationMoves(const MafBlock& curren
   }
   output_->endLine();
 }
-

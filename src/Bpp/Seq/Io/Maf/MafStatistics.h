@@ -361,9 +361,9 @@ protected:
 
 public:
   AbstractSpeciesSelectionMafStatistics(
-    const std::vector<std::string>& species,
-    bool noSpeciesMeansAllSpecies = false,
-    const std::string& suffix = "") :
+      const std::vector<std::string>& species,
+      bool noSpeciesMeansAllSpecies = false,
+      const std::string& suffix = "") :
     species_(species),
     noSpeciesMeansAllSpecies_(noSpeciesMeansAllSpecies),
     suffix_(suffix)
@@ -386,7 +386,7 @@ private:
   std::vector<std::vector<std::string>> species_;
 
 public:
-  AbstractSpeciesMultipleSelectionMafStatistics(const std::vector< std::vector<std::string> >& species);
+  AbstractSpeciesMultipleSelectionMafStatistics(const std::vector< std::vector<std::string>>& species);
 
 protected:
   std::vector<std::unique_ptr<SiteContainerInterface>> getSiteContainers_(const MafBlock& block);
@@ -494,7 +494,7 @@ public:
   SiteFrequencySpectrumMafStatistics(
       std::shared_ptr<const DNA> alphabet,
       const std::vector<double>& bounds,
-      const std::vector<std::string>& ingroup, 
+      const std::vector<std::string>& ingroup,
       const std::string outgroup = "") :
     AbstractMafStatistics(),
     AbstractSpeciesSelectionMafStatistics(ingroup),
@@ -554,8 +554,8 @@ private:
 
 public:
   FourSpeciesPatternCountsMafStatistics(
-    std::shared_ptr<const DNA> alphabet,
-    const std::vector<std::string>& species) :
+      std::shared_ptr<const DNA> alphabet,
+      const std::vector<std::string>& species) :
     AbstractMafStatistics(),
     AbstractSpeciesSelectionMafStatistics(species),
     alphabet_(alphabet),
@@ -642,7 +642,7 @@ class PolymorphismMafStatistics :
   public AbstractSpeciesMultipleSelectionMafStatistics
 {
 public:
-  PolymorphismMafStatistics(const std::vector< std::vector<std::string> >& species) :
+  PolymorphismMafStatistics(const std::vector< std::vector<std::string>>& species) :
     AbstractMafStatistics(),
     AbstractSpeciesMultipleSelectionMafStatistics(species)
   {
@@ -696,4 +696,4 @@ private:
 };
 } // end of namespace bpp
 
-#endif//_MAFSTATISTICS_H_
+#endif // _MAFSTATISTICS_H_

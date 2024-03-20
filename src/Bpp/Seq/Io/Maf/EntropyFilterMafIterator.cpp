@@ -32,7 +32,7 @@ unique_ptr<MafBlock> EntropyFilterMafIterator::analyseCurrentBlock_()
       if (nc < windowSize_)
         throw Exception("EntropyFilterMafIterator::analyseCurrentBlock_. Block is smaller than window size: " + TextTools::toString(nc));
 
-      vector< vector<int> > aln;
+      vector< vector<int>> aln;
       if (missingAsGap_ && !ignoreGaps_)
       {
         nr = species_.size();
@@ -236,7 +236,6 @@ unique_ptr<MafBlock> EntropyFilterMafIterator::analyseCurrentBlock_()
         }
         if (verbose_)
           ApplicationTools::displayTaskDone();
-
       }
     }
     while (blockBuffer_.size() == 0);

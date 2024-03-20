@@ -34,7 +34,7 @@ private:
   unsigned int currentCode_;
   bool makeDiploids_;
   int phenotype_;
-  std::string colSeparator_; //Stored as a string to facilitate concatenation.
+  std::string colSeparator_; // Stored as a string to facilitate concatenation.
   size_t nbIndividuals_;
 
 public:
@@ -72,12 +72,12 @@ public:
       char columnSeparator = '\t') :
     AbstractFilterMafIterator(iterator),
     outputPed_(outPed),
-    outputMap_(outMap), 
+    outputMap_(outMap),
     species_(species),
     refSpecies_(reference),
     map3_(map3),
     ped_(),
-    currentChr_(""), 
+    currentChr_(""),
     lastPosition_(0),
     recodeChr_(recodeChr),
     chrCodes_(),
@@ -148,4 +148,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_PLINKOUTPUTMAFITERATOR_H_
+#endif // _PLINKOUTPUTMAFITERATOR_H_

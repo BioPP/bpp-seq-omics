@@ -27,7 +27,8 @@ START:
       return 0; // No more block.
 
     // Check if the block contains the reference species:
-    if (!block->hasSequenceForSpecies(refSpecies_)) {
+    if (!block->hasSequenceForSpecies(refSpecies_))
+    {
       goto START;
     }
 
@@ -36,7 +37,8 @@ START:
     // first check if there is one (for now we assume that features refer to the chromosome or contig name, with implicit species):
 
     auto mr = ranges_.find(refSeq.getChromosome());
-    if (mr == ranges_.end()) {
+    if (mr == ranges_.end())
+    {
       goto START;
     }
 
@@ -45,7 +47,8 @@ START:
       ranges.filterWithin(refSeq.getRange(true));
     else
       ranges.restrictTo(refSeq.getRange(true));
-    if (ranges.isEmpty()) {
+    if (ranges.isEmpty())
+    {
       goto START;
     }
 

@@ -77,7 +77,7 @@ public:
       std::shared_ptr<MafIteratorInterface> iterator,
       std::shared_ptr<std::ostream> out,
       const std::string& reference,
-      const std::vector< std::vector<std::string> >& genotypes,
+      const std::vector< std::vector<std::string>>& genotypes,
       bool outputAll = false) :
     AbstractFilterMafIterator(iterator),
     output_(out),
@@ -125,4 +125,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_VCFOUTPUTMAFITERATOR_H_
+#endif // _VCFOUTPUTMAFITERATOR_H_

@@ -31,7 +31,7 @@ unique_ptr<MafBlock> AlignmentFilterMafIterator::analyseCurrentBlock_()
       if (nc < windowSize_)
         throw Exception("AlignmentFilterMafIterator::analyseCurrentBlock_. Block is smaller than window size: " + TextTools::toString(nc));
 
-      vector< vector<int> > aln;
+      vector< vector<int>> aln;
       if (missingAsGap_)
       {
         nr = species_.size();
@@ -317,7 +317,7 @@ unique_ptr<MafBlock> AlignmentFilter2MafIterator::analyseCurrentBlock_()
       if (nc < windowSize_)
         throw Exception("AlignmentFilter2MafIterator::analyseCurrentBlock_. Block is smaller than window size: " + TextTools::toString(nc));
 
-      vector< vector<int> > aln;
+      vector< vector<int>> aln;
       if (missingAsGap_)
       {
         nr = species_.size();

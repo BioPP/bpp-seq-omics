@@ -33,7 +33,7 @@ public:
       std::shared_ptr<MafIteratorInterface> iterator,
       bool unresolvedAsGaps = false) :
     AbstractFilterMafIterator(iterator),
-       	unresolvedAsGaps_(unresolvedAsGaps)
+    unresolvedAsGaps_(unresolvedAsGaps)
   {}
 
 private:
@@ -53,4 +53,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_REMOVEEMPTYSEQUENCESMAFITERATOR_H_
+#endif // _REMOVEEMPTYSEQUENCESMAFITERATOR_H_

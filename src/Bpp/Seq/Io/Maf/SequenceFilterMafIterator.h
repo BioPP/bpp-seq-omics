@@ -77,4 +77,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_SEQUENCEFILTERMAFITERATOR_H_
+#endif // _SEQUENCEFILTERMAFITERATOR_H_

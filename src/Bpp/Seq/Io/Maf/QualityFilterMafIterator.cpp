@@ -219,7 +219,7 @@ unique_ptr<MafBlock> QualityFilterMafIterator::analyseCurrentBlock_()
               outBlock->setPass(block->getPass());
               for (size_t j = 0; j < block->getNumberOfSequences(); ++j)
               {
-		auto outseq = block->sequence(j).subSequence(pos[i], pos[i + 1] - pos[i]);
+                auto outseq = block->sequence(j).subSequence(pos[i], pos[i + 1] - pos[i]);
                 outBlock->addSequence(outseq);
               }
               trashBuffer_.push_back(move(outBlock));

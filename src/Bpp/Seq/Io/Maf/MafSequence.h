@@ -263,7 +263,7 @@ private:
   }
   void beforeSequenceDeleted(const IntSymbolListDeletionEvent& event) override {}
   void afterSequenceDeleted(const IntSymbolListDeletionEvent& event) override
-  { 
+  {
     size_ = SequenceTools::getNumberOfSites(*this);
   }
   void beforeSequenceSubstituted(const IntSymbolListSubstitutionEvent& event) override {}
@@ -271,4 +271,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_MAFSEQUENCE_H_
+#endif // _MAFSEQUENCE_H_

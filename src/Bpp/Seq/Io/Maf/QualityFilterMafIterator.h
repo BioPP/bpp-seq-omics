@@ -63,4 +63,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_QUALITYFILTERMAFITERATOR_H_
+#endif // _QUALITYFILTERMAFITERATOR_H_

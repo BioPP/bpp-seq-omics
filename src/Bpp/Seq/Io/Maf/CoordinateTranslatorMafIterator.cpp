@@ -53,7 +53,7 @@ unique_ptr<MafBlock> CoordinateTranslatorMafIterator::analyseCurrentBlock_()
     RangeSet<size_t> cRanges;
     for (const auto& it : ranges.getSet())
     {
-      cRanges.addRange(SeqRange(refSeq.getSrcSize() - it->end(), refSeq.getSrcSize() - it->begin(), dynamic_cast<const SeqRange *>(it)->getStrand()));
+      cRanges.addRange(SeqRange(refSeq.getSrcSize() - it->end(), refSeq.getSrcSize() - it->begin(), dynamic_cast<const SeqRange*>(it)->getStrand()));
     }
     ranges = cRanges;
   }

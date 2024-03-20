@@ -94,9 +94,11 @@ const BasicSequenceFeature GtfFeatureReader::nextFeature()
         value.erase(value.end() - 1);
       }
       attributes[key] = value;
-    // std::cout << "[" << key << "] = [" << value << "]" << std::endl;
-    } else {
-      attributes[item] = ""; //Empty value.
+      // std::cout << "[" << key << "] = [" << value << "]" << std::endl;
+    }
+    else
+    {
+      attributes[item] = ""; // Empty value.
     }
   }
   // KeyvalTools::multipleKeyvals(attrDesc, attributes, ";", false);

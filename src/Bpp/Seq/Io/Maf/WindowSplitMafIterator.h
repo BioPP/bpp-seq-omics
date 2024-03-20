@@ -41,7 +41,7 @@ public:
       short splitOption = CENTER,
       bool keepSmallBlocks = false) :
     AbstractFilterMafIterator(iterator),
-    windowSize_(windowSize), 
+    windowSize_(windowSize),
     windowStep_(windowStep),
     align_(splitOption),
     blockBuffer_(),
@@ -59,4 +59,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_WINDOWSPLITMAFITERATOR_H_
+#endif // _WINDOWSPLITMAFITERATOR_H_

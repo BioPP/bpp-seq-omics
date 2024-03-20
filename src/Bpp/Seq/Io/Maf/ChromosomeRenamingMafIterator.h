@@ -52,4 +52,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_CHROMOSOMERENAMINGMAFITERATOR_H_
+#endif // _CHROMOSOMERENAMINGMAFITERATOR_H_

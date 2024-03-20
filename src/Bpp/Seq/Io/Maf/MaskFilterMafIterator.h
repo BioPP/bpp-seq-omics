@@ -37,10 +37,10 @@ private:
 public:
   MaskFilterMafIterator(
       std::shared_ptr<MafIteratorInterface> iterator,
-      const std::vector<std::string>& species, 
+      const std::vector<std::string>& species,
       unsigned int windowSize,
       unsigned int step,
-      unsigned int maxMasked, 
+      unsigned int maxMasked,
       bool keepTrashedBlocks) :
     AbstractFilterMafIterator(iterator),
     species_(species),
@@ -67,4 +67,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_MASKFILTERMAFITERATOR_H_
+#endif // _MASKFILTERMAFITERATOR_H_

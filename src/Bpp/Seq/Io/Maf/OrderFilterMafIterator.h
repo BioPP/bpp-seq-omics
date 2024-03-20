@@ -109,4 +109,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_ORDERFILTERMAFITERATOR_H_
+#endif // _ORDERFILTERMAFITERATOR_H_

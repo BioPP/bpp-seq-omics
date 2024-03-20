@@ -101,12 +101,15 @@ void PlinkOutputMafIterator::parseBlock_(std::ostream& out, const MafBlock& bloc
         pos = TextTools::toString(offset + walker.getSequencePosition(i) + 1);
       }
       string alleles = sites.site(i).toString();
-      if (makeDiploids_) {
+      if (makeDiploids_)
+      {
         for (size_t j = 0; j < nbIndividuals_; ++j)
         {
           ped_[j] += colSeparator_ + TextTools::toString(alleles[2 * j]) + " " + alleles[2 * j + 1];
         }
-      } else {
+      }
+      else
+      {
         for (size_t j = 0; j < alleles.size(); ++j)
         {
           ped_[j] += colSeparator_ + TextTools::toString(alleles[j]) + " " + alleles[j];

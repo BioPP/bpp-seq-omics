@@ -49,7 +49,7 @@ unique_ptr<SiteContainerInterface> AbstractSpeciesSelectionMafStatistics::getSit
       vector<const MafSequence*> selection = block.getSequencesForSpecies(species_[i]);
       for (size_t j = 0; j < selection.size(); ++j)
       {
-  auto tmpSeq = make_unique<Sequence>(*selection[j]);
+        auto tmpSeq = make_unique<Sequence>(*selection[j]);
         alignment->addSequence(tmpSeq->getName(), tmpSeq);
       }
     }
@@ -57,7 +57,7 @@ unique_ptr<SiteContainerInterface> AbstractSpeciesSelectionMafStatistics::getSit
   return alignment;
 }
 
-AbstractSpeciesMultipleSelectionMafStatistics::AbstractSpeciesMultipleSelectionMafStatistics(const std::vector< std::vector<std::string> >& species) :
+AbstractSpeciesMultipleSelectionMafStatistics::AbstractSpeciesMultipleSelectionMafStatistics(const std::vector< std::vector<std::string>>& species) :
   species_(species)
 {
   size_t n = VectorTools::vectorUnion(species).size();
@@ -83,7 +83,7 @@ vector<unique_ptr<SiteContainerInterface>> AbstractSpeciesMultipleSelectionMafSt
         vector<const MafSequence*> selection = block.getSequencesForSpecies(species_[k][i]);
         for (size_t j = 0; j < selection.size(); ++j)
         {
-    auto tmpSeq = make_unique<Sequence>(*selection[j]);
+          auto tmpSeq = make_unique<Sequence>(*selection[j]);
           alignment->addSequence(tmpSeq->getName(), tmpSeq);
         }
       }
@@ -199,8 +199,8 @@ void SiteFrequencySpectrumMafStatistics::compute(const MafBlock& block)
         nbSaturated++;
       }
       else if (hasOutgroup && (
-                 alignment->getAlphabet()->isGap((*outgroupSeq)[i]) ||
-                 alignment->getAlphabet()->isUnresolved((*outgroupSeq)[i])))
+            alignment->getAlphabet()->isGap((*outgroupSeq)[i]) ||
+            alignment->getAlphabet()->isUnresolved((*outgroupSeq)[i])))
       {
         nbUnresolved++;
       }
@@ -297,12 +297,12 @@ void FourSpeciesPatternCountsMafStatistics::compute(const MafBlock& block)
             site[3] == site[2])
           counts_[0]++;
         else if (site[1] == site[2] &&
-                 site[1] != site[0] &&
-                 site[3] == site[0])
+            site[1] != site[0] &&
+            site[3] == site[0])
           counts_[1]++;
         else if (site[0] == site[2] &&
-                 site[1] != site[0] &&
-                 site[3] == site[1])
+            site[1] != site[0] &&
+            site[3] == site[1])
           counts_[2]++;
       }
       else
@@ -569,11 +569,11 @@ void SequenceDiversityMafStatistics::compute(const MafBlock& block)
     for (size_t j = i + 1; j < n; ++j)
     {
       pi += SiteContainerTools::computeSimilarity(
-        alignment2->sequence(i),
-        alignment2->sequence(j),
-        true,
-        SiteContainerTools::SIMILARITY_NOGAP,
-        true);
+            alignment2->sequence(i),
+            alignment2->sequence(j),
+            true,
+            SiteContainerTools::SIMILARITY_NOGAP,
+            true);
     }
   }
   pi /= static_cast<double>((n - 1) * n / 2);

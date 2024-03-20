@@ -74,41 +74,42 @@ public:
   double getScore() const { return score_; }
   unsigned int getPass() const { return pass_; }
 
-  std::unique_ptr<AlignedSequenceContainer> getAlignment() const {
+  std::unique_ptr<AlignedSequenceContainer> getAlignment() const
+  {
     auto aln = std::make_unique<AlignedSequenceContainer>(AlphabetTools::DNA_ALPHABET);
     SequenceContainerTools::convertContainer<TemplateAlignedSequenceContainer<MafSequence, Site>, AlignedSequenceContainer, Sequence>(*this, *aln);
     return aln;
   }
-  
+
   void addSequence(std::unique_ptr<MafSequence>& sequence) override
   {
     std::string key = "maf_seq_" + TextTools::toString(idCounter_++);
     TemplateAlignedSequenceContainer::addSequence(key, sequence);
-  } 
+  }
 
   using TemplateAlignedSequenceContainer::getAlphabet;
-  
+
   using TemplateAlignedSequenceContainer::alphabet;
-  
+
   using TemplateAlignedSequenceContainer::getSequenceNames;
-  
+
   using TemplateAlignedSequenceContainer::getNumberOfSequences;
 
   using TemplateAlignedSequenceContainer::getNumberOfSites;
-  
+
   using TemplateAlignedSequenceContainer::site;
-  
+
   using TemplateAlignedSequenceContainer::deleteSite;
-  
+
   using TemplateAlignedSequenceContainer::deleteSites;
-  
-  
+
+
   using TemplateAlignedSequenceContainer::hasSequence;
-  
+
   using TemplateAlignedSequenceContainer::sequence;
-  
+
   using TemplateAlignedSequenceContainer::removeSequence;
-  
+
   using TemplateAlignedSequenceContainer::clear;
 
   bool hasSequenceForSpecies(const std::string& species) const
@@ -241,4 +242,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_MAFBLOCK_H_
+#endif // _MAFBLOCK_H_

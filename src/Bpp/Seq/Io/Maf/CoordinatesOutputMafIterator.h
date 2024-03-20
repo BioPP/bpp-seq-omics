@@ -43,9 +43,9 @@ public:
       const std::vector<std::string>& species,
       bool includeSrcSize = false) :
     AbstractFilterMafIterator(iterator),
-      output_(out),
-	species_(species),
-	includeSrcSize_(includeSrcSize)
+    output_(out),
+    species_(species),
+    includeSrcSize_(includeSrcSize)
   {
     if (output_)
       writeHeader_(*output_);
@@ -73,4 +73,4 @@ private:
 };
 } // end of namespace bpp.
 
-#endif//_COORDINATESOUTPUTMAFITERATOR_H_
+#endif // _COORDINATESOUTPUTMAFITERATOR_H_

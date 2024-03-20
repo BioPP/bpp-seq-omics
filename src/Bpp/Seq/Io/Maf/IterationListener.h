@@ -22,7 +22,6 @@ public:
   virtual void iterationMoves(const MafBlock& currentBlock) = 0;
   virtual void iterationStops() = 0;
 };
-
 } // end of namespace bpp.
 
-#endif//_ITERATIONLISTENER_H_
+#endif // _ITERATIONLISTENER_H_

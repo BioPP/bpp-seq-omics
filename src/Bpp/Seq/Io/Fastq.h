@@ -101,4 +101,4 @@ public:
 };
 }
 
-#endif// _BPP_SEQ_IO_FASTQ_H_
+#endif // _BPP_SEQ_IO_FASTQ_H_

@@ -14,18 +14,22 @@
 using namespace bpp;
 using namespace std;
 
-int main () {
-  try {
+int main ()
+{
+  try
+  {
     std::string filename = "example.fastq";
     std::ifstream input(filename.c_str(), std::ios::in);
-    if (!input) {
+    if (!input)
+    {
       std::cerr << "Could not open " << filename << std::endl;
       return 1;
     }
     Fastq fq;
     shared_ptr<const Alphabet> alpha = AlphabetTools::DNA_ALPHABET;
     SequenceWithQuality seq("", "", alpha);
-    while (fq.nextSequence(input, seq)) {
+    while (fq.nextSequence(input, seq))
+    {
       std::cout << seq.getName() << " " << seq.size();
       std::cout << " " << VectorTools::min(seq.getQualities()) - 33;
       std::cout << " " << VectorTools::max(seq.getQualities()) - 33;
@@ -35,7 +39,9 @@ int main () {
       fq.repeatName(false);
     }
     return 0;
-  } catch (std::exception& ex) {
+  }
+  catch (std::exception& ex)
+  {
     std::cerr << ex.what() << std::endl;
     return 1;
   }
