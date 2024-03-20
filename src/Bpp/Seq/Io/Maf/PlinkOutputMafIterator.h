@@ -138,7 +138,7 @@ public:
       parseBlock_(*outputMap_, *currentBlock_);
     if (outputMap_ && outputPed_ && !currentBlock_)
       writePedToFile_(*outputPed_); // Note we currently can output Map and no Ped, but not Ped without Map.
-    return move(currentBlock_);
+    return std::move(currentBlock_);
   }
 
 private:

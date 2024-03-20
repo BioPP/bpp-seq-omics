@@ -44,12 +44,12 @@ std::unique_ptr<MafBlock> ChromosomeMafIterator::analyseCurrentBlock_()
     }
     else
     {
-      return move(currentBlock_);
+      return std::move(currentBlock_);
     }
 
     // Look for the next block:
     currentBlock_ = iterator_->nextBlock();
   }
 
-  return move(currentBlock_);
+  return std::move(currentBlock_);
 }

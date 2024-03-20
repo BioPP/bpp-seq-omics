@@ -154,7 +154,7 @@ unique_ptr<MafBlock> EntropyFilterMafIterator::analyseCurrentBlock_()
       // Now we remove regions with two many gaps, using a sliding window:
       if (pos.size() == 0)
       {
-        blockBuffer_.push_back(move(block));
+        blockBuffer_.push_back(std::move(block));
         if (logstream_)
         {
           (*logstream_ << "ENTROPY CLEANER: block " << block->getDescription() << " is clean and kept as is.").endLine();
@@ -205,7 +205,7 @@ unique_ptr<MafBlock> EntropyFilterMafIterator::analyseCurrentBlock_()
               }
               newBlock->addSequence(subseq);
             }
-            blockBuffer_.push_back(move(newBlock));
+            blockBuffer_.push_back(std::move(newBlock));
           }
 
           if (keepTrashedBlocks_)
@@ -218,7 +218,7 @@ unique_ptr<MafBlock> EntropyFilterMafIterator::analyseCurrentBlock_()
               auto outseq = block->sequence(j).subSequence(pos[i], pos[i + 1] - pos[i]);
               outBlock->addSequence(outseq);
             }
-            trashBuffer_.push_back(move(outBlock));
+            trashBuffer_.push_back(std::move(outBlock));
           }
         }
         // Add last block:
@@ -232,7 +232,7 @@ unique_ptr<MafBlock> EntropyFilterMafIterator::analyseCurrentBlock_()
             auto subseq = block->sequence(j).subSequence(pos[pos.size() - 1], block->getNumberOfSites() - pos[pos.size() - 1]);
             newBlock->addSequence(subseq);
           }
-          blockBuffer_.push_back(move(newBlock));
+          blockBuffer_.push_back(std::move(newBlock));
         }
         if (verbose_)
           ApplicationTools::displayTaskDone();
@@ -241,7 +241,7 @@ unique_ptr<MafBlock> EntropyFilterMafIterator::analyseCurrentBlock_()
     while (blockBuffer_.size() == 0);
   }
 
-  auto block = move(blockBuffer_.front());
+  auto block = std::move(blockBuffer_.front());
   blockBuffer_.pop_front();
   return block;
 }

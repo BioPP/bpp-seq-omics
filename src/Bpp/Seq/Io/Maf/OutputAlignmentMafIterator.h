@@ -64,7 +64,7 @@ public:
     mask_(mask),
     outputCoordinates_(outputCoordinates),
     addLDHatHeader_(addLDHatHeader),
-    writer_(move(writer)),
+    writer_(std::move(writer)),
     currentBlockIndex_(0),
     refSpecies_(reference)
   {
@@ -102,7 +102,7 @@ public:
     mask_(mask),
     outputCoordinates_(outputCoordinates),
     addLDHatHeader_(addLDHatHeader),
-    writer_(move(writer)),
+    writer_(std::move(writer)),
     currentBlockIndex_(0),
     refSpecies_(reference)
   {

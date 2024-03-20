@@ -100,7 +100,7 @@ public:
       else
         testCont = false;
     }
-    return move(currentBlock_);
+    return std::move(currentBlock_);
   }
 
 private:

@@ -66,5 +66,5 @@ unique_ptr<MafBlock> SequenceStatisticsMafIterator::analyseCurrentBlock_()
       }
     }
   }
-  return move(currentBlock_);
+  return std::move(currentBlock_);
 }

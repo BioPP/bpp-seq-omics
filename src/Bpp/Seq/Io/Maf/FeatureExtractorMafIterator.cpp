@@ -105,14 +105,14 @@ START:
         (*logstream_ << subseq->getName()).endLine();
         newBlock->addSequence(subseq);
       }
-      blockBuffer_.push_back(move(newBlock));
+      blockBuffer_.push_back(std::move(newBlock));
     }
 
     if (verbose_)
       ApplicationTools::displayTaskDone();
   }
 
-  auto nxtBlock = move(blockBuffer_.front());
+  auto nxtBlock = std::move(blockBuffer_.front());
   blockBuffer_.pop_front();
   return nxtBlock;
 }

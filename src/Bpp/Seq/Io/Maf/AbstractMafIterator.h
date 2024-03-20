@@ -55,7 +55,7 @@ protected:
 public:
   void addIterationListener(std::unique_ptr<IterationListenerInterface> listener)
   {
-    iterationListeners_.push_back(move(listener));
+    iterationListeners_.push_back(std::move(listener));
   }
 
   std::unique_ptr<MafBlock> nextBlock()

@@ -48,5 +48,5 @@ std::unique_ptr<MafBlock> CoordinatesOutputMafIterator::analyseCurrentBlock_()
     }
     *output_ << endl;
   }
-  return move(currentBlock_);
+  return std::move(currentBlock_);
 }

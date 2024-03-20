@@ -33,5 +33,5 @@ unique_ptr<MafBlock> ChromosomeRenamingMafIterator::analyseCurrentBlock_()
     }
   }
 
-  return move(currentBlock_);
+  return std::move(currentBlock_);
 }

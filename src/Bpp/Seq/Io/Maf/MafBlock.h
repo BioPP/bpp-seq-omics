@@ -229,7 +229,7 @@ public:
       throw Exception("MafBlock::setProperty. Pointer to data is nullptr.");
     if (hasProperty(property))
       deleteProperty(property);
-    properties_[property] = move(data);
+    properties_[property] = std::move(data);
   }
 
 private:

@@ -50,12 +50,12 @@ std::unique_ptr<MafBlock> OrphanSequenceFilterMafIterator::analyseCurrentBlock_(
       if (!duplicate)  // No duplicate found or duplicates are kept
       {
         if (strictCrit || (!strict_ && loseCrit))
-          return move(currentBlock_);
+          return std::move(currentBlock_);
       }
     }
     // Otherwise there is at least one extra species, we get the next block...
     currentBlock_ = iterator_->nextBlock();
   }
 
-  return move(currentBlock_);
+  return std::move(currentBlock_);
 }

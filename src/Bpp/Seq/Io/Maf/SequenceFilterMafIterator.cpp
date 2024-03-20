@@ -73,12 +73,12 @@ unique_ptr<MafBlock> SequenceFilterMafIterator::analyseCurrentBlock_()
           }
           else
           {
-            return move(currentBlock_);
+            return std::move(currentBlock_);
           }
         }
         else
         {
-          return move(currentBlock_);
+          return std::move(currentBlock_);
         }
       }
     }
@@ -87,5 +87,5 @@ unique_ptr<MafBlock> SequenceFilterMafIterator::analyseCurrentBlock_()
     currentBlock_ = iterator_->nextBlock();
   }
 
-  return move(currentBlock_);
+  return std::move(currentBlock_);
 }

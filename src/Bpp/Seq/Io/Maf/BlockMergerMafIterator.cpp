@@ -16,7 +16,7 @@ std::unique_ptr<MafBlock> BlockMergerMafIterator::analyseCurrentBlock_()
 {
   if (!incomingBlock_)
     return 0;
-  currentBlock_  = move(incomingBlock_);
+  currentBlock_  = std::move(incomingBlock_);
   incomingBlock_ = iterator_->nextBlock();
   while (incomingBlock_)
   {
@@ -31,16 +31,16 @@ std::unique_ptr<MafBlock> BlockMergerMafIterator::analyseCurrentBlock_()
           throw Exception("BlockMergerMafIterator::nextBlock. Species '" + species_[i] + "' is missing coordinates in at least one block.");
 
         if (seq1.stop() > seq2.start())
-          return move(currentBlock_);
+          return std::move(currentBlock_);
         size_t space = seq2.start() - seq1.stop();
         if (space > maxDist_)
-          return move(currentBlock_);
+          return std::move(currentBlock_);
         if (i == 0)
           globalSpace = space;
         else
         {
           if (space != globalSpace)
-            return move(currentBlock_);
+            return std::move(currentBlock_);
         }
         if (seq1.getChromosome() != seq2.getChromosome()
             || VectorTools::contains(ignoreChrs_, seq1.getChromosome())
@@ -49,14 +49,14 @@ std::unique_ptr<MafBlock> BlockMergerMafIterator::analyseCurrentBlock_()
             || seq1.getSrcSize() != seq2.getSrcSize())
         {
           // There is a syntheny break in this sequence, so we do not merge the blocks.
-          return move(currentBlock_);
+          return std::move(currentBlock_);
         }
       }
       catch (SequenceNotFoundException& snfe)
       {
         // At least one block does not contain the sequence.
         // We don't merge the blocks:
-        return move(currentBlock_);
+        return std::move(currentBlock_);
       }
     }
     // We merge the two blocks:
@@ -156,9 +156,9 @@ std::unique_ptr<MafBlock> BlockMergerMafIterator::analyseCurrentBlock_()
       }
       mergedBlock->addSequence(seq);
     }
-    currentBlock_ = move(mergedBlock);
+    currentBlock_ = std::move(mergedBlock);
     // We check if we can also merge the next block:
     incomingBlock_ = iterator_->nextBlock();
   }
-  return move(currentBlock_);
+  return std::move(currentBlock_);
 }

@@ -88,7 +88,7 @@ vector<unique_ptr<SiteContainerInterface>> AbstractSpeciesMultipleSelectionMafSt
         }
       }
     }
-    alignments.push_back(move(alignment));
+    alignments.push_back(std::move(alignment));
   }
   return alignments;
 }

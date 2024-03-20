@@ -80,7 +80,7 @@ public:
     currentBlock_ = iterator_->nextBlock();
     if (output_ && currentBlock_)
       writeBlock_(*output_, *currentBlock_);
-    return move(currentBlock_);
+    return std::move(currentBlock_);
   }
 
 private:

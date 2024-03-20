@@ -65,16 +65,16 @@ unique_ptr<MafBlock> WindowSplitMafIterator::analyseCurrentBlock_()
         auto subseq = block->sequence(j).subSequence(i, size);
         newBlock->addSequence(subseq);
       }
-      blockBuffer_.push_back(move(newBlock));
+      blockBuffer_.push_back(std::move(newBlock));
     }
 
     if (align_ == ADJUST && keepSmallBlocks_ && bSize < windowSize_)
     {
-      blockBuffer_.push_back(move(block));
+      blockBuffer_.push_back(std::move(block));
     }
   }
 
-  auto nxtBlock = move(blockBuffer_.front());
+  auto nxtBlock = std::move(blockBuffer_.front());
   blockBuffer_.pop_front();
   return nxtBlock;
 }

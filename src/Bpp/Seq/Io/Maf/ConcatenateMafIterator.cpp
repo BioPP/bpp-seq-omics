@@ -19,7 +19,7 @@ unique_ptr<MafBlock> ConcatenateMafIterator::analyseCurrentBlock_()
 {
   if (!incomingBlock_)
     return 0;
-  currentBlock_  = move(incomingBlock_);
+  currentBlock_  = std::move(incomingBlock_);
   incomingBlock_ = iterator_->nextBlock();
   size_t count = 1;
   if (verbose_)
@@ -36,7 +36,7 @@ unique_ptr<MafBlock> ConcatenateMafIterator::analyseCurrentBlock_()
   {
     if (currentBlock_->getNumberOfSites() >= minimumSize_)
     {
-      return move(currentBlock_);
+      return std::move(currentBlock_);
     }
     if (verbose_)
     {
@@ -115,9 +115,9 @@ unique_ptr<MafBlock> ConcatenateMafIterator::analyseCurrentBlock_()
       }
       mergedBlock->addSequence(seq);
     }
-    currentBlock_ = move(mergedBlock);
+    currentBlock_ = std::move(mergedBlock);
     // We check if we can also merge the next block:
     incomingBlock_ = iterator_->nextBlock();
   }
-  return move(currentBlock_);
+  return std::move(currentBlock_);
 }

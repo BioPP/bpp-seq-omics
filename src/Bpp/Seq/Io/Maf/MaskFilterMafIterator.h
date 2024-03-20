@@ -57,7 +57,7 @@ public:
   std::unique_ptr<MafBlock> nextRemovedBlock()
   {
     if (trashBuffer_.size() == 0) return nullptr;
-    auto block = move(trashBuffer_.front());
+    auto block = std::move(trashBuffer_.front());
     trashBuffer_.pop_front();
     return block;
   }

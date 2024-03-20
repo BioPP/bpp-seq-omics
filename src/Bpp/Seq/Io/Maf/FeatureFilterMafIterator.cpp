@@ -163,7 +163,7 @@ unique_ptr<MafBlock> FeatureFilterMafIterator::analyseCurrentBlock_()
               newBlock->addSequence(subseq);
             }
             if (newBlock->getNumberOfSites() > 0)
-              blockBuffer_.push_back(move(newBlock));
+              blockBuffer_.push_back(std::move(newBlock));
           }
 
           if (keepTrashedBlocks_)
@@ -176,7 +176,7 @@ unique_ptr<MafBlock> FeatureFilterMafIterator::analyseCurrentBlock_()
               auto outseq = block->sequence(j).subSequence(pos[i], pos[i + 1] - pos[i]);
               outBlock->addSequence(outseq);
             }
-            trashBuffer_.push_back(move(outBlock));
+            trashBuffer_.push_back(std::move(outBlock));
           }
         }
         // Add last block:
@@ -190,7 +190,7 @@ unique_ptr<MafBlock> FeatureFilterMafIterator::analyseCurrentBlock_()
             auto subseq = block->sequence(j).subSequence(pos[pos.size() - 1], block->getNumberOfSites() - pos[pos.size() - 1]);
             newBlock->addSequence(subseq);
           }
-          blockBuffer_.push_back(move(newBlock));
+          blockBuffer_.push_back(std::move(newBlock));
         }
         if (verbose_)
           ApplicationTools::displayTaskDone();
@@ -199,7 +199,7 @@ unique_ptr<MafBlock> FeatureFilterMafIterator::analyseCurrentBlock_()
     while (blockBuffer_.size() == 0);
   }
 
-  auto nxtBlock = move(blockBuffer_.front());
+  auto nxtBlock = std::move(blockBuffer_.front());
   blockBuffer_.pop_front();
   return nxtBlock;
 }
