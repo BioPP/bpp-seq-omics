@@ -162,7 +162,7 @@ std::unique_ptr<MafBlock> MafParser::analyseCurrentBlock_()
         }
         else
         {
-          throw Exception("MafAlignmentParser::nextBlock(). Unvalid quality score: " + TextTools::toString(c) + ". Should be 0-9, F or '-'.");
+          throw Exception("MafAlignmentParser::nextBlock(). Invalid quality score: " + TextTools::toString(c) + ". Should be 0-9, F or '-'.");
         }
       }
       currentSequence->addAnnotation(seqQual);

@@ -22,7 +22,7 @@ unique_ptr<MafBlock> FullGapFilterMafIterator::analyseCurrentBlock_()
   if (!block)
     return nullptr;
 
-  // We create a copy of the ingroup alignement for better efficiency:
+  // We create a copy of the ingroup alignment for better efficiency:
   VectorSiteContainer vsc(AlphabetTools::DNA_ALPHABET);
   for (size_t i = 0; i < species_.size(); ++i)
   {

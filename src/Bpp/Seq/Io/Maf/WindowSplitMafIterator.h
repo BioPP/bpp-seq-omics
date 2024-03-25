@@ -49,7 +49,7 @@ public:
   {
     if (splitOption != RAGGED_LEFT && splitOption != RAGGED_RIGHT
         && splitOption != CENTER && splitOption != ADJUST)
-      throw Exception("WindowSplitMafIterator: unvalid split option: " + TextTools::toString(splitOption));
+      throw Exception("WindowSplitMafIterator: invalid split option: " + TextTools::toString(splitOption));
     if (splitOption != RAGGED_LEFT && windowStep != windowSize)
       throw Exception("WindowSplitMafIterator: overlapping windows are only supported together with the RAGGED_LEFT option.");
   }

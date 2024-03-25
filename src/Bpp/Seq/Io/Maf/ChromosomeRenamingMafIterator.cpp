@@ -23,7 +23,7 @@ unique_ptr<MafBlock> ChromosomeRenamingMafIterator::analyseCurrentBlock_()
       auto tln = chrTranslation_.find(chr);
       if (tln != chrTranslation_.end())
       {
-        // We force conversion to avoid unecessary recopy
+        // We force conversion to avoid unnecessary recopy
         const_cast<MafSequence&>(currentBlock_->sequence(i)).setChromosome(tln->second);
         if (logstream_)
         {

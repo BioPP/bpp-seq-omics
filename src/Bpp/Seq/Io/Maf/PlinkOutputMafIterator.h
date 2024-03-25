@@ -53,7 +53,7 @@ public:
    * In case one species is duplicated in a block, the first sequence will be used.
    * @param reference The species to use as a reference for coordinates.
    * It does not have to be one of the selected species on which SNPs are computed.
-   * @param map3 Tell if genetic distance column should be ommited in the map file. Otherwise set to 0.
+   * @param map3 Tell if genetic distance column should be omitted in the map file. Otherwise set to 0.
    * @param recodeChr Tell if chromosomes should be recoded to numbers.
    * @param makeDiploids If true, combines genomes into diploids. In case of odd numbers, the last genome will be ignored. If false, each genome will be output as a homozygous diploid.
    * @param phenotype Phenotype value to set in the map file.

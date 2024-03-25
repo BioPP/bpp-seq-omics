@@ -18,7 +18,7 @@ namespace bpp
 /**
  * @brief Remove from alignment all positions that fall within any feature from a list given as a SequenceFeatureSet object.
  *
- * Removed regions are outputed as a trash iterator.
+ * Removed regions are outputted as a trash iterator.
  */
 class FeatureFilterMafIterator :
   public AbstractFilterMafIterator,

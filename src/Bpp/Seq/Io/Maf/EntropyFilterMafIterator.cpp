@@ -177,7 +177,7 @@ unique_ptr<MafBlock> EntropyFilterMafIterator::analyseCurrentBlock_()
         if (verbose_)
         {
           ApplicationTools::message->endLine();
-          ApplicationTools::displayTask("Spliting block", true);
+          ApplicationTools::displayTask("Splitting block", true);
         }
         for (i = 0; i < pos.size(); i += 2)
         {
