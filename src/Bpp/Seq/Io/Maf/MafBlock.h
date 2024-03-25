@@ -149,7 +149,7 @@ public:
   }
 
   /**
-   * @return The species names for all sequencies in the container.
+   * @return The species names for all sequences in the container.
    */
   std::vector<std::string> getSpeciesList() const
   {

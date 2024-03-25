@@ -20,7 +20,7 @@ namespace bpp
 /**
  * @brief A simple reader for features in the BedGraph format.
  *
- * Format desciption at UCSC: https://genome.ucsc.edu/goldenpath/help/bedgraph.html
+ * Format description at UCSC: https://genome.ucsc.edu/goldenpath/help/bedgraph.html
  *
  * Note: The value associated to each feature is stored as a string attribute, using
  * tag BegGraphFeatureReader::BED_VALUE. No check is performed regarding its value.

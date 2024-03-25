@@ -20,7 +20,7 @@ namespace bpp
  * like the chromosome position. The sequence is its own listener,
  * and recomputes its "genomic" site by using the SequenceTools::getNumberOfSites
  * function when a content modification is performed.
- * Tags like begin and stop, hovever, have to be set by hand.
+ * Tags like begin and stop, however, have to be set by hand.
  *
  * A MAF sequence is necessarily a DNA sequence.
  */
@@ -245,7 +245,7 @@ public:
    * @brief Extract a sub-sequence.
    *
    * @return A subsequence.
-   * @param startAt Begining of sub-sequence.
+   * @param startAt Beginning of sub-sequence.
    * @param length  the length of the sub-sequence.
    */
   std::unique_ptr<MafSequence> subSequence(size_t startAt, size_t length) const;

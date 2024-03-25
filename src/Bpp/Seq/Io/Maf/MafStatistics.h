@@ -138,7 +138,7 @@ public:
     if (tag == name_)
       setValue(value);
     else
-      throw Exception("SimpleMafStatisticsResult::setValue(). Unvalid tag name: " + tag + ".");
+      throw Exception("SimpleMafStatisticsResult::setValue(). Invalid tag name: " + tag + ".");
   }
 
   virtual void setValue(const std::string& tag, int value)
@@ -146,7 +146,7 @@ public:
     if (tag == name_)
       setValue(value);
     else
-      throw Exception("SimpleMafStatisticsResult::setValue(). Unvalid tag name: " + tag + ".");
+      throw Exception("SimpleMafStatisticsResult::setValue(). Invalid tag name: " + tag + ".");
   }
 
   virtual void setValue(const std::string& tag, unsigned int value)
@@ -154,7 +154,7 @@ public:
     if (tag == name_)
       setValue(value);
     else
-      throw Exception("SimpleMafStatisticsResult::setValue(). Unvalid tag name: " + tag + ".");
+      throw Exception("SimpleMafStatisticsResult::setValue(). Invalid tag name: " + tag + ".");
   }
 
   virtual void setValue(double value)

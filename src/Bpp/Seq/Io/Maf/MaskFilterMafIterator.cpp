@@ -4,7 +4,7 @@
 
 #include "MaskFilterMafIterator.h"
 
-// Fomr bpp-seq:
+// From bpp-seq:
 #include <Bpp/Seq/SequenceWithAnnotationTools.h>
 
 using namespace bpp;
@@ -169,7 +169,7 @@ unique_ptr<MafBlock> MaskFilterMafIterator::analyseCurrentBlock_()
         if (verbose_)
         {
           ApplicationTools::message->endLine();
-          ApplicationTools::displayTask("Spliting block", true);
+          ApplicationTools::displayTask("Splitting block", true);
         }
         for (i = 0; i < pos.size(); i += 2)
         {

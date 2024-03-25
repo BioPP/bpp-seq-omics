@@ -74,7 +74,7 @@ unique_ptr<MafBlock> FeatureFilterMafIterator::analyseCurrentBlock_()
       }
 
       // Now extract corresponding alignments. We use the range to split the original block.
-      // Only thing to watch out is the coordinates, refering to the ref species...
+      // Only thing to watch out is the coordinates, referring to the ref species...
       // A good idea is then to convert those with respect to the given block:
 
       int gap = refSeq.getAlphabet()->getGapCharacterCode();
@@ -134,7 +134,7 @@ unique_ptr<MafBlock> FeatureFilterMafIterator::analyseCurrentBlock_()
         }
         if (verbose_)
         {
-          ApplicationTools::displayTask("Spliting block", true);
+          ApplicationTools::displayTask("Splitting block", true);
         }
         for (size_t i = 0; i < pos.size(); i += 2)
         {

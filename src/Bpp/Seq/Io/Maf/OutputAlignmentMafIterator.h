@@ -46,7 +46,7 @@ public:
    * The underlying object will be own by this instance, and destroyed when this object is deleted.
    * @param mask Tell if sequences should be printed masked (if applicable).
    * @param outputCoordinates Tell if coordinates should be written in sequence headers, if any.
-   * @param addLDHatHeader Tell if first line of file should contain number and lenght of sequences (for instance for use with LDhat/convert).
+   * @param addLDHatHeader Tell if first line of file should contain number and length of sequences (for instance for use with LDhat/convert).
    * @param reference [optional] specify a reference species which can be used to configure file names
    * (for instance using coordinates information).
    */
@@ -84,7 +84,7 @@ public:
    * The underlying object will be own by this instance, and destroyed when this object is deleted.
    * @param mask Tell if sequences should be printed masked (if applicable).
    * @param outputCoordinates Tell if coordinates should be written in sequence headers, if any.
-   * @param addLDHatHeader Tell if first line of file should contain number and lenght of sequences (for instance for use with LDhat/convert).
+   * @param addLDHatHeader Tell if first line of file should contain number and length of sequences (for instance for use with LDhat/convert).
    * @param reference [optional] specify a reference species which can be used to configure file names
    * (for instance using coordinates information).
    */

@@ -229,7 +229,7 @@ unique_ptr<MafBlock> AlignmentFilterMafIterator::analyseCurrentBlock_()
         if (verbose_)
         {
           ApplicationTools::message->endLine();
-          ApplicationTools::displayTask("Spliting block", true);
+          ApplicationTools::displayTask("Splitting block", true);
         }
         for (i = 0; i < pos.size(); i += 2)
         {
@@ -527,7 +527,7 @@ unique_ptr<MafBlock> AlignmentFilter2MafIterator::analyseCurrentBlock_()
         if (verbose_)
         {
           ApplicationTools::message->endLine();
-          ApplicationTools::displayTask("Spliting block", true);
+          ApplicationTools::displayTask("Splitting block", true);
         }
         for (i = 0; i < pos.size(); i += 2)
         {
