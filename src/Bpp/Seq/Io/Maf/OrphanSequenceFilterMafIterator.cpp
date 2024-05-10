@@ -32,7 +32,7 @@ std::unique_ptr<MafBlock> OrphanSequenceFilterMafIterator::analyseCurrentBlock_(
       bool duplicate = false;
       for (size_t i = 0; i < species_.size() && !duplicate; ++i)
       {
-        map<string, unsigned int>::iterator it = counts.find(species_[i]);
+        auto it = counts.find(species_[i]);
         if (it != counts.end())
         {
           loseCrit = true;

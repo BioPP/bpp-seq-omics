@@ -39,7 +39,7 @@ unsigned int SequenceFeatureTools::getOrfs(
     SequenceFeatureSet& featSet,
     const GeneticCode& gCode)
 {
-  if (!AlphabetTools::isNucleicAlphabet(&seq.alphabet()))
+  if (!AlphabetTools::isNucleicAlphabet(seq.alphabet()))
   {
     throw AlphabetException("SequenceFeatureTools::getOrfs: Sequence alphabet must be nucleic!", seq.getAlphabet());
   }
