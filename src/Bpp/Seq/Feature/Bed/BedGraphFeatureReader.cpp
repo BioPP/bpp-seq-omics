@@ -51,7 +51,6 @@ const BasicSequenceFeature BedGraphFeatureReader::nextFeature()
   string value       = st.nextToken();
   string id          = "bed" + TextTools::toString(++id_);
   BasicSequenceFeature feature(id, seqId, "bed_graph", "", start, end, '.', -1);
-
   // Set value attributes:
   if (value != ".")
     feature.setAttribute(BED_VALUE, value);

@@ -67,7 +67,8 @@ private:
   // Recopy is forbidden!
   MafParser(const MafParser& maf) :
     stream_(nullptr), mask_(maf.mask_), checkSequenceSize_(maf.checkSequenceSize_),
-    cmAlphabet_(AlphabetTools::DNA_ALPHABET), firstBlock_(maf.firstBlock_),
+    cmAlphabet_(AlphabetTools::DNA_ALPHABET),
+    firstBlock_(maf.firstBlock_),
     dotOption_(maf.dotOption_) {}
 
   MafParser& operator=(const MafParser& maf)
