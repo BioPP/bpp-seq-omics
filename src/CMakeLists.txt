@@ -26,6 +26,7 @@ set (CPP_FILES
   Bpp/Seq/Io/Maf/CoordinatesOutputMafIterator.cpp
   Bpp/Seq/Io/Maf/DuplicateFilterMafIterator.cpp
   Bpp/Seq/Io/Maf/EntropyFilterMafIterator.cpp
+  Bpp/Seq/Io/Maf/EstSfsOutputMafIterator.cpp
   Bpp/Seq/Io/Maf/FeatureExtractorMafIterator.cpp
   Bpp/Seq/Io/Maf/FeatureFilterMafIterator.cpp
   Bpp/Seq/Io/Maf/FullGapFilterMafIterator.cpp
