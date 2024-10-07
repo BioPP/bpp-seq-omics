@@ -84,7 +84,10 @@ public:
   std::unique_ptr<AlignedSequenceContainer> getAlignment() const
   {
     auto aln = std::make_unique<AlignedSequenceContainer>(AlphabetTools::DNA_ALPHABET);
-    SequenceContainerTools::convertContainer<TemplateAlignedSequenceContainer<MafSequence, Site>, AlignedSequenceContainer, Sequence>(*this, *aln);
+    for (size_t i = 0; i < getNumberOfSequences(); ++i) {
+      auto copySeq = std::make_unique<Sequence>(sequence(i));
+      aln->addSequence(sequenceKey(i), copySeq);
+    }
     return aln;
   }
 
@@ -101,7 +104,7 @@ public:
     for (size_t i = 0; i < getNumberOfSequences(); ++i) {
       if (VectorTools::contains(species, sequence(i).getSpecies())) {
 	auto copySeq = std::make_unique<Sequence>(sequence(i));
-        aln->addSequence(copySeq->getName(), copySeq);
+        aln->addSequence(sequenceKey(i), copySeq);
       } 
     }
     return aln;
