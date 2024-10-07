@@ -24,42 +24,57 @@ void EstSfsOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& blo
   auto outgroup2Container = block.getAlignment(outgroup2_);
   auto outgroup3Container = block.getAlignment(outgroup3_);
 
-  for (size_t i = 0; i < ingroupContainer->getNumberOfSites(); ++i) {
-    if (SymbolListTools::isComplete(ingroupContainer->site(i))) {
+  for (size_t i = 0; i < ingroupContainer->getNumberOfSites(); ++i)
+  {
+    if (SymbolListTools::isComplete(ingroupContainer->site(i)))
+    {
       map<int, size_t> counts;
       SiteTools::getCounts(ingroupContainer->site(i), counts);
-      //Alphabet states are in alaphabetical order
+      // Alphabet states are in alaphabetical order
       out << counts[0] << "," << counts[1] << "," << counts[2] << "," << counts[3];
-    } else {
+    }
+    else
+    {
       out << "0,0,0,0";
     }
-    
-    if (SymbolListTools::isComplete(outgroup1Container->site(i))) {
+
+    if (SymbolListTools::isComplete(outgroup1Container->site(i)))
+    {
       map<int, size_t> counts;
       SiteTools::getCounts(outgroup1Container->site(i), counts);
       out << " " << counts[0] << "," << counts[1] << "," << counts[2] << "," << counts[3];
-    } else {
+    }
+    else
+    {
       out << " 0,0,0,0";
     }
 
-    if (outgroup2_.size() > 0) {
+    if (outgroup2_.size() > 0)
+    {
       // Second outgroup is present
-      if (SymbolListTools::isComplete(outgroup2Container->site(i))) {
+      if (SymbolListTools::isComplete(outgroup2Container->site(i)))
+      {
         map<int, size_t> counts;
         SiteTools::getCounts(outgroup2Container->site(i), counts);
         out << " " << counts[0] << "," << counts[1] << "," << counts[2] << "," << counts[3];
-      } else {
+      }
+      else
+      {
         out << " 0,0,0,0";
       }
     }
 
-    if (outgroup3_.size() > 0) {
+    if (outgroup3_.size() > 0)
+    {
       // Third outgroup is present
-      if (SymbolListTools::isComplete(outgroup3Container->site(i))) {
+      if (SymbolListTools::isComplete(outgroup3Container->site(i)))
+      {
         map<int, size_t> counts;
         SiteTools::getCounts(outgroup3Container->site(i), counts);
         out << " " << counts[0] << "," << counts[1] << "," << counts[2] << "," << counts[3];
-      } else {
+      }
+      else
+      {
         out << " 0,0,0,0";
       }
     }

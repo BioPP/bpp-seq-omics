@@ -84,7 +84,8 @@ public:
   std::unique_ptr<AlignedSequenceContainer> getAlignment() const
   {
     auto aln = std::make_unique<AlignedSequenceContainer>(AlphabetTools::DNA_ALPHABET);
-    for (size_t i = 0; i < getNumberOfSequences(); ++i) {
+    for (size_t i = 0; i < getNumberOfSequences(); ++i)
+    {
       auto copySeq = std::make_unique<Sequence>(sequence(i));
       aln->addSequence(sequenceKey(i), copySeq);
     }
@@ -101,11 +102,13 @@ public:
   std::unique_ptr<AlignedSequenceContainer> getAlignment(const std::vector<std::string>& species) const
   {
     auto aln = std::make_unique<AlignedSequenceContainer>(AlphabetTools::DNA_ALPHABET);
-    for (size_t i = 0; i < getNumberOfSequences(); ++i) {
-      if (VectorTools::contains(species, sequence(i).getSpecies())) {
-	auto copySeq = std::make_unique<Sequence>(sequence(i));
+    for (size_t i = 0; i < getNumberOfSequences(); ++i)
+    {
+      if (VectorTools::contains(species, sequence(i).getSpecies()))
+      {
+        auto copySeq = std::make_unique<Sequence>(sequence(i));
         aln->addSequence(sequenceKey(i), copySeq);
-      } 
+      }
     }
     return aln;
   }

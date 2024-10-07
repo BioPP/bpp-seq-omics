@@ -40,7 +40,7 @@ std::unique_ptr<MafBlock> MafParser::analyseCurrentBlock_()
 
       // end of paragraph
       test = false;
-      firstBlock_ = true; //This allows to have multiple blanck lines between blocks, not only at the start of the file.
+      firstBlock_ = true; // This allows to have multiple blanck lines between blocks, not only at the start of the file.
     }
     else if (line[0] == 'a')
     {

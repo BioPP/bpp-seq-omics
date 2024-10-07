@@ -58,15 +58,16 @@ public:
     outgroup2_(outgroup2),
     outgroup3_(outgroup3)
   {
-    if (outgroup1.size() == 0) {
+    if (outgroup1.size() == 0)
+    {
       throw Exception("EstSfsOutputMafIterator::constructor. At least one outgroup species is required.");
     }
   }
 
   EstSfsOutputMafIterator(const EstSfsOutputMafIterator& iterator) = delete;
-    
+
   EstSfsOutputMafIterator& operator=(const EstSfsOutputMafIterator& iterator) = delete;
- 
+
 public:
   std::unique_ptr<MafBlock> analyseCurrentBlock_()
   {
