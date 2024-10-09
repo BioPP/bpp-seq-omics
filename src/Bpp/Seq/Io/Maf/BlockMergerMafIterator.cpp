@@ -86,12 +86,12 @@ std::unique_ptr<MafBlock> BlockMergerMafIterator::analyseCurrentBlock_()
       unique_ptr<MafSequence> seq;
       try
       {
-        seq.reset(new MafSequence(currentBlock_->sequenceForSpecies(allSp[i])));
+        seq = currentBlock_->removeSequenceForSpecies(allSp[i]);
 
         // Check is there is a second sequence:
         try
         {
-          auto tmp = make_unique<MafSequence>(incomingBlock_->sequenceForSpecies(allSp[i]));
+          auto tmp = incomingBlock_->removeSequenceForSpecies(allSp[i]);
           string ref1 = seq->getDescription(), ref2 = tmp->getDescription();
           // Add spacer if needed:
           if (globalSpace > 0)
@@ -146,7 +146,7 @@ std::unique_ptr<MafBlock> BlockMergerMafIterator::analyseCurrentBlock_()
       catch (SequenceNotFoundException& snfe1)
       {
         // There must be a second sequence then:
-        seq.reset(new MafSequence(incomingBlock_->sequenceForSpecies(allSp[i])));
+        seq = incomingBlock_->removeSequenceForSpecies(allSp[i]);
         string ref2 = seq->getDescription();
         seq->setToSizeL(seq->size() + currentBlock_->getNumberOfSites() + globalSpace);
         if (logstream_)

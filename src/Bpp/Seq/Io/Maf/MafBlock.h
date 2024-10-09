@@ -180,6 +180,18 @@ public:
     return selection;
   }
 
+  // Return the first sequence with the species name.
+  std::unique_ptr<MafSequence> removeSequenceForSpecies(const std::string& species)
+  {
+    for (size_t i = 0; i < getNumberOfSequences(); ++i)
+    {
+      const MafSequence& seq = sequence(i);
+      if (seq.getSpecies() == species)
+        return removeSequence(i);
+    }
+    throw SequenceNotFoundException("MafBlock::removeSequenceForSpecies. No sequence with the given species name in this block.", species);
+  }
+
   /**
    * @return The species names for all sequences in the container.
    */
