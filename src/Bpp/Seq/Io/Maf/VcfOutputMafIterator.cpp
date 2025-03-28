@@ -64,19 +64,23 @@ void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
   size_t offset = refSeq.start();
   int gap = refSeq.alphabet().getGapCharacterCode();
   map<int, string> chars;
-  for (int i = 0; i < static_cast<int>(AlphabetTools::DNA_ALPHABET->getNumberOfTypes()); ++i)
+  for (int i = (gapAsDeletion_ ? -1 : 0); i < static_cast<int>(AlphabetTools::DNA_ALPHABET->getNumberOfTypes()); ++i)
   {
-    chars[i] = AlphabetTools::DNA_ALPHABET->intToChar(i);
+    if (i == -1) {
+      chars[i] = ".";
+    } else {
+      chars[i] = AlphabetTools::DNA_ALPHABET->intToChar(i);
+    }
   }
   // Where to store genotype information, if any:
   vector<int> gt(genotypes_.size());
   // Now we look all sites for SNPs:
   for (size_t i = 0; i < block.getNumberOfSites(); ++i)
   {
-    if (refSeq[i] == gap)
+    if (refSeq[i] == gap) //TODO: call indels
       continue;
     string filter = "";
-    if (SiteTools::hasGap(block.site(i)))
+    if (! gapAsDeletion_ && SiteTools::hasGap(block.site(i)))
     {
       filter = "gap";
     }
@@ -97,7 +101,7 @@ void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
 
     map<int, int> snps;
     int c = 0;
-    for (int x = 0; x < 4; ++x)
+    for (int x = (gapAsDeletion_ ? -1 : 0); x < 4; ++x)
     {
       if (x != ref)
       {

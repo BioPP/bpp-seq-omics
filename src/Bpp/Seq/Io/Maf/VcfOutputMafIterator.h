@@ -28,6 +28,7 @@ private:
   std::vector<std::vector<std::string>> genotypes_;
   bool outputAll_;
   bool generateDiploids_;
+  bool gapAsDeletion_;
 
 public:
   /**
@@ -39,6 +40,7 @@ public:
    * @param genotypes A list of species for which genotype information should be written in the VCF file. There will be one extra column per genotype, +1 format column.
    * @param outputAll If true, also output non-variable positions.
    * @param generateDiploids If true, output artificial "homozygous" diploids.
+   * @param gapAsDeletion If true, gaps are considered as a "deletion" allele.
    */
   VcfOutputMafIterator(
       std::shared_ptr<MafIteratorInterface> iterator,
@@ -46,13 +48,15 @@ public:
       const std::string& reference,
       const std::vector<std::string>& genotypes,
       bool outputAll = false,
-      bool generateDiploids = false) :
+      bool generateDiploids = false,
+      bool gapAsDeletion = false) :
     AbstractFilterMafIterator(iterator),
     output_(out),
     refSpecies_(reference),
     genotypes_(),
     outputAll_(outputAll),
-    generateDiploids_(generateDiploids)
+    generateDiploids_(generateDiploids),
+    gapAsDeletion_(gapAsDeletion)
   {
     for (auto g : genotypes)
     {
@@ -78,37 +82,24 @@ public:
       std::shared_ptr<std::ostream> out,
       const std::string& reference,
       const std::vector< std::vector<std::string>>& genotypes,
-      bool outputAll = false) :
+      bool outputAll = false,
+      bool gapAsDeletion = false) :
     AbstractFilterMafIterator(iterator),
     output_(out),
     refSpecies_(reference),
     genotypes_(genotypes),
     outputAll_(outputAll),
-    generateDiploids_(false)
+    generateDiploids_(false),
+    gapAsDeletion_(gapAsDeletion)
   {
     if (output_)
       writeHeader_(*output_);
   }
 
 private:
-  VcfOutputMafIterator(const VcfOutputMafIterator& iterator) :
-    AbstractFilterMafIterator(0),
-    output_(iterator.output_),
-    refSpecies_(iterator.refSpecies_),
-    genotypes_(iterator.genotypes_),
-    outputAll_(iterator.outputAll_),
-    generateDiploids_(iterator.generateDiploids_)
-  {}
+  VcfOutputMafIterator(const VcfOutputMafIterator& iterator) = default;
 
-  VcfOutputMafIterator& operator=(const VcfOutputMafIterator& iterator)
-  {
-    output_ = iterator.output_;
-    refSpecies_ = iterator.refSpecies_;
-    genotypes_ = iterator.genotypes_;
-    outputAll_ = iterator.outputAll_;
-    generateDiploids_ = iterator.generateDiploids_;
-    return *this;
-  }
+  VcfOutputMafIterator& operator=(const VcfOutputMafIterator& iterator) = default;
 
 public:
   std::unique_ptr<MafBlock> analyseCurrentBlock_()
