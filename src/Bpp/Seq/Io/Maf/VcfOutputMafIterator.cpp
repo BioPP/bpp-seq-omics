@@ -66,11 +66,7 @@ void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
   map<int, string> chars;
   for (int i = (gapAsDeletion_ ? -1 : 0); i < static_cast<int>(AlphabetTools::DNA_ALPHABET->getNumberOfTypes()); ++i)
   {
-    if (i == -1) {
-      chars[i] = ".";
-    } else {
-      chars[i] = AlphabetTools::DNA_ALPHABET->intToChar(i);
-    }
+    chars[i] = AlphabetTools::DNA_ALPHABET->intToChar(i);
   }
   // Where to store genotype information, if any:
   vector<int> gt(genotypes_.size());
@@ -149,8 +145,18 @@ void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
             else
             {
               int state = (*sequences[0])[i];
-              if (AlphabetTools::DNA_ALPHABET->isGap(state) || AlphabetTools::DNA_ALPHABET->isUnresolved(state))
+              if (AlphabetTools::DNA_ALPHABET->isUnresolved(state))
+              {
                 geno += (generateDiploids_ ? ".|." : ".");
+              }
+              else if (AlphabetTools::DNA_ALPHABET->isGap(state))
+              {
+                if(gapAsDeletion_) {
+                  geno += (generateDiploids_ ? "-|-" : "-");
+                } else {
+                  geno += (generateDiploids_ ? ".|." : ".");
+                }
+              }
               else
               {
                 geno += TextTools::toString(snps[state]);
