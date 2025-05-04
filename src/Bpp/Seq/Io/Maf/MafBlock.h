@@ -213,6 +213,30 @@ public:
     const_cast<MafSequence&>(sequence(i)).removeCoordinates();
   }
 
+  /**
+   * @brief Add a new annotation to a sequence.
+   *
+   * @param i Sequence position in the container.
+   * @param anno The annotation object to be added. 
+   * @throw Exception If the annotation is not valid for this sequence.
+   */
+  void addAnnotationToSequence(size_t i, std::shared_ptr<SequenceAnnotation> anno)
+  {
+    sequence_(i).addAnnotation(anno);
+  }
+  
+  /**
+   * @brief Add a new annotation to a sequence for a given species.
+   *
+   * @param species Species name. In case several sequences are available, the first one will be used.
+   * @param anno The annotation object to be added. 
+   * @throw Exception If the annotation is not valid for this sequence.
+   */
+  void addAnnotationToSequenceForSpecies(const std::string& species, std::shared_ptr<SequenceAnnotation> anno)
+  {
+    sequenceForSpecies_(species).addAnnotation(anno);
+  }
+
   std::string getDescription() const
   {
     std::string desc;
@@ -278,6 +302,18 @@ public:
 
 private:
   using TemplateAlignedSequenceContainer::addSequence;
+
+  // Return the first sequence with the species name.
+  MafSequence& sequenceForSpecies_(const std::string& species)
+  {
+    for (size_t i = 0; i < getNumberOfSequences(); ++i)
+    {
+      MafSequence& seq = sequence_(i);
+      if (seq.getSpecies() == species)
+        return seq;
+    }
+    throw SequenceNotFoundException("MafBlock::sequenceForSpecies. No sequence with the given species name in this block.", species);
+  }
 
   void deleteProperties_()
   {

@@ -66,11 +66,7 @@ void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
   map<int, string> chars;
   for (int i = (gapAsDeletion_ ? -1 : 0); i < static_cast<int>(AlphabetTools::DNA_ALPHABET->getNumberOfTypes()); ++i)
   {
-    if (i == -1) {
-      chars[i] = ".";
-    } else {
-      chars[i] = AlphabetTools::DNA_ALPHABET->intToChar(i);
-    }
+    chars[i] = AlphabetTools::DNA_ALPHABET->intToChar(i);
   }
   // Where to store genotype information, if any:
   vector<int> gt(genotypes_.size());

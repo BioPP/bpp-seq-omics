@@ -97,9 +97,9 @@ public:
   }
 
 private:
-  VcfOutputMafIterator(const VcfOutputMafIterator& iterator) = default;
+  VcfOutputMafIterator(const VcfOutputMafIterator& iterator) = delete;
 
-  VcfOutputMafIterator& operator=(const VcfOutputMafIterator& iterator) = default;
+  VcfOutputMafIterator& operator=(const VcfOutputMafIterator& iterator) = delete;
 
 public:
   std::unique_ptr<MafBlock> analyseCurrentBlock_()
