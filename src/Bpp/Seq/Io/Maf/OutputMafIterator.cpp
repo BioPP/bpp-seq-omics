@@ -101,7 +101,7 @@ void OutputMafIterator::writeBlock(std::ostream& out, const MafBlock& block) con
         }
         else
         {
-          throw Exception("MafAlignmentParser::writeBlock. Unsupported score value: " + TextTools::toString(s));
+          throw Exception("OutputMafIterator::writeBlock. Unsupported score value: " + TextTools::toString(s));
         }
       }
       out << qualStr << endl;

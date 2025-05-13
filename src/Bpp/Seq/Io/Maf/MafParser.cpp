@@ -84,7 +84,7 @@ std::unique_ptr<MafBlock> MafParser::analyseCurrentBlock_()
         throw IOException("Sequence description should include a strand field.");
       string tmp = st.nextToken();
       if (tmp.size() != 1)
-        throw Exception("MafAlignmentParser::nextBlock. Strand specification is incorrect, should be only one character long, found " + TextTools::toString(tmp.size()) + ".");
+        throw Exception("MafParser::nextBlock. Strand specification is incorrect, should be only one character long, found " + TextTools::toString(tmp.size()) + ".");
       char strand = tmp[0];
 
       if (!st.hasMoreToken())
@@ -110,12 +110,12 @@ std::unique_ptr<MafBlock> MafParser::analyseCurrentBlock_()
       if (currentSequence->getGenomicSize() != size)
       {
         if (checkSequenceSize_)
-          throw Exception("MafAlignmentParser::nextBlock. Sequence found (" + src + ") does not match specified size: " + TextTools::toString(currentSequence->getGenomicSize()) + ", should be " + TextTools::toString(size) + ".");
+          throw Exception("MafParser::nextBlock. Sequence found (" + src + ") does not match specified size: " + TextTools::toString(currentSequence->getGenomicSize()) + ", should be " + TextTools::toString(size) + ".");
         else
         {
           if (verbose_)
           {
-            ApplicationTools::displayWarning("MafAlignmentParser::nextBlock. Sequence found (" + src + ") does not match specified size: " + TextTools::toString(currentSequence->getGenomicSize()) + ", should be " + TextTools::toString(size) + ".");
+            ApplicationTools::displayWarning("MafParser::nextBlock. Sequence found (" + src + ") does not match specified size: " + TextTools::toString(currentSequence->getGenomicSize()) + ", should be " + TextTools::toString(size) + ".");
           }
         }
       }
@@ -133,12 +133,12 @@ std::unique_ptr<MafBlock> MafParser::analyseCurrentBlock_()
     else if (line[0] == 'q')
     {
       if (!currentSequence)
-        throw Exception("MafAlignmentParser::nextBlock(). Quality scores found, but there is currently no sequence!");
+        throw Exception("MaParser::nextBlock(). Quality scores found, but there is currently no sequence!");
       StringTokenizer st(line);
       st.nextToken(); // The 'q' tag
       string name = st.nextToken();
       if (name != currentSequence->getName())
-        throw Exception("MafAlignmentParser::nextBlock(). Quality scores found, but with a different name from the previous sequence: " + name + ", should be " + currentSequence->getName() + ".");
+        throw Exception("MafParser::nextBlock(). Quality scores found, but with a different name from the previous sequence: " + name + ", should be " + currentSequence->getName() + ".");
       string qstr = st.nextToken();
       // Now parse the score string:
       auto seqQual = make_shared<SequenceQuality>(qstr.size());
@@ -163,7 +163,7 @@ std::unique_ptr<MafBlock> MafParser::analyseCurrentBlock_()
         }
         else
         {
-          throw Exception("MafAlignmentParser::nextBlock(). Invalid quality score: " + TextTools::toString(c) + ". Should be 0-9, F or '-'.");
+          throw Exception("MafParser::nextBlock(). Invalid quality score: " + TextTools::toString(c) + ". Should be 0-9, F or '-'.");
         }
       }
       currentSequence->addAnnotation(seqQual);
