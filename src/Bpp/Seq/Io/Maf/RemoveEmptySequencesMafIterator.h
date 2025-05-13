@@ -14,7 +14,7 @@
 namespace bpp
 {
 /**
- * @brief Remove ga-only or unresolved and gap-only sequences in each block.
+ * @brief Remove gap-only or unresolved and gap-only sequences in each block.
  */
 class RemoveEmptySequencesMafIterator :
   public AbstractFilterMafIterator
@@ -37,16 +37,9 @@ public:
   {}
 
 private:
-  RemoveEmptySequencesMafIterator(const RemoveEmptySequencesMafIterator& iterator) :
-    AbstractFilterMafIterator(nullptr),
-    unresolvedAsGaps_(iterator.unresolvedAsGaps_)
-  {}
+  RemoveEmptySequencesMafIterator(const RemoveEmptySequencesMafIterator& iterator) = delete;
 
-  RemoveEmptySequencesMafIterator& operator=(const RemoveEmptySequencesMafIterator& iterator)
-  {
-    unresolvedAsGaps_ = iterator.unresolvedAsGaps_;
-    return *this;
-  }
+  RemoveEmptySequencesMafIterator& operator=(const RemoveEmptySequencesMafIterator& iterator) = delete;
 
 private:
   std::unique_ptr<MafBlock> analyseCurrentBlock_();
