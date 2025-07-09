@@ -78,6 +78,7 @@ public:
    * @brief Export the content of the block to an AlignedSequenceContainer object.
    *
    * All non-sequence information will not be passed to the new container.
+   * Sequence names will be used as keys in the container.
    *
    * @return A pointer toward a new AlignedSequenceContainer object.
    */
@@ -87,7 +88,7 @@ public:
     for (size_t i = 0; i < getNumberOfSequences(); ++i)
     {
       auto copySeq = std::make_unique<Sequence>(sequence(i));
-      aln->addSequence(sequenceKey(i), copySeq);
+      aln->addSequence(sequence(i).getName(), copySeq);
     }
     return aln;
   }
@@ -96,6 +97,7 @@ public:
    * @brief Export a selection of the content of the block to an AlignedSequenceContainer object.
    * Only sequences for the given set of species will be copied in the new container.
    * All non-sequence information will not be passed to the new container.
+   * Sequence names will be used as keys in the container.
    *
    * @return A pointer toward a new AlignedSequenceContainer object.
    */
@@ -107,7 +109,7 @@ public:
       if (VectorTools::contains(species, sequence(i).getSpecies()))
       {
         auto copySeq = std::make_unique<Sequence>(sequence(i));
-        aln->addSequence(sequenceKey(i), copySeq);
+        aln->addSequence(sequence(i).getName(), copySeq);
       }
     }
     return aln;
