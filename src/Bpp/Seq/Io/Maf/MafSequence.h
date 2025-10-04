@@ -148,7 +148,7 @@ public:
 public:
   bool hasCoordinates() const { return hasCoordinates_; }
 
-  void removeCoordinates() { hasCoordinates_ = false; begin_ = 0; }
+  void removeCoordinates() { hasCoordinates_ = false; begin_ = 0; srcSize_ = 0; }
 
   size_t start() const
   {

@@ -50,13 +50,16 @@ void OutputMafIterator::writeBlock(std::ostream& out, const MafBlock& block) con
     const MafSequence& seq = block.sequence(i);
     out << "s ";
     out << TextTools::resizeRight(seq.getName(), mxcSrc, ' ') << " ";
-    size_t start = 0; // Maybe we should output sthg else here?
+    string start = "?";
     if (seq.hasCoordinates())
-      start = seq.start();
-    out << TextTools::resizeLeft(TextTools::toString(start), mxcStart, ' ') << " ";
+      start = TextTools::toString(seq.start());
+    out << TextTools::resizeLeft(start, mxcStart, ' ') << " ";
     out << TextTools::resizeLeft(TextTools::toString(seq.getGenomicSize()), mxcSize, ' ') << " ";
     out << seq.getStrand() << " ";
-    out << TextTools::resizeLeft(TextTools::toString(seq.getSrcSize()), mxcSrcSize, ' ') << " ";
+    string srcSize = "?";
+    if (seq.hasCoordinates())
+      srcSize = TextTools::toString(seq.getSrcSize());
+    out << TextTools::resizeLeft(srcSize, mxcSrcSize, ' ') << " ";
     // Shall we write the sequence as masked?
     string seqstr = seq.toString();
     if (mask_ && seq.hasAnnotation(SequenceMask::MASK))
