@@ -27,7 +27,7 @@ public:
    * @brief Creates a new AlignmentScoreFilterMafIterator object.
    *
    * @param iterator The input iterator.
-   * @param double Minimum score.
+   * @param minimumScore Minimum score.
    */
   AlignmentScoreFilterMafIterator(
       std::shared_ptr<MafIteratorInterface> iterator,

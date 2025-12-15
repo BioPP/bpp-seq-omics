@@ -76,6 +76,7 @@ public:
    * @param reference The species to use as a reference.
    * @param genotypes A list of species combinations for which genotype information should be written in the VCF file. There will be one extra column per genotype, +1 format column. When more than one sequence is specified in a combination, a (phased) polyploid genotype will be created.
    * @param outputAll If true, also output non-variable positions.
+   * @param gapAsDeletion If true, convert gap characters as deletion rather than missing genotype.
    */
   VcfOutputMafIterator(
       std::shared_ptr<MafIteratorInterface> iterator,
