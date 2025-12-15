@@ -73,10 +73,10 @@ void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
   // Now we look all sites for SNPs:
   for (size_t i = 0; i < block.getNumberOfSites(); ++i)
   {
-    if (refSeq[i] == gap) //TODO: call indels
+    if (refSeq[i] == gap) // TODO: call indels
       continue;
     string filter = "";
-    if (! gapAsDeletion_ && SiteTools::hasGap(block.site(i)))
+    if (!gapAsDeletion_ && SiteTools::hasGap(block.site(i)))
     {
       filter = "gap";
     }
@@ -145,7 +145,7 @@ void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
             else
             {
               int state = (*sequences[0])[i];
-              if (AlphabetTools::DNA_ALPHABET->isUnresolved(state) || (AlphabetTools::DNA_ALPHABET->isGap(state) && ! gapAsDeletion_))
+              if (AlphabetTools::DNA_ALPHABET->isUnresolved(state) || (AlphabetTools::DNA_ALPHABET->isGap(state) && !gapAsDeletion_))
               {
                 geno += (generateDiploids_ ? ".|." : ".");
               }

@@ -219,19 +219,19 @@ public:
    * @brief Add a new annotation to a sequence.
    *
    * @param i Sequence position in the container.
-   * @param anno The annotation object to be added. 
+   * @param anno The annotation object to be added.
    * @throw Exception If the annotation is not valid for this sequence.
    */
   void addAnnotationToSequence(size_t i, std::shared_ptr<SequenceAnnotation> anno)
   {
     sequence_(i).addAnnotation(anno);
   }
-  
+
   /**
    * @brief Add a new annotation to a sequence for a given species.
    *
    * @param species Species name. In case several sequences are available, the first one will be used.
-   * @param anno The annotation object to be added. 
+   * @param anno The annotation object to be added.
    * @throw Exception If the annotation is not valid for this sequence.
    */
   void addAnnotationToSequenceForSpecies(const std::string& species, std::shared_ptr<SequenceAnnotation> anno)
