@@ -58,109 +58,117 @@ void VcfOutputMafIterator::writeHeader_(std::ostream& out) const
 
 void VcfOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block) const
 {
-  const MafSequence& refSeq = block.sequenceForSpecies(refSpecies_);
-  string chr = refSeq.getChromosome();
-  SequenceWalker walker(refSeq);
-  size_t offset = refSeq.start();
-  int gap = refSeq.alphabet().getGapCharacterCode();
-  map<int, string> chars;
-  for (int i = (gapAsDeletion_ ? -1 : 0); i < static_cast<int>(AlphabetTools::DNA_ALPHABET->getNumberOfTypes()); ++i)
+  if (block.hasSequenceForSpecies(refSpecies_))
   {
-    chars[i] = AlphabetTools::DNA_ALPHABET->intToChar(i);
-  }
-  // Where to store genotype information, if any:
-  vector<int> gt(genotypes_.size());
-  // Now we look all sites for SNPs:
-  for (size_t i = 0; i < block.getNumberOfSites(); ++i)
-  {
-    if (refSeq[i] == gap) // TODO: call indels
-      continue;
-    string filter = "";
-    if (!gapAsDeletion_ && SiteTools::hasGap(block.site(i)))
+    const MafSequence& refSeq = block.sequenceForSpecies(refSpecies_);
+    string chr = refSeq.getChromosome();
+    SequenceWalker walker(refSeq);
+    size_t offset = refSeq.start();
+    int gap = refSeq.alphabet().getGapCharacterCode();
+    map<int, string> chars;
+    for (int i = (gapAsDeletion_ ? -1 : 0); i < static_cast<int>(AlphabetTools::DNA_ALPHABET->getNumberOfTypes()); ++i)
     {
-      filter = "gap";
+      chars[i] = AlphabetTools::DNA_ALPHABET->intToChar(i);
     }
-    if (SymbolListTools::hasUnresolved(block.site(i)))
+    // Where to store genotype information, if any:
+    vector<int> gt(genotypes_.size());
+    // Now we look all sites for SNPs:
+    for (size_t i = 0; i < block.getNumberOfSites(); ++i)
     {
-      if (filter != "")
-        filter += ";";
-      filter += "unk";
-    }
-    if (filter == "")
-      filter = "PASS";
-
-    map<int, size_t> counts;
-    SiteTools::getCounts(block.site(i), counts);
-    int ref = refSeq[i];
-    string alt = "";
-    string ac = "";
-
-    map<int, int> snps;
-    int c = 0;
-    for (int x = (gapAsDeletion_ ? -1 : 0); x < 4; ++x)
-    {
-      if (x != ref)
+      if (refSeq[i] == gap) // TODO: call indels
+        continue;
+      string filter = "";
+      if (!gapAsDeletion_ && SiteTools::hasGap(block.site(i)))
       {
-        size_t f = counts[x];
-        if (f > 0)
-        {
-          if (alt != "")
+        filter = "gap";
+      }
+      if (SymbolListTools::hasUnresolved(block.site(i)))
+      {
+        if (filter != "")
+          filter += ";";
+        filter += "unk";
+      }
+      if (filter == "")
+        filter = "PASS";
+
+      map<int, size_t> counts;
+      SiteTools::getCounts(block.site(i), counts);
+      int ref = refSeq[i];
+      string alt = "";
+      string ac = "";
+
+      map<int, int> snps;
+      int c = 0;
+      for (int x = (gapAsDeletion_ ? -1 : 0); x < 4; ++x)
+      {
+        if (x != ref)
+        { 
+          size_t f = counts[x];
+          if (f > 0)
           {
-            alt += ",";
-            ac += ",";
+            if (alt != "")
+            {
+              alt += ",";
+              ac += ",";
+            }
+            alt += chars[x];
+            ac += TextTools::toString(f);
+            snps[x] = ++c;
           }
-          alt += chars[x];
-          ac += TextTools::toString(f);
-          snps[x] = ++c;
+        }
+        else
+        {
+          snps[x] = 0;
         }
       }
-      else
+      if (ac == "" && outputAll_)
       {
-        snps[x] = 0;
+        ac = TextTools::toString(counts[ref]);
       }
-    }
-    if (ac == "" && outputAll_)
-    {
-      ac = TextTools::toString(counts[ref]);
-    }
-    if (ac != "")
-    {
-      out << chr << "\t" << (offset + walker.getSequencePosition(i) + 1) << "\t.\t" << chars[refSeq[i]] << "\t" << alt << "\t.\t" << filter << "\tAC=" << ac;
-      // Write genotpyes:
-      if (genotypes_.size() > 0)
+      if (ac != "")
       {
-        out << "\tGT";
-        for (size_t g = 0; g < genotypes_.size(); ++g)
+        out << chr << "\t" << (offset + walker.getSequencePosition(i) + 1) << "\t.\t" << chars[refSeq[i]] << "\t" << alt << "\t.\t" << filter << "\tAC=" << ac;
+        // Write genotpyes:
+        if (genotypes_.size() > 0)
         {
-          string geno = "";
-          for (auto x: genotypes_[g])
+          out << "\tGT";
+          for (size_t g = 0; g < genotypes_.size(); ++g)
           {
-            if (geno != "")
-              geno += "|"; // Polyploid
-            vector<const MafSequence*> sequences = block.getSequencesForSpecies(x);
-            if (sequences.size() == 0)
-              geno += (generateDiploids_ ? ".|." : ".");
-            else if (sequences.size() > 1)
-              throw Exception("VcfOutputMafIterator::writeBlock(). Duplicated sequence for species '" + x + "'.");
-            else
+            string geno = "";
+            for (auto x: genotypes_[g])
             {
-              int state = (*sequences[0])[i];
-              if (AlphabetTools::DNA_ALPHABET->isUnresolved(state) || (AlphabetTools::DNA_ALPHABET->isGap(state) && !gapAsDeletion_))
-              {
+              if (geno != "")
+                geno += "|"; // Polyploid
+              vector<const MafSequence*> sequences = block.getSequencesForSpecies(x);
+              if (sequences.size() == 0)
                 geno += (generateDiploids_ ? ".|." : ".");
-              }
+              else if (sequences.size() > 1)
+                throw Exception("VcfOutputMafIterator::writeBlock(). Duplicated sequence for species '" + x + "'.");
               else
               {
-                geno += TextTools::toString(snps[state]);
-                if (generateDiploids_)
-                  geno += "|" + TextTools::toString(snps[state]);
+                int state = (*sequences[0])[i];
+                if (AlphabetTools::DNA_ALPHABET->isUnresolved(state) || (AlphabetTools::DNA_ALPHABET->isGap(state) && !gapAsDeletion_))
+                {
+                  geno += (generateDiploids_ ? ".|." : ".");
+                }
+                else
+                {
+                  geno += TextTools::toString(snps[state]);
+                  if (generateDiploids_)
+                    geno += "|" + TextTools::toString(snps[state]);
+                }
               }
             }
+            out << "\t" << geno;
           }
-          out << "\t" << geno;
         }
+        out << endl;
       }
-      out << endl;
+    }
+  } else {
+    if (logstream_)
+    {
+      (*logstream_ << "VCF OUTPUT: block " << block.getDescription() << " does not contain the reference species.").endLine();
     }
   }
 }
