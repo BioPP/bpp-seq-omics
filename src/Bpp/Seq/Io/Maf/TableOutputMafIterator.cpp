@@ -21,36 +21,48 @@ using namespace std;
 
 void TableOutputMafIterator::writeBlock_(std::ostream& out, const MafBlock& block)
 {
-  // Check for reference species for coordinates:
-  unique_ptr<SequenceWalker> walker;
-  bool hasCoordinates = block.hasSequenceForSpecies(refSpecies_);
-  string chr = "NA";
-  string pos = "NA";
-  if (hasCoordinates)
+  // Check for reference species:
+  if (block.hasSequenceForSpecies(refSpecies_))
   {
     const auto& refSeq = block.sequenceForSpecies(refSpecies_);
-    walker.reset(new SequenceWalker(refSeq));
-    chr = refSeq.getChromosome();
-  }
+    auto walker = make_unique<SequenceWalker>(refSeq);
+    string chr = refSeq.getChromosome();
 
-  // Preprocess data:
-  vector<string> seqs;
-  for (const string& sp : species_)
-  {
-    seqs.push_back(block.sequenceForSpecies(sp).toString());
-  }
-  // Loop over all alignment columns:
-  for (size_t i = 0; i < block.getNumberOfSites(); ++i)
-  {
-    pos = TextTools::toString(walker->getSequencePosition(i));
-    if (hasCoordinates)
+    // Preprocess data:
+    vector<string> seqs;
+    for (const string& sp : species_)
     {
+      if (block.hasSequenceForSpecies(sp))
+      {
+        seqs.push_back(block.sequenceForSpecies(sp).toString());
+      }
+      else
+      {
+        seqs.push_back("");
+      }
+    }
+    // Loop over all alignment columns:
+    for (size_t i = 0; i < block.getNumberOfSites(); ++i)
+    {
+      string pos = TextTools::toString(walker->getSequencePosition(i));
       *output_ << chr << "\t" << pos;
+      for (const string& seq : seqs)
+      {
+	if (seq != "")
+	{
+          *output_ << "\t" << seq[i];
+	}
+	else
+	{
+          *output_ << "\tNA";
+	}
+      }
+      *output_ << endl;
     }
-    for (const string& seq : seqs)
-    {
-      *output_ << "\t" << seq[i];
-    }
-    *output_ << endl;
+  } else {
+     if (logstream_)
+     {
+       (*logstream_ << "OUTPUT AS TABLE FILTER: block " << block.getDescription() << " does not contain the reference species.").endLine();
+     }
   }
 }
