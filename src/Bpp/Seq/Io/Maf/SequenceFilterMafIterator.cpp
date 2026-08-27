@@ -23,12 +23,12 @@ unique_ptr<MafBlock> SequenceFilterMafIterator::analyseCurrentBlock_()
       string species = currentBlock_->sequence(i - 1).getSpecies();
       if (!VectorTools::contains(species_, species))
       {
-        if (logstream_)
-        {
-          (*logstream_ << "SEQUENCE FILTER: remove sequence '" << species << "' from current block " << currentBlock_->getDescription() << ".").endLine();
-        }
         if (!keep_)
         {
+          if (logstream_)
+          {
+            (*logstream_ << "SEQUENCE FILTER: remove sequence '" << species << "' from current block " << currentBlock_->getDescription() << ".").endLine();
+          }
           currentBlock_->removeSequence(i - 1);
         }
       }
@@ -38,7 +38,6 @@ unique_ptr<MafBlock> SequenceFilterMafIterator::analyseCurrentBlock_()
       }
     }
     bool test = currentBlock_->getNumberOfSequences() == 0;
-    // Avoid a memory leak:
     if (test)
     {
       if (logstream_)
@@ -66,14 +65,48 @@ unique_ptr<MafBlock> SequenceFilterMafIterator::analyseCurrentBlock_()
           {}
           if (test)
           {
-            if (logstream_)
+            if (duplicatePolicy_ == DUPLICATE_POLICY_DISCARD)
             {
-              (*logstream_ << "SEQUENCE FILTER: block " << currentBlock_->getDescription() << " has two sequences for species '" << it->first << "' and will be ignored. Try to get the next one.").endLine();
+              if (logstream_)
+              {
+                (*logstream_ << "SEQUENCE FILTER: block " << currentBlock_->getDescription() << " has two sequences for species '" << it->first << "' and will be ignored. Try to get the next one.").endLine();
+              }
+              else
+              {
+                return std::move(currentBlock_);
+              }
             }
-          }
-          else
-          {
-            return std::move(currentBlock_);
+            else if(duplicatePolicy_ == DUPLICATE_POLICY_SAMPLE)
+            {
+              map<string, unsigned int> counts2;
+              for (size_t i = currentBlock_->getNumberOfSequences(); i > 0; --i)
+              {
+                string species = currentBlock_->sequence(i - 1).getSpecies();
+		counts2[species]++;
+		if (counts2[species] > 1)
+		{
+                  if (logstream_)
+                  {
+                    (*logstream_ << "SEQUENCE FILTER: remove duplicated sequence '" << species << "' from current block " << currentBlock_->getDescription() << ".").endLine();
+                  }
+                  currentBlock_->removeSequence(i - 1);
+		}
+              }
+            }
+            else if(duplicatePolicy_ == DUPLICATE_POLICY_REMOVE)
+            {
+              for (it = counts.begin(); it != counts.end(); it++)
+              {
+	        if (it->second > 1)
+		{
+                  currentBlock_->deleteSequencesForSpecies(it->first);
+		}
+	      }	       
+            }
+            else
+            {
+              throw Exception("SequenceFilterMafIterator::analyseCurrentBlock_: invalid DUPLICATE_POLICY.");
+            }
           }
         }
         else

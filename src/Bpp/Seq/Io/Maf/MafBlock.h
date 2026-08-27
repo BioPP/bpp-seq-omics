@@ -194,6 +194,17 @@ public:
     throw SequenceNotFoundException("MafBlock::removeSequenceForSpecies. No sequence with the given species name in this block.", species);
   }
 
+  // Delete all sequences with the species name. Return silently if no sequence is found.
+  void deleteSequencesForSpecies(const std::string& species)
+  {
+    for (size_t i = getNumberOfSequences(); i > 0; --i)
+    {
+      const MafSequence& seq = sequence(i - 1);
+      if (seq.getSpecies() == species)
+        removeSequence(i);
+    }
+  }
+
   /**
    * @return The species names for all sequences in the container.
    */
