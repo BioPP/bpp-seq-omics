@@ -201,7 +201,7 @@ public:
     {
       const MafSequence& seq = sequence(i - 1);
       if (seq.getSpecies() == species)
-        removeSequence(i);
+        removeSequence(i - 1);
     }
   }
 
