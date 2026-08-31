@@ -92,6 +92,7 @@ unique_ptr<MafBlock> SequenceFilterMafIterator::analyseCurrentBlock_()
                   currentBlock_->removeSequence(i - 1);
 		}
               }
+              return std::move(currentBlock_);
             }
             else if(duplicatePolicy_ == DUPLICATE_POLICY_REMOVE)
             {
@@ -102,6 +103,7 @@ unique_ptr<MafBlock> SequenceFilterMafIterator::analyseCurrentBlock_()
                   currentBlock_->deleteSequencesForSpecies(it->first);
 		}
 	      }	       
+              return std::move(currentBlock_);
             }
             else
             {
