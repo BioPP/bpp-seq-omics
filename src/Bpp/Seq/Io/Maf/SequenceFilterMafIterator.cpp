@@ -71,10 +71,6 @@ unique_ptr<MafBlock> SequenceFilterMafIterator::analyseCurrentBlock_()
               {
                 (*logstream_ << "SEQUENCE FILTER: block " << currentBlock_->getDescription() << " has two sequences for species '" << it->first << "' and will be ignored. Try to get the next one.").endLine();
               }
-              else
-              {
-                return std::move(currentBlock_);
-              }
             }
             else if(duplicatePolicy_ == DUPLICATE_POLICY_SAMPLE)
             {
@@ -109,6 +105,10 @@ unique_ptr<MafBlock> SequenceFilterMafIterator::analyseCurrentBlock_()
             {
               throw Exception("SequenceFilterMafIterator::analyseCurrentBlock_: invalid DUPLICATE_POLICY.");
             }
+          }
+          else
+          {
+            return std::move(currentBlock_);
           }
         }
         else
