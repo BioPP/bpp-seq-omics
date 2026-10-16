@@ -20,7 +20,7 @@ std::unique_ptr<MafBlock> BlockMergerMafIterator::analyseCurrentBlock_()
   incomingBlock_ = iterator_->nextBlock();
   while (incomingBlock_)
   {
-    size_t globalSpace = 0;
+    size_t globalSpace = 0, maxSpace = 0;
     for (size_t i = 0; i < species_.size(); ++i)
     {
       try
@@ -36,11 +36,16 @@ std::unique_ptr<MafBlock> BlockMergerMafIterator::analyseCurrentBlock_()
         if (space > maxDist_)
           return std::move(currentBlock_);
         if (i == 0)
-          globalSpace = space;
+          globalSpace = maxSpace = space;
         else
         {
           if (space != globalSpace)
-            return std::move(currentBlock_);
+          {
+            if (allowVariableDistance_)
+              maxSpace = max(maxSpace, space); 
+            else
+              return std::move(currentBlock_);
+          }
         }
         if (seq1.getChromosome() != seq2.getChromosome()
             || VectorTools::contains(ignoreChrs_, seq1.getChromosome())
@@ -67,6 +72,8 @@ std::unique_ptr<MafBlock> BlockMergerMafIterator::analyseCurrentBlock_()
     vector<string> sp1 = currentBlock_->getSpeciesList();
     vector<string> sp2 = incomingBlock_->getSpeciesList();
     vector<string> allSp = VectorTools::unique(VectorTools::vectorUnion(sp1, sp2));
+    globalSpace = maxSpace; //In case of heterogeneous distances
+
     // We need to create a new MafBlock:
     auto mergedBlock = make_unique<MafBlock>();
     // We average the score and pass values:
@@ -83,6 +90,7 @@ std::unique_ptr<MafBlock> BlockMergerMafIterator::analyseCurrentBlock_()
     // Now fill the new block:
     for (size_t i = 0; i < allSp.size(); ++i)
     {
+      bool isFocalSpecies = VectorTools::contains(species_, allSp[i]);
       unique_ptr<MafSequence> seq;
       try
       {
@@ -92,6 +100,7 @@ std::unique_ptr<MafBlock> BlockMergerMafIterator::analyseCurrentBlock_()
         try
         {
           auto tmp = incomingBlock_->removeSequenceForSpecies(allSp[i]);
+          size_t space = isFocalSpecies ? tmp->start() - seq->stop() : 0;
           string ref1 = seq->getDescription(), ref2 = tmp->getDescription();
           // Add spacer if needed:
           if (globalSpace > 0)
@@ -100,7 +109,19 @@ std::unique_ptr<MafBlock> BlockMergerMafIterator::analyseCurrentBlock_()
             {
               (*logstream_ << "BLOCK MERGER: a spacer of size " << globalSpace << " is inserted in sequence for species " << allSp[i] << ".").endLine();
             }
-            seq->append(vector<int>(globalSpace, AlphabetTools::DNA_ALPHABET->getUnknownCharacterCode()));
+            if (isFocalSpecies)
+            {
+              //Add the necessary missing characters to keep coordinates
+              seq->append(vector<int>(space, AlphabetTools::DNA_ALPHABET->getUnknownCharacterCode()));
+              //Add gaps at the end in case of heterogeneous distances
+              if (space != globalSpace)
+                seq->append(vector<int>(globalSpace - space, AlphabetTools::DNA_ALPHABET->getGapCharacterCode()));
+            }
+            else
+            {
+              //Add the missing characters, ignoring coordinates
+              seq->append(vector<int>(globalSpace, AlphabetTools::DNA_ALPHABET->getUnknownCharacterCode()));
+            }
           }
           if (seq->getChromosome() != tmp->getChromosome())
           {

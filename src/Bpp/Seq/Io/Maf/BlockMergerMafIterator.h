@@ -24,6 +24,7 @@ namespace bpp
  * It is possible to define a maximum distance for the merging. Setting a distance of zero implies that the blocks
  * have to be exactly contiguous. Alternatively, the appropriate number of 'N' will be inserted in all species.
  * All species however have to be distant of the exact same amount.
+ * Setting 'allowVariableDistance' to true will also merge in case of heterogeneous distance, adding arbitrary gaps where needed.
  */
 class BlockMergerMafIterator :
   public AbstractFilterMafIterator
@@ -35,45 +36,31 @@ private:
   unsigned int maxDist_;
   bool renameChimericChromosomes_;
   std::map<std::string, unsigned int> chimericChromosomeCounts_;
+  bool allowVariableDistance_;
 
 public:
   BlockMergerMafIterator(
       std::shared_ptr<MafIteratorInterface> iterator,
       const std::vector<std::string>& species,
       unsigned int maxDist = 0,
-      bool renameChimericChromosomes = false) :
+      bool renameChimericChromosomes = false,
+      bool allowVariableDistance = false) :
     AbstractFilterMafIterator(iterator),
     species_(species),
     incomingBlock_(nullptr),
     ignoreChrs_(),
     maxDist_(maxDist),
     renameChimericChromosomes_(renameChimericChromosomes),
-    chimericChromosomeCounts_()
+    chimericChromosomeCounts_(),
+    allowVariableDistance_(allowVariableDistance)
   {
     incomingBlock_ = iterator->nextBlock();
   }
 
 private:
-  BlockMergerMafIterator(const BlockMergerMafIterator& iterator) :
-    AbstractFilterMafIterator(0),
-    species_(iterator.species_),
-    incomingBlock_(),
-    ignoreChrs_(iterator.ignoreChrs_),
-    maxDist_(iterator.maxDist_),
-    renameChimericChromosomes_(iterator.renameChimericChromosomes_),
-    chimericChromosomeCounts_(iterator.chimericChromosomeCounts_)
-  {}
+  BlockMergerMafIterator(const BlockMergerMafIterator& iterator) = delete;
 
-  BlockMergerMafIterator& operator=(const BlockMergerMafIterator& iterator)
-  {
-    species_                   = iterator.species_;
-    incomingBlock_             = nullptr;
-    ignoreChrs_                = iterator.ignoreChrs_;
-    maxDist_                   = iterator.maxDist_;
-    renameChimericChromosomes_ = iterator.renameChimericChromosomes_;
-    chimericChromosomeCounts_  = iterator.chimericChromosomeCounts_;
-    return *this;
-  }
+  BlockMergerMafIterator& operator=(const BlockMergerMafIterator& iterator) = delete;
 
 public:
   /**
